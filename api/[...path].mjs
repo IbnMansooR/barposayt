@@ -1,9 +1,6 @@
 // Vercel serverless funksiyasi — barcha /api/* so'rovlarini qabul qiladi.
-// Multipart (fayl) ni busboy bilan, JSON ni Vercel'ning req.body si orqali oladi.
 import { handleApi } from '../server/api-core.mjs'
 import { parseMultipart } from '../server/multipart.mjs'
-
-export const config = { api: { bodyParser: false } }
 
 function readRawJson(req) {
   return new Promise((resolve) => {
@@ -16,6 +13,11 @@ function readRawJson(req) {
 
 export default async function handler(req, res) {
   try {
+    // Vercel catch-all ba'zan /api prefiksini olib tashlashi mumkin — qayta tiklaymiz
+    if (req.url && !req.url.startsWith('/api/')) {
+      req.url = '/api' + (req.url.startsWith('/') ? req.url : '/' + req.url)
+    }
+
     const ct = (req.headers['content-type'] || '')
     const method = (req.method || 'GET').toUpperCase()
     if (method === 'POST' || method === 'PUT') {
@@ -23,8 +25,17 @@ export default async function handler(req, res) {
         const { fields, file } = await parseMultipart(req)
         req._fields = fields
         req._file = file
+      } else if (req.body !== undefined && req.body !== null) {
+        // Vercel JSON tanani allaqachon parse qilgan bo'lishi mumkin
+        if (typeof req.body === 'string') {
+          try { req._json = JSON.parse(req.body) } catch { req._json = {} }
+        } else if (typeof req.body === 'object') {
+          req._json = req.body
+        } else {
+          req._json = {}
+        }
       } else {
-        // JSON tanani o'qiymiz (bodyParser o'chirilgan)
+        // Aks holda xom tanani o'zimiz o'qiymiz
         req._json = await readRawJson(req)
       }
     }
