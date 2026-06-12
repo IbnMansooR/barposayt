@@ -15,6 +15,9 @@ import { AdminPage } from "../admin/admin";
 import { JarayonPage } from "../jarayon/jarayon";
 import { OrnamentDetailPage } from "../standart/ornamentDetail";
 import { FoydaPage } from "../foyda/foyda";
+import { RahbarPage } from "../rahbar/rahbar";
+import { JamoaPage } from "../jamoa/jamoa";
+import { BlogPage } from "../blog/blog";
 import { Footer } from "./components/Footer";
 
 import logo from '../assets/logo.png';
@@ -53,6 +56,9 @@ export function AppRouter() {
     { label: "Jarayon", href: "#jarayon", icon: "◎" },
     { label: "Iqtisodiy foyda", href: "#foyda", icon: "◍" },
     { label: "Haqimizda", href: "#about", icon: "◐" },
+    { label: "Rahbar", href: "#rahbar", icon: "◕" },
+    { label: "Jamoa", href: "#jamoa", icon: "○" },
+    { label: "Bilim markazi", href: "#blog", icon: "●" },
     { label: "Standart", href: "#standard", icon: "◑" },
     { label: "HR", href: "#hr", icon: "◒" },
     { label: "Takliflar", href: "#takliflar", icon: "◓" },
@@ -93,6 +99,12 @@ export function AppRouter() {
         return <JarayonPage />;
       case "foyda":
         return <FoydaPage />;
+      case "rahbar":
+        return <RahbarPage />;
+      case "jamoa":
+        return <JamoaPage />;
+      case "blog":
+        return <BlogPage />;
       case "boshqaruv":
         return <AdminPage />;
       case "home":
