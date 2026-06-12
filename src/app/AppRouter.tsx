@@ -18,6 +18,9 @@ import { FoydaPage } from "../foyda/foyda";
 import { RahbarPage } from "../rahbar/rahbar";
 import { JamoaPage } from "../jamoa/jamoa";
 import { BlogPage } from "../blog/blog";
+import { NazoratPage } from "../nazorat/nazorat";
+import { KalkulyatorPage } from "../kalkulyator/kalkulyator";
+import { LugatPage } from "../lugat/lugat";
 import { Footer } from "./components/Footer";
 
 import logo from '../assets/logo.png';
@@ -59,6 +62,9 @@ export function AppRouter() {
     { label: "Rahbar", href: "#rahbar", icon: "◕" },
     { label: "Jamoa", href: "#jamoa", icon: "○" },
     { label: "Bilim markazi", href: "#blog", icon: "●" },
+    { label: "Nazorat", href: "#nazorat", icon: "◖" },
+    { label: "Xavf kalkulyatori", href: "#kalkulyator", icon: "◗" },
+    { label: "Lug'at", href: "#lugat", icon: "◘" },
     { label: "Standart", href: "#standard", icon: "◑" },
     { label: "HR", href: "#hr", icon: "◒" },
     { label: "Takliflar", href: "#takliflar", icon: "◓" },
@@ -105,6 +111,12 @@ export function AppRouter() {
         return <JamoaPage />;
       case "blog":
         return <BlogPage />;
+      case "nazorat":
+        return <NazoratPage />;
+      case "kalkulyator":
+        return <KalkulyatorPage />;
+      case "lugat":
+        return <LugatPage />;
       case "boshqaruv":
         return <AdminPage />;
       case "home":
