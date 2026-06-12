@@ -3,3 +3,10 @@ dist
 .env
 *.local
 .DS_Store
+# Maxfiy va keraksiz
+data/
+backups/
+.claude/
+*.pdf
+src/assets/__synctest.txt
+src/app/logo_import_fix.txt
