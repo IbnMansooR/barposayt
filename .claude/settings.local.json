@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "PowerShell(if \\(Test-Path \"package.json\"\\) { $p = Get-Content package.json -Raw | ConvertFrom-Json; $p.scripts } else { \"no package.json in cwd\" })",
-      "PowerShell(npx tsc --noEmit -p tsconfig.json)"
-    ]
-  }
-}
