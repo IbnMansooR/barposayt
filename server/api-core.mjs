@@ -256,19 +256,6 @@ export async function handleApi(req, res) {
   }
 
   try {
-    // ===== VAQTINCHALIK: env tekshiruvi (diagnostika, keyin olib tashlanadi) =====
-    if (p === '/api/_envcheck' && method === 'GET') {
-      const eurl = process.env.SUPABASE_URL || ''
-      const ekey = process.env.SUPABASE_SERVICE_KEY || ''
-      return json(200, {
-        ok: true,
-        urlSet: !!eurl, urlLen: eurl.length, urlPreview: eurl.slice(0, 34),
-        keySet: !!ekey, keyLen: ekey.length, keyHead: ekey.slice(0, 12), keyTail: ekey.slice(-6),
-        keyHasSpaceOrQuote: /[\s"']/.test(ekey),
-        expectedKeyLen: 41, expectedHead: 'sb_secret_ki', expectedTail: 'aNBKOu',
-      })
-    }
-
     // ===== Ommaviy GET'lar =====
     if (p === '/api/offers' && method === 'GET') {
       const offers = (await readArray('offers')).filter((o) => o.active !== false)
