@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { Eye, EyeOff } from "lucide-react";
 
 const CREDS_KEY = "barpo_admin_creds";
 
@@ -149,6 +150,7 @@ export function AdminPage() {
   const [creds, setCreds] = useState<Creds | null>(() => loadCreds());
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showLoginPass, setShowLoginPass] = useState(false);
   const [loginError, setLoginError] = useState("");
   const [loggingIn, setLoggingIn] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("projects");
@@ -592,9 +594,16 @@ export function AdminPage() {
             <input type="text" value={username} onChange={(e) => setUsername(e.target.value)}
               placeholder="Login (username)" autoComplete="username"
               style={{ fontFamily: "var(--font-body)" }} className={inputClass} autoFocus />
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-              placeholder="Parol" autoComplete="current-password"
-              style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+            <div className="relative">
+              <input type={showLoginPass ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)}
+                placeholder="Parol" autoComplete="current-password"
+                style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} pr-12`} />
+              <button type="button" onClick={() => setShowLoginPass((v) => !v)}
+                aria-label={showLoginPass ? "Parolni yashirish" : "Parolni ko'rsatish"}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#060920]/40 hover:text-[#060920] transition-colors">
+                {showLoginPass ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
             {loginError && <p style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]">{loginError}</p>}
             <button type="submit" disabled={loggingIn} style={{ fontFamily: "var(--font-body)" }}
               className="w-full px-8 py-4 bg-[#060920] text-white tracking-[0.15em] uppercase font-medium rounded-2xl hover:shadow-xl transition-all disabled:opacity-70">
