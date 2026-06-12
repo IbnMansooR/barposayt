@@ -1,16 +1,13 @@
 import { useState, useEffect, useRef } from "react";
-import { motion, useScroll, useMotionValueEvent } from "motion/react";
+import { motion, useScroll } from "motion/react";
 import logo from '../assets/logo.png';
 import logoHero from '../assets/Logo dark night.png';
-import fonVideo from '../assets/fonvideo.webm';
 import { FloorSection } from "./components/FloorSection";
 import { SoftDivider } from "./components/SoftDivider";
 import { Footer } from "./components/Footer";
 
 export default function App() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const targetTimeRef = useRef(0);
   const [currentFloor, setCurrentFloor] = useState(0);
   const [contactStatus, setContactStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [contactError, setContactError] = useState("");
@@ -53,38 +50,11 @@ export default function App() {
     }
   };
 
-  // Butun sahifa scroll progressi: 0% -> video boshi, 100% -> video oxiri
+  // Butun sahifa scroll progressi (qavat raqamini kuzatish uchun)
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
   });
-
-  // Scroll -> video timeline. Faqat maqsadli vaqtni saqlaymiz,
-  // haqiqiy seeking'ni rAF ichida silliq qilamiz.
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    const video = videoRef.current;
-    if (video && Number.isFinite(video.duration)) {
-      targetTimeRef.current = latest * video.duration;
-    }
-  });
-
-  // Silliq seeking: currentTime'ni maqsadga lerp bilan yaqinlashtiramiz.
-  // `seeking` guard — yangi seek faqat oldingisi tugagach beriladi (VP9 dekod yuki kamayadi).
-  useEffect(() => {
-    let raf = 0;
-    const tick = () => {
-      const video = videoRef.current;
-      if (video && Number.isFinite(video.duration) && !video.seeking) {
-        const diff = targetTimeRef.current - video.currentTime;
-        if (Math.abs(diff) > 0.01) {
-          video.currentTime = video.currentTime + diff * 0.2;
-        }
-      }
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, []);
 
   // Floor number tracking
   useEffect(() => {
@@ -98,27 +68,8 @@ export default function App() {
 
   return (
     <div ref={containerRef} className="relative">
-      {/* Fixed video background — butun sahifa fonida, scroll bilan boshqariladi */}
-      <div className="fixed inset-0 -z-10">
-        <video
-          ref={videoRef}
-          className="w-full h-full object-cover"
-          muted
-          playsInline
-          preload="auto"
-          loop={false}
-          onLoadedMetadata={(e) => {
-            e.currentTarget.pause();
-            // Birinchi kadrni majburan dekod qilish (aks holda scroll'gacha bo'sh turadi)
-            e.currentTarget.currentTime = 0.001;
-          }}
-        >
-          <source src={fonVideo} type="video/webm" />
-          Your browser does not support WebM video.
-        </video>
-        {/* Oq parda — qora matn o'qilishi uchun kontrast */}
-        <div className="absolute inset-0 bg-white/60" />
-      </div>
+      {/* Fixed background — butun sahifa fonida toza och rang */}
+      <div className="fixed inset-0 -z-10 bg-white" />
 
       {/* Atmospheric grain texture */}
       <div className="fixed inset-0 opacity-[0.015] pointer-events-none z-50 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii43NSIgc3RpdGNoVGlsZXM9InN0aXRjaCIgdHlwZT0iZnJhY3RhbE5vaXNlIi8+PGZlQ29sb3JNYXRyaXh0IHR5cGU9InNhdHVyYXRlIiB2YWx1ZXM9IjAiLz48L2ZpbHRlcj48cGF0aCBkPSJNMCAwaDMwMHYzMDBIMHoiIGZpbHRlcj0idXJsKCNhKSIgb3BhY2l0eT0iLjA1Ii8+PC9zdmc+')]" />
