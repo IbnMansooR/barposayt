@@ -1,0 +1,9 @@
+To show your logo image correctly in React (Vite), you should import the image and use it as a variable:
+
+1. Place your logo at: d:/Yana_sayt/src/assets/logo.png
+2. In App.tsx, at the top, add:
+   import logo from '../assets/logo.png';
+3. Replace <img src="/path/to/logo.png" ... /> with:
+   <img src={logo} alt="Logo" className="tracking-tight cursor-pointer" style={{ height: 24 }} />
+
+This ensures the image is bundled and displayed correctly.

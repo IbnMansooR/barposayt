@@ -1,0 +1,602 @@
+[
+  {
+    "id": "mqb558vbbd9h39",
+    "actor": "Jamshid",
+    "action": "adminni tahrirladi: \"Admin 3\" (admin3)",
+    "time": "2026-06-12T16:28:41.639Z"
+  },
+  {
+    "id": "mqb555qburwv7c",
+    "actor": "Jamshid",
+    "action": "adminni tahrirladi: \"Admin 2\" (admin2)",
+    "time": "2026-06-12T16:28:37.571Z"
+  },
+  {
+    "id": "mqb54u9gr9it3z",
+    "actor": "Jamshid",
+    "action": "adminni tahrirladi: \"Admin 2\" (admin2)",
+    "time": "2026-06-12T16:28:22.708Z"
+  },
+  {
+    "id": "mqb51op1pji6tw",
+    "actor": "Jamshid",
+    "action": "tizimga kirdi",
+    "time": "2026-06-12T16:25:55.525Z"
+  },
+  {
+    "id": "mqb4zooni3qall",
+    "actor": "Jamshid",
+    "action": "tizimga kirdi",
+    "time": "2026-06-12T16:24:22.199Z"
+  },
+  {
+    "id": "mqb3684g313efx",
+    "actor": "Jamshid",
+    "action": "kelgan taklifni o'chirdi",
+    "time": "2026-06-12T15:33:28.096Z"
+  },
+  {
+    "id": "mqb367l884u6xp",
+    "actor": "Jamshid",
+    "action": "kelgan taklifni o'chirdi",
+    "time": "2026-06-12T15:33:27.404Z"
+  },
+  {
+    "id": "mqb363n8sxmmmz",
+    "actor": "Jamshid",
+    "action": "aloqa so'rovini o'chirdi",
+    "time": "2026-06-12T15:33:22.292Z"
+  },
+  {
+    "id": "mqb362xolmg1n1",
+    "actor": "Jamshid",
+    "action": "aloqa so'rovini o'chirdi",
+    "time": "2026-06-12T15:33:21.372Z"
+  },
+  {
+    "id": "mqb360dp3i9st2",
+    "actor": "Jamshid",
+    "action": "HR arizasini o'chirdi: \"ism\"",
+    "time": "2026-06-12T15:33:18.061Z"
+  },
+  {
+    "id": "mqb35z3rbo97bh",
+    "actor": "Jamshid",
+    "action": "HR arizasini o'chirdi: \"jama\"",
+    "time": "2026-06-12T15:33:16.407Z"
+  },
+  {
+    "id": "mqb35yome0ixbt",
+    "actor": "Jamshid",
+    "action": "HR arizasini o'chirdi: \"Jamshid\"",
+    "time": "2026-06-12T15:33:15.862Z"
+  },
+  {
+    "id": "mqb35y9w5vas9t",
+    "actor": "Jamshid",
+    "action": "HR arizasini o'chirdi: \"jamshid\"",
+    "time": "2026-06-12T15:33:15.332Z"
+  },
+  {
+    "id": "mqb35xuhgdq316",
+    "actor": "Jamshid",
+    "action": "HR arizasini o'chirdi: \"Jamshidb\"",
+    "time": "2026-06-12T15:33:14.777Z"
+  },
+  {
+    "id": "mqb35xf9bf84tz",
+    "actor": "Jamshid",
+    "action": "HR arizasini o'chirdi: \"Alisher\"",
+    "time": "2026-06-12T15:33:14.229Z"
+  },
+  {
+    "id": "mqb35wwf6wvn5u",
+    "actor": "Jamshid",
+    "action": "HR arizasini o'chirdi: \"Alisher\"",
+    "time": "2026-06-12T15:33:13.551Z"
+  },
+  {
+    "id": "mqb2dm5foxoh6i",
+    "actor": "Jamshid",
+    "action": "tizimga kirdi",
+    "time": "2026-06-12T15:11:13.251Z"
+  },
+  {
+    "id": "mqb1e8sh57z5ee",
+    "actor": "Jamshid",
+    "action": "hero statistikasini yangiladi",
+    "time": "2026-06-12T14:43:42.977Z"
+  },
+  {
+    "id": "mqb1dyljakyzpx",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini o'chirdi: service-1",
+    "time": "2026-06-12T14:43:29.767Z"
+  },
+  {
+    "id": "mqb1dxxwaokaj6",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini o'chirdi: service-3",
+    "time": "2026-06-12T14:43:28.916Z"
+  },
+  {
+    "id": "mqb1dxhk7ppxxf",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini o'chirdi: service-5",
+    "time": "2026-06-12T14:43:28.328Z"
+  },
+  {
+    "id": "mqb1dwunhc2fox",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini o'chirdi: service-6",
+    "time": "2026-06-12T14:43:27.503Z"
+  },
+  {
+    "id": "mqb1dw9kop8snk",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini o'chirdi: service-4",
+    "time": "2026-06-12T14:43:26.744Z"
+  },
+  {
+    "id": "mqb1dvn1jk6fwg",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini o'chirdi: service-2",
+    "time": "2026-06-12T14:43:25.933Z"
+  },
+  {
+    "id": "mqb1dv5e8pyt2g",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini o'chirdi: culture-1",
+    "time": "2026-06-12T14:43:25.298Z"
+  },
+  {
+    "id": "mqb1dudsdev3k4",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini o'chirdi: culture-3",
+    "time": "2026-06-12T14:43:24.304Z"
+  },
+  {
+    "id": "mqb1dt3vsggu0z",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini o'chirdi: culture-4",
+    "time": "2026-06-12T14:43:22.651Z"
+  },
+  {
+    "id": "mqb1drx74vwi9e",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini o'chirdi: culture-2",
+    "time": "2026-06-12T14:43:21.115Z"
+  },
+  {
+    "id": "mqb1dqzf9jczg3",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini o'chirdi: culture-0",
+    "time": "2026-06-12T14:43:19.899Z"
+  },
+  {
+    "id": "mqayqprytqgonz",
+    "actor": "Jamshid",
+    "action": "naqshni tahrirladi: \"Boteh\"",
+    "time": "2026-06-12T13:29:26.014Z"
+  },
+  {
+    "id": "mqayq2s163hmwx",
+    "actor": "Jamshid",
+    "action": "naqshni tahrirladi: \"Bodom\"",
+    "time": "2026-06-12T13:28:56.209Z"
+  },
+  {
+    "id": "mqayncksagnya1",
+    "actor": "Jamshid",
+    "action": "naqshni o'chirdi: \"Zanjira naqshi\"",
+    "time": "2026-06-12T13:26:48.940Z"
+  },
+  {
+    "id": "mqau80kl13eoxi",
+    "actor": "Jamshid",
+    "action": "topshiriqni o'chirdi: \"TEST topshiriq\"",
+    "time": "2026-06-12T11:22:55.077Z"
+  },
+  {
+    "id": "mqau80kf7q4vkk",
+    "actor": "Jamshid",
+    "action": "topshiriqni bajardi: \"TEST topshiriq\"",
+    "time": "2026-06-12T11:22:55.071Z"
+  },
+  {
+    "id": "mqau80iokpmiu3",
+    "actor": "Jamshid",
+    "action": "topshiriq berdi (admin2): \"TEST topshiriq\"",
+    "time": "2026-06-12T11:22:55.008Z"
+  },
+  {
+    "id": "mqau67csjv0jvo",
+    "actor": "Jamshid",
+    "action": "HR arizasini o'chirdi: \"TEST_SINOV_HR\"",
+    "time": "2026-06-12T11:21:30.556Z"
+  },
+  {
+    "id": "mqau4v5hf2egdj",
+    "actor": "Jamshid",
+    "action": "kelgan taklifni o'chirdi",
+    "time": "2026-06-12T11:20:28.085Z"
+  },
+  {
+    "id": "mqau4v5ehmpziu",
+    "actor": "Jamshid",
+    "action": "aloqa so'rovini o'chirdi",
+    "time": "2026-06-12T11:20:28.082Z"
+  },
+  {
+    "id": "mqau2vxsx7s5si",
+    "actor": "Jamshid",
+    "action": "tizimga kirdi",
+    "time": "2026-06-12T11:18:55.792Z"
+  },
+  {
+    "id": "mqastgztl232vg",
+    "actor": "Jamshid",
+    "action": "sozlamalarni yangiladi",
+    "time": "2026-06-12T10:43:36.905Z"
+  },
+  {
+    "id": "mqasrdep8e33zj",
+    "actor": "Jamshid",
+    "action": "sozlamalarni yangiladi",
+    "time": "2026-06-12T10:41:58.945Z"
+  },
+  {
+    "id": "mqasrc16e8h7lx",
+    "actor": "Jamshid",
+    "action": "sozlamalarni yangiladi",
+    "time": "2026-06-12T10:41:57.162Z"
+  },
+  {
+    "id": "mqargojlh37kyq",
+    "actor": "Jamshid",
+    "action": "naqshni tahrirladi: \"Zanjira naqshi\"",
+    "time": "2026-06-12T10:05:40.545Z"
+  },
+  {
+    "id": "mqareashgykt9a",
+    "actor": "Jamshid",
+    "action": "naqshni tahrirladi: \"Girih naqshi\"",
+    "time": "2026-06-12T10:03:49.409Z"
+  },
+  {
+    "id": "mqarb18qsm6sg7",
+    "actor": "Jamshid",
+    "action": "HR arizasini rad etdi: \"Alisher\"",
+    "time": "2026-06-12T10:01:17.066Z"
+  },
+  {
+    "id": "mqarb0ieonwu34",
+    "actor": "Jamshid",
+    "action": "HR arizasini rad etdi: \"jama\"",
+    "time": "2026-06-12T10:01:16.118Z"
+  },
+  {
+    "id": "mqarazh7m23w0t",
+    "actor": "Jamshid",
+    "action": "HR arizasini rad etdi: \"Jamshid\"",
+    "time": "2026-06-12T10:01:14.779Z"
+  },
+  {
+    "id": "mqarayeq779u7m",
+    "actor": "Jamshid",
+    "action": "HR arizasini rad etdi: \"jamshid\"",
+    "time": "2026-06-12T10:01:13.394Z"
+  },
+  {
+    "id": "mqaraxevxashtt",
+    "actor": "Jamshid",
+    "action": "HR arizasini rad etdi: \"Jamshidb\"",
+    "time": "2026-06-12T10:01:12.103Z"
+  },
+  {
+    "id": "mqarawaar2q9uu",
+    "actor": "Jamshid",
+    "action": "HR arizasini rad etdi: \"Alisher\"",
+    "time": "2026-06-12T10:01:10.642Z"
+  },
+  {
+    "id": "mqar9kp8po717i",
+    "actor": "Jamshid",
+    "action": "HR arizasini rad etdi: \"ism\"",
+    "time": "2026-06-12T10:00:08.972Z"
+  },
+  {
+    "id": "mqar8pgj4x4qun",
+    "actor": "Jamshid",
+    "action": "HR arizasini rad etdi: \"Alisher\"",
+    "time": "2026-06-12T09:59:28.483Z"
+  },
+  {
+    "id": "mqar8np4z4bwj0",
+    "actor": "Jamshid",
+    "action": "HR arizasini rad etdi: \"Alisher\"",
+    "time": "2026-06-12T09:59:26.200Z"
+  },
+  {
+    "id": "mqar8mj6g432n8",
+    "actor": "Jamshid",
+    "action": "HR arizasini rad etdi: \"Alisher\"",
+    "time": "2026-06-12T09:59:24.690Z"
+  },
+  {
+    "id": "mqar7ogaklqqdj",
+    "actor": "Jamshid",
+    "action": "adminni o'chirdi: \"Admin 4\" (admin4)",
+    "time": "2026-06-12T09:58:40.522Z"
+  },
+  {
+    "id": "mqar7m1ugpu586",
+    "actor": "Jamshid",
+    "action": "adminni o'chirdi: \"Admin 5\" (admin5)",
+    "time": "2026-06-12T09:58:37.410Z"
+  },
+  {
+    "id": "mqar63g4ct6n4v",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini yangiladi: service-6",
+    "time": "2026-06-12T09:57:26.644Z"
+  },
+  {
+    "id": "mqar60vlnpd4et",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini yangiladi: service-5",
+    "time": "2026-06-12T09:57:23.313Z"
+  },
+  {
+    "id": "mqar5y6wyvtcue",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini yangiladi: service-4",
+    "time": "2026-06-12T09:57:19.832Z"
+  },
+  {
+    "id": "mqar5uimb7pupz",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini yangiladi: service-3",
+    "time": "2026-06-12T09:57:15.070Z"
+  },
+  {
+    "id": "mqar5r5sd5ah0j",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini yangiladi: service-2",
+    "time": "2026-06-12T09:57:10.720Z"
+  },
+  {
+    "id": "mqar5l1awnth4z",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini yangiladi: service-1",
+    "time": "2026-06-12T09:57:02.782Z"
+  },
+  {
+    "id": "mqaqy6zy94fjdr",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini yangiladi: culture-4",
+    "time": "2026-06-12T09:51:17.998Z"
+  },
+  {
+    "id": "mqaqy4wmn8egqx",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini yangiladi: culture-3",
+    "time": "2026-06-12T09:51:15.286Z"
+  },
+  {
+    "id": "mqaqy2ymdjfmpw",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini yangiladi: culture-2",
+    "time": "2026-06-12T09:51:12.766Z"
+  },
+  {
+    "id": "mqaqy11b0a5ghf",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini yangiladi: culture-1",
+    "time": "2026-06-12T09:51:10.271Z"
+  },
+  {
+    "id": "mqaqxxl4hzc7ug",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini yangiladi: culture-0",
+    "time": "2026-06-12T09:51:05.800Z"
+  },
+  {
+    "id": "mqaqdu5ja3jce6",
+    "actor": "Jamshid",
+    "action": "naqshni tahrirladi: \"Koshin (plitkalar)\"",
+    "time": "2026-06-12T09:35:28.231Z"
+  },
+  {
+    "id": "mqaq9r0l7orgg6",
+    "actor": "Jamshid",
+    "action": "naqshni tahrirladi: \"Turunj (markaz)\"",
+    "time": "2026-06-12T09:32:17.541Z"
+  },
+  {
+    "id": "mqakobtzt0y51h",
+    "actor": "Jamshid",
+    "action": "sozlamalarni yangiladi",
+    "time": "2026-06-12T06:55:40.007Z"
+  },
+  {
+    "id": "mqakoaic5vmszv",
+    "actor": "Jamshid",
+    "action": "sozlamalarni yangiladi",
+    "time": "2026-06-12T06:55:38.292Z"
+  },
+  {
+    "id": "mqakla23wyx0he",
+    "actor": "Jamshid",
+    "action": "sozlamalarni yangiladi",
+    "time": "2026-06-12T06:53:17.739Z"
+  },
+  {
+    "id": "mqakl97sz1cmb4",
+    "actor": "Jamshid",
+    "action": "sozlamalarni yangiladi",
+    "time": "2026-06-12T06:53:16.648Z"
+  },
+  {
+    "id": "mqakjxjxq8yf14",
+    "actor": "Jamshid",
+    "action": "sozlamalarni yangiladi",
+    "time": "2026-06-12T06:52:14.877Z"
+  },
+  {
+    "id": "mqak5dr3jf5svx",
+    "actor": "Jamshid",
+    "action": "tizimga kirdi",
+    "time": "2026-06-12T06:40:56.031Z"
+  },
+  {
+    "id": "mqajgg0t7cvh73",
+    "actor": "Jamshid",
+    "action": "sozlamalarni yangiladi",
+    "time": "2026-06-12T06:21:32.573Z"
+  },
+  {
+    "id": "mqajfw4dreduci",
+    "actor": "Jamshid",
+    "action": "sozlamalarni yangiladi",
+    "time": "2026-06-12T06:21:06.781Z"
+  },
+  {
+    "id": "mqaj7xw0851w0f",
+    "actor": "Jamshid",
+    "action": "sozlamalarni yangiladi",
+    "time": "2026-06-12T06:14:55.824Z"
+  },
+  {
+    "id": "mqaj789vnkejrq",
+    "actor": "Jamshid",
+    "action": "sozlamalarni yangiladi",
+    "time": "2026-06-12T06:14:22.628Z"
+  },
+  {
+    "id": "mqaiy97k11tvdk",
+    "actor": "Jamshid",
+    "action": "sozlamalarni yangiladi",
+    "time": "2026-06-12T06:07:23.936Z"
+  },
+  {
+    "id": "mqailwc2of2jfb",
+    "actor": "Jamshid",
+    "action": "tizimga kirdi",
+    "time": "2026-06-12T05:57:47.378Z"
+  },
+  {
+    "id": "mqai4fug6y8lsy",
+    "actor": "Jamshid",
+    "action": "standartni o'chirdi: \"Telefon\"",
+    "time": "2026-06-12T05:44:12.856Z"
+  },
+  {
+    "id": "mqai3l1uhj2g5x",
+    "actor": "Jamshid",
+    "action": "tizimga kirdi",
+    "time": "2026-06-12T05:43:32.946Z"
+  },
+  {
+    "id": "mqagx5lfbb937b",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini o'chirdi: service-1",
+    "time": "2026-06-12T05:10:33.363Z"
+  },
+  {
+    "id": "mqagwswcqrd1tl",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini o'chirdi: culture-0",
+    "time": "2026-06-12T05:10:16.908Z"
+  },
+  {
+    "id": "mqagvln2dztudn",
+    "actor": "Jamshid",
+    "action": "yangi standart qo'shdi: \"Telefon\"",
+    "time": "2026-06-12T05:09:20.846Z"
+  },
+  {
+    "id": "mqaguc562tl6zy",
+    "actor": "Jamshid",
+    "action": "tizimga kirdi",
+    "time": "2026-06-12T05:08:21.882Z"
+  },
+  {
+    "id": "mq9lndgka2my6r",
+    "actor": "Jamshid",
+    "action": "tizimga kirdi",
+    "time": "2026-06-11T14:35:08.900Z"
+  },
+  {
+    "id": "mq4wt7ek6btoyu",
+    "actor": "Jamshid",
+    "action": "naqshni tahrirladi: \"Zanjira naqshi\"",
+    "time": "2026-06-08T07:48:45.884Z"
+  },
+  {
+    "id": "mq4wsxltnnl5mk",
+    "actor": "Jamshid",
+    "action": "naqshni tahrirladi: \"Girih naqshi\"",
+    "time": "2026-06-08T07:48:33.185Z"
+  },
+  {
+    "id": "mq4v95i5a7k8w8",
+    "actor": "Jamshid",
+    "action": "hero statistikasini yangiladi",
+    "time": "2026-06-08T07:05:10.685Z"
+  },
+  {
+    "id": "mq4v92rzu0z952",
+    "actor": "Jamshid",
+    "action": "hero statistikasini yangiladi",
+    "time": "2026-06-08T07:05:07.151Z"
+  },
+  {
+    "id": "mq4v8841pw16yy",
+    "actor": "Jamshid",
+    "action": "tizimga kirdi",
+    "time": "2026-06-08T07:04:27.409Z"
+  },
+  {
+    "id": "mq2j507pa6jzj5",
+    "actor": "Jamshid",
+    "action": "hero statistikasini yangiladi",
+    "time": "2026-06-06T15:50:29.461Z"
+  },
+  {
+    "id": "mq2j4x848u1boq",
+    "actor": "Jamshid",
+    "action": "hero statistikasini yangiladi",
+    "time": "2026-06-06T15:50:25.588Z"
+  },
+  {
+    "id": "mq2j4olftylfua",
+    "actor": "Jamshid",
+    "action": "hero statistikasini yangiladi",
+    "time": "2026-06-06T15:50:14.403Z"
+  },
+  {
+    "id": "mq2j3lvk6zzde0",
+    "actor": "Jamshid",
+    "action": "tizimga kirdi",
+    "time": "2026-06-06T15:49:24.224Z"
+  },
+  {
+    "id": "mq2i1rifyjpx2n",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini yangiladi: service-1",
+    "time": "2026-06-06T15:19:58.599Z"
+  },
+  {
+    "id": "mq2i0ti9fvy29j",
+    "actor": "Jamshid",
+    "action": "bo'lim rasmini yangiladi: culture-0",
+    "time": "2026-06-06T15:19:14.529Z"
+  },
+  {
+    "id": "mq2i087uy2k75v",
+    "actor": "Jamshid",
+    "action": "kelgan taklifni o'chirdi",
+    "time": "2026-06-06T15:18:46.938Z"
+  }
+]

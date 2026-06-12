@@ -1,0 +1,42 @@
+[
+  {
+    "id": "mq2l9opf310p45",
+    "old": "Girih naqshi",
+    "new": "Zamonaviy grid va reja",
+    "desc": "Geometrik aniqlik qadimdan ham, bugun ham asosiy qoida",
+    "history": "",
+    "hasImage": true,
+    "active": true,
+    "createdAt": "2026-06-06T16:50:07.059Z"
+  },
+  {
+    "id": "mq2l9opfudf0cn",
+    "old": "Zanjira naqshi",
+    "new": "Jarayon uzviyligi",
+    "desc": "Har bir detal va bosqich bir-biriga bog'langan",
+    "history": "",
+    "hasImage": true,
+    "active": true,
+    "createdAt": "2026-06-06T16:50:07.059Z"
+  },
+  {
+    "id": "mq2l9opfgj4v9p",
+    "old": "Turunj (markaz)",
+    "new": "Markaziy boshqaruv",
+    "desc": "Hammaning markaz atrofida tartibiy harakatlari",
+    "history": "",
+    "hasImage": false,
+    "active": true,
+    "createdAt": "2026-06-06T16:50:07.059Z"
+  },
+  {
+    "id": "mq2l9opfc84aix",
+    "old": "Koshin (plitkalar)",
+    "new": "Zamonaviy fasad paneli",
+    "desc": "Material integratsiyasi va chidamlilik",
+    "history": "",
+    "hasImage": false,
+    "active": true,
+    "createdAt": "2026-06-06T16:50:07.059Z"
+  }
+]

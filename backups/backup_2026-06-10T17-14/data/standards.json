@@ -1,0 +1,58 @@
+[
+  {
+    "id": "mq4v89au3pybfx",
+    "title": "Tizim",
+    "desc": "Har bir obyekt tartibli boshqaruv asosida yuritiladi: GPR, ish grafigi, moliyaviy reja, resurslar jadvali, texnika grafigi va kunlik nazorat",
+    "active": true,
+    "createdAt": "2026-06-08T07:04:28.950Z"
+  },
+  {
+    "id": "mq4v89au5nz19e",
+    "title": "Sifat",
+    "desc": "Sifat faqat yakunda tekshirilmaydi. U har kuni, har bosqichda, har ish turida nazorat qilinadi",
+    "active": true,
+    "createdAt": "2026-06-08T07:04:28.950Z"
+  },
+  {
+    "id": "mq4v89augms9ij",
+    "title": "Nazorat",
+    "desc": "Obyektda nima bo'layotgani ko'rinib turishi kerak: kim ishlayapti, nima bajarildi, qancha bajarildi, qaysi bosqichda muammo bor",
+    "active": true,
+    "createdAt": "2026-06-08T07:04:28.950Z"
+  },
+  {
+    "id": "mq4v89aumu1azo",
+    "title": "Mas'uliyat",
+    "desc": "Biz qarorlarimiz, ishimiz va natijamiz uchun javob beramiz. Obyekt biz uchun topshirilguncha emas, to'g'ri ishlaguncha muhim",
+    "active": true,
+    "createdAt": "2026-06-08T07:04:28.950Z"
+  },
+  {
+    "id": "mq4v89aujabez4",
+    "title": "Shaffoflik",
+    "desc": "Investor uchun xarajatlar, jarayonlar va qarorlar tushunarli bo'lishi kerak. Qurilishda noaniqlik — xavf. Shaffoflik — boshqaruv",
+    "active": true,
+    "createdAt": "2026-06-08T07:04:28.950Z"
+  },
+  {
+    "id": "mq4v89auzof68r",
+    "title": "Xotirjamlik",
+    "desc": "Mijoz har kuni obyekt ortidan yugurmasligi kerak. Tizim to'g'ri ishlasa, investor strategik qarorlar bilan shug'ullanadi, jarayon esa nazorat ostida bo'ladi.",
+    "active": true,
+    "createdAt": "2026-06-08T07:04:28.950Z"
+  },
+  {
+    "id": "mq4v89aueey6z7",
+    "title": "Innovatsion yondashuv",
+    "desc": "Biz zamonaviy boshqaruv, muhandislik yechimlari va raqamli nazorat vositalarini qurilish jarayoniga kiritamiz",
+    "active": true,
+    "createdAt": "2026-06-08T07:04:28.950Z"
+  },
+  {
+    "id": "mq4v89auitbxp5",
+    "title": "Iqtisodiy samaradorlik",
+    "desc": "To'g'ri qurilish — bu faqat arzon qilish emas. To'g'ri qurilish — keraksiz xarajatlarni oldini olish, resursni oqilona ishlatish va investitsiyani himoya qilish",
+    "active": true,
+    "createdAt": "2026-06-08T07:04:28.950Z"
+  }
+]
