@@ -165,7 +165,7 @@ export function ContactPage() {
       </section>
 
       {/* Tezkor aloqa — Murojaat formasi */}
-      <section className="relative py-24 px-8 md:px-16 bg-[#060920]/2">
+      <section className="relative py-24 px-8 md:px-16 bg-white">
         <div className="max-w-3xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 30 }}

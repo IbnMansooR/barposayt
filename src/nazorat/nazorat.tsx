@@ -93,7 +93,7 @@ export function NazoratPage() {
       </section>
 
       {/* ===== NAZORAT NUQTALARI (timeline) ===== */}
-      <section className="px-8 md:px-16 py-16 bg-[#060920]/[0.03]">
+      <section className="px-8 md:px-16 py-16 bg-white">
         <div className="max-w-4xl mx-auto">
           <div className="mb-10">
             <p style={{ fontFamily: "var(--font-body)" }} className="text-sm tracking-[0.2em] uppercase text-[#060920]/50 mb-4">BARPO NAZORAT NUQTALARI</p>

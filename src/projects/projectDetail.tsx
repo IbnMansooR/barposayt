@@ -230,7 +230,7 @@ export function ProjectDetailPage({ id }: { id: string }) {
         )}
 
         {/* CTA 2 */}
-        <div className="mt-16 border border-[#060920]/10 rounded-3xl p-8 md:p-12 text-center space-y-5 bg-[#060920]/[0.02]">
+        <div className="mt-16 border border-[#060920]/10 rounded-3xl p-8 md:p-12 text-center space-y-5 bg-white">
           <h3
             style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.25rem, 3vw, 2rem)', color: '#060920' }}
             className="tracking-tight"

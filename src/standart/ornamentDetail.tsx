@@ -104,7 +104,7 @@ export function OrnamentDetailPage({ id }: { id: string }) {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.2 }}
-            className="mb-14 rounded-3xl overflow-hidden bg-[#060920]/[0.03] border border-[#060920]/10"
+            className="mb-14 rounded-3xl overflow-hidden bg-white border border-[#060920]/10"
           >
             <img
               src={`/api/ornament-image?id=${ornament.id}`}

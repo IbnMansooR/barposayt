@@ -151,7 +151,7 @@ export function JarayonPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false }}
             transition={{ duration: 0.8 }}
-            className="p-8 md:p-10 border-l-4 border-[#060920] bg-[#060920]/5 rounded"
+            className="p-8 md:p-10 border-l-4 border-[#060920] bg-white rounded"
           >
             <p
               style={{ fontFamily: "var(--font-display)", color: "#060920" }}
@@ -164,7 +164,7 @@ export function JarayonPage() {
       </section>
 
       {/* Summary strip */}
-      <section className="relative py-16 px-8 md:px-16 bg-[#060920]/[0.03]">
+      <section className="relative py-16 px-8 md:px-16 bg-white">
         <div className="max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

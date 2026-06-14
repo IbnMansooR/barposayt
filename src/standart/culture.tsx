@@ -255,7 +255,7 @@ export function CulturePage() {
       </section>
 
       {/* Heritage Connection */}
-      <section className="relative py-24 px-8 md:px-16 bg-[#060920]/3">
+      <section className="relative py-24 px-8 md:px-16 bg-white">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

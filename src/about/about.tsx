@@ -72,7 +72,7 @@ export function AboutPage() {
       </section>
 
       {/* Mission & Vision */}
-      <section className="relative py-20 px-8 md:px-16 bg-[#060920]/5">
+      <section className="relative py-20 px-8 md:px-16 bg-white">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -253,7 +253,7 @@ Kelajak qurilishi — bu faqat baland binolar emas. Bu yaxshi boshqarilgan jaray
       </section>
 
       {/* Rahbar / Asoschi */}
-      <section className="relative py-20 px-8 md:px-16 bg-[#060920]/5">
+      <section className="relative py-20 px-8 md:px-16 bg-white">
         <div className="max-w-4xl mx-auto space-y-6">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -367,7 +367,7 @@ Kelajak qurilishi — bu faqat baland binolar emas. Bu yaxshi boshqarilgan jaray
       </section>
 
       {/* Team */}
-      <section className="relative py-20 px-8 md:px-16 bg-[#060920]/5">
+      <section className="relative py-20 px-8 md:px-16 bg-white">
         <div className="max-w-6xl mx-auto">
           <h2
             style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', color: '#060920' }}
@@ -416,7 +416,7 @@ Kelajak qurilishi — bu faqat baland binolar emas. Bu yaxshi boshqarilgan jaray
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false }}
             transition={{ duration: 0.8 }}
-            className="p-8 border-l-4 border-[#060920] bg-[#060920]/5 rounded"
+            className="p-8 border-l-4 border-[#060920] bg-white rounded"
           >
             <p
               style={{ fontFamily: 'var(--font-body)' }}

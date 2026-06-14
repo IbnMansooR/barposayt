@@ -122,7 +122,7 @@ export function FoydaPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false }}
             transition={{ duration: 0.8 }}
-            className="p-8 md:p-10 border-l-4 border-[#060920] bg-[#060920]/5 rounded space-y-4"
+            className="p-8 md:p-10 border-l-4 border-[#060920] bg-white rounded space-y-4"
           >
             <h2
               style={{ fontFamily: "var(--font-display)", color: "#060920" }}

@@ -169,7 +169,7 @@ export function TakliflarPage() {
 
       {/* ====== INVESTORLAR UCHUN TAKLIFLAR (admin'dan boshqariladi) ====== */}
       {investors.length > 0 && (
-        <section className="relative px-8 md:px-16 py-16 bg-[#060920]/[0.03]">
+        <section className="relative px-8 md:px-16 py-16 bg-white">
           <div className="max-w-4xl w-full mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 30 }}

@@ -3,12 +3,12 @@
 :root {
   --font-size: 16px;
 
-  /* Wabi-sabi color palette */
-  --background: #F5F3EF;
+  /* Oq fon palitra */
+  --background: #FFFFFF;
   --foreground: #060920;
-  --card: #FAFAF8;
+  --card: #FFFFFF;
   --card-foreground: #060920;
-  --popover: #FAFAF8;
+  --popover: #FFFFFF;
   --popover-foreground: #060920;
   --primary: #060920;
   --primary-foreground: #F5F3EF;
