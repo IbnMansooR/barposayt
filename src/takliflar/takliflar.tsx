@@ -184,9 +184,11 @@ export function TakliflarPage() {
               <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 4vw, 3.25rem)", color: "#060920" }} className="leading-[1.15] tracking-tight">
                 Investorlar uchun obyekt konsepsiyalari
               </h2>
-              <p style={{ fontFamily: "var(--font-body)" }} className="max-w-2xl mx-auto leading-relaxed tracking-wide text-[#060920]/70">
-                BARPO investorlar uchun turli yo'nalishdagi obyektlarni konsepsiyadan qurilishgacha tizimli yondashuv asosida ko'rib chiqadi.
-              </p>
+              <div style={{ fontFamily: "var(--font-body)" }} className="max-w-2xl mx-auto leading-relaxed tracking-wide text-[#060920]/70 space-y-3">
+                <p>Investor uchun qurilish — bu faqat bino qurish emas. Bu kapitalni to'g'ri joylashtirish, risklarni kamaytirish va kelajakdagi daromad modelini barpo etish.</p>
+                <p>BARPO investorlar uchun turli yo'nalishdagi obyektlarni konsepsiyadan qurilishgacha tizimli yondashuv asosida ko'rib chiqadi.</p>
+                <p>Biz har bir loyiha bo'yicha nafaqat "qanday quriladi?" degan savolga, balki "bu obyekt qanday ishlaydi, kimga xizmat qiladi va qanday qiymat yaratadi?" degan savolga ham javob izlaymiz.</p>
+              </div>
             </motion.div>
 
             <div className="space-y-8">
