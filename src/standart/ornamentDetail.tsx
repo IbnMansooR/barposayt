@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
+import { BarpoWord } from "../app/components/Barpo";
 
 type Ornament = {
   id: string;
@@ -32,7 +33,7 @@ export function OrnamentDetailPage({ id }: { id: string }) {
     return (
       <div className="relative bg-white pt-32 min-h-screen flex items-center justify-center">
         <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/40 tracking-wide">
-          Barpo etilyapti...
+          <BarpoWord /> etilyapti...
         </p>
       </div>
     );

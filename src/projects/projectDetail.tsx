@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { SoftDivider } from "../app/components/SoftDivider";
+import { BarpoWord } from "../app/components/Barpo";
 
 interface Project {
   id: string;
@@ -47,7 +48,7 @@ export function ProjectDetailPage({ id }: { id: string }) {
     return (
       <div className="pt-32 min-h-screen flex items-center justify-center">
         <div style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/40 tracking-wide animate-pulse">
-          Barpo etilyapti...
+          <BarpoWord /> etilyapti...
         </div>
       </div>
     );

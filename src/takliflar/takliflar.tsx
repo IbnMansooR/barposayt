@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { SoftDivider } from "../app/components/SoftDivider";
+import { BarpoWord } from "../app/components/Barpo";
 
 type Status = "idle" | "sending" | "success" | "error";
 
@@ -112,7 +113,7 @@ export function TakliflarPage() {
 
           {offersLoading ? (
             <div style={{ fontFamily: "var(--font-body)" }} className="text-center py-12 text-[#060920]/40 tracking-wide animate-pulse">
-              Barpo etilyapti...
+              <BarpoWord /> etilyapti...
             </div>
           ) : offers.length === 0 ? (
             <div

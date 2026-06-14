@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { SoftDivider } from "../app/components/SoftDivider";
+import { BarpoWord } from "../app/components/Barpo";
 
 interface Article {
   id: string;
@@ -28,7 +29,7 @@ export function BlogDetailPage({ id }: { id: string }) {
   if (loading) {
     return (
       <div className="relative bg-white pt-32 min-h-screen flex items-center justify-center">
-        <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/40 tracking-wide animate-pulse">Barpo etilyapti...</p>
+        <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/40 tracking-wide animate-pulse"><BarpoWord /> etilyapti...</p>
       </div>
     );
   }
