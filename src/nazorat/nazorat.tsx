@@ -22,11 +22,11 @@ const CHECKPOINTS = [
 ];
 
 const PANEL = [
-  "Haftalik hisobot",
+  "Kunlik hisobot",
   "Bajarilgan ishlar ro'yxati",
   "Foto / video progress",
   "Muammolar va yechimlar",
-  "Keyingi hafta rejasi",
+  "Keyingi kun rejasi",
   "Sarf va muddat nazorati",
 ];
 

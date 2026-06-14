@@ -63,7 +63,7 @@ export function CulturePage() {
       description: "Buyurtmachining vaqti, mablag'i va ishonchi hurmat qilinadi. Qurilish mijozni charchatadigan jarayon bo'lmasligi kerak.",
       details: "BARPO falsafasida mijoz — bu hamkor. Uning vaqti, mablag'i va ishonchi — qimmatli manba. Biz mijozni noaniqlik bilan charchatmaymiz: darhol tushuntiramiz, maslahat beramiz va muammoning yechimini taklif etamiz.",
       principles: [
-        "Haftalik hisobot va jarayon haqida muntazam ma'lumot",
+        "Kunlik hisobot va jarayon haqida muntazam ma'lumot",
         "Tushuntirish va maslahat berish",
         "Muammolarni tezda hal qilish",
         "Muhim qarorlar oldidan mijozning roziligini olish",

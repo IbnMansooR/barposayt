@@ -324,7 +324,7 @@ export default function App() {
               "Grafik va resurs rejalashtirish",
               "Ishga kirishish va tayyorlash",
               "Texnik nazorat — har ish bajarilgandan so'ng",
-              "Haftalik hisobot mijozga",
+              "Kunlik hisobot mijozga",
               "Yakuniy qabul va topshirish"
             ].map((step, i) => (
               <motion.div
@@ -416,7 +416,7 @@ export default function App() {
         floorNumber={6}
         subtitle="HISOBOT VA NAZORAT"
         title="Investor uchun shaffof qurilish"
-        description="Qurilishda eng katta xavflardan biri — investor jarayonni real ko'rmasligi. BARPO'da obyekt bo'yicha kunlik va haftalik nazorat tizimi yuritiladi."
+        description="Qurilishda eng katta xavflardan biri — investor jarayonni real ko'rmasligi. BARPO'da obyekt bo'yicha kunlik nazorat tizimi yuritiladi."
         alignment="left"
       >
         <div className="mt-8 space-y-6">
@@ -426,7 +426,7 @@ export default function App() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 mt-6">
             {[
               { label: "Kunlik nazorat", desc: "Har kuni maydon tekshiruvi va qaydlar" },
-              { label: "Haftalik hisobot", desc: "Mijozga strukturali progress hisoboti" },
+              { label: "Kunlik hisobot", desc: "Mijozga strukturali progress hisoboti" },
               { label: "Grafik monitoring", desc: "Rejadan ortda qolish darhol ko'rinadi" },
               { label: "Material holati", desc: "Zaxira va sarflanish real vaqtda" },
             ].map((item, i) => (
