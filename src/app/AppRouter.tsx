@@ -20,7 +20,9 @@ import { JamoaPage } from "../jamoa/jamoa";
 import { BlogPage } from "../blog/blog";
 import { BlogDetailPage } from "../blog/blogDetail";
 import { NazoratPage } from "../nazorat/nazorat";
-import { KalkulyatorPage } from "../kalkulyator/kalkulyator";
+// Xavf kalkulyatori vaqtincha saytdan olib qo'yilgan (fayl saqlanadi: src/kalkulyator/kalkulyator.tsx).
+// Qaytarish uchun: shu importni, menyu elementini va "kalkulyator" case'ini tiklash kifoya.
+// import { KalkulyatorPage } from "../kalkulyator/kalkulyator";
 import { LugatPage } from "../lugat/lugat";
 import { Footer } from "./components/Footer";
 
@@ -64,7 +66,6 @@ export function AppRouter() {
     { label: "Jamoa", href: "#jamoa", icon: "○" },
     { label: "Bilim markazi", href: "#blog", icon: "●" },
     { label: "Nazorat", href: "#nazorat", icon: "◖" },
-    { label: "Xavf kalkulyatori", href: "#kalkulyator", icon: "◗" },
     { label: "Lug'at", href: "#lugat", icon: "◘" },
     { label: "Standart", href: "#standard", icon: "◑" },
     { label: "HR", href: "#hr", icon: "◒" },
@@ -120,8 +121,6 @@ export function AppRouter() {
         return <BlogPage />;
       case "nazorat":
         return <NazoratPage />;
-      case "kalkulyator":
-        return <KalkulyatorPage />;
       case "lugat":
         return <LugatPage />;
       case "boshqaruv":
