@@ -8,7 +8,7 @@ const CHAOS = [
   { p: "Noto'g'ri smeta", s: "Smeta real hajm va narx asosida hisoblanadi — ortiqcha xarajat oldindan ko'rinadi." },
   { p: "Yopilgan xato", s: "Yopiladigan ishlar yopilishdan oldin tekshiriladi — keyin buzib tuzatish kerak bo'lmaydi." },
   { p: "Muddat cho'zilishi", s: "Har bosqich grafikka bog'lanadi, kechikish darhol ko'rinadi va to'g'rilanadi." },
-  { p: "Mijozga hisobot yo'qligi", s: "Mijozga haftalik hisobot, foto/video progress va keyingi hafta rejasi yetkaziladi." },
+  { p: "Mijozga hisobot yo'qligi", s: "Mijozga kunlik hisobot, foto/video progress va keyingi kun rejasi yetkaziladi." },
   { p: "Muhandislik va pardoz kelishmovchiligi", s: "Muhandislik tugunlari pardozdan oldin tekshiriladi va o'zaro kelishtiriladi." },
 ];
 
