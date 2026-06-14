@@ -163,35 +163,6 @@ export function JarayonPage() {
         </div>
       </section>
 
-      {/* Summary strip */}
-      <section className="relative py-16 px-8 md:px-16 bg-white">
-        <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false }}
-            transition={{ duration: 0.8 }}
-            className="flex flex-wrap gap-4 justify-center"
-          >
-            {steps.map((s) => (
-              <div
-                key={s.num}
-                style={{ fontFamily: "var(--font-body)" }}
-                className="flex items-center gap-3 px-5 py-3 bg-white border border-[#060920]/10 rounded-full shadow-[0_2px_8px_-4px_rgba(6,9,32,0.12)]"
-              >
-                <span
-                  style={{ fontFamily: "var(--font-display)" }}
-                  className="text-xs font-bold text-[#060920]"
-                >
-                  {s.num}
-                </span>
-                <span className="text-sm text-[#060920]/80">{s.title}</span>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
       {/* CTA 1 */}
       <section className="relative py-16 px-8 md:px-16 bg-[#060920]">
         <div className="max-w-4xl mx-auto text-center space-y-6">
