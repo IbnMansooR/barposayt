@@ -28,7 +28,7 @@ export function BlogDetailPage({ id }: { id: string }) {
   if (loading) {
     return (
       <div className="relative bg-white pt-32 min-h-screen flex items-center justify-center">
-        <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/40 tracking-wide animate-pulse">Yuklanmoqda...</p>
+        <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/40 tracking-wide animate-pulse">Barpo etilyapti...</p>
       </div>
     );
   }

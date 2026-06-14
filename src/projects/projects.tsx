@@ -66,7 +66,7 @@ export function ProjectsPage() {
         <div className="max-w-6xl mx-auto">
           {loading ? (
             <div style={{ fontFamily: 'var(--font-body)' }} className="text-center py-16 text-[#060920]/40 tracking-wide animate-pulse">
-              Yuklanmoqda...
+              Barpo etilyapti...
             </div>
           ) : projects.length === 0 ? (
             <div style={{ fontFamily: 'var(--font-body)' }} className="text-center py-16 text-[#060920]/40 tracking-wide">

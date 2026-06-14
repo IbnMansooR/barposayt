@@ -112,7 +112,7 @@ export function TakliflarPage() {
 
           {offersLoading ? (
             <div style={{ fontFamily: "var(--font-body)" }} className="text-center py-12 text-[#060920]/40 tracking-wide animate-pulse">
-              Yuklanmoqda...
+              Barpo etilyapti...
             </div>
           ) : offers.length === 0 ? (
             <div

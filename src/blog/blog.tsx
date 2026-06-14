@@ -63,7 +63,7 @@ export function BlogPage() {
         <div className="max-w-5xl mx-auto">
           {loading ? (
             <p style={{ fontFamily: "var(--font-body)" }} className="text-center text-[#060920]/40 tracking-wide py-10 animate-pulse">
-              Yuklanmoqda...
+              Barpo etilyapti...
             </p>
           ) : articles.length === 0 ? (
             <p style={{ fontFamily: "var(--font-body)" }} className="text-center text-[#060920]/40 tracking-wide py-10">
