@@ -18,6 +18,7 @@ import { FoydaPage } from "../foyda/foyda";
 import { RahbarPage } from "../rahbar/rahbar";
 import { JamoaPage } from "../jamoa/jamoa";
 import { BlogPage } from "../blog/blog";
+import { BlogDetailPage } from "../blog/blogDetail";
 import { NazoratPage } from "../nazorat/nazorat";
 import { KalkulyatorPage } from "../kalkulyator/kalkulyator";
 import { LugatPage } from "../lugat/lugat";
@@ -82,6 +83,12 @@ export function AppRouter() {
     if (currentPage.startsWith("ornament-")) {
       const id = currentPage.slice("ornament-".length);
       return <OrnamentDetailPage id={id} />;
+    }
+
+    // Har bir maqola uchun alohida sahifa: #blog-<id>
+    if (currentPage.startsWith("blog-")) {
+      const id = currentPage.slice("blog-".length);
+      return <BlogDetailPage id={id} />;
     }
 
     switch (currentPage) {

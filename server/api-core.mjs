@@ -20,7 +20,7 @@ const ADMINS = [
   { username: 'admin5', password: 'admin5_2026', name: 'Admin 5' },
 ]
 const SUPERADMIN_USERNAME = 'jamshid'
-const PERM_KEYS = ['projects', 'ornaments', 'offers', 'standards', 'investors', 'sections', 'stats', 'suggestions', 'hr', 'contacts', 'settings']
+const PERM_KEYS = ['projects', 'ornaments', 'offers', 'standards', 'investors', 'blog', 'sections', 'stats', 'suggestions', 'hr', 'contacts', 'settings']
 
 function defaultPerms(value = true) {
   const o = {}
@@ -157,6 +157,23 @@ async function ensureInvestors() {
   if (Array.isArray(cur)) return
   await writeJson('investors', [])
 }
+// Bilim markazi (blog) — dastlabki 16 ta maqola QORALAMA sifatida seed qilinadi
+async function ensureBlog() {
+  const cur = await readJson('blog', null)
+  if (Array.isArray(cur)) return
+  const seed = [
+    { rubric: 'BARPO Standarti', titles: ['Devor tekisligi nima uchun muhim?', 'Pardoz sifatini buzadigan 5 ta yashirin xato', 'Nima uchun yopiladigan ishlar oldin tekshirilishi kerak?', 'Toza obyekt — xavfsizlik va sifat belgisi'] },
+    { rubric: 'Mijoz iqtisodiy foydasi', titles: ['Qurilishda ortiqcha xarajat qayerdan chiqadi?', 'Arzon smeta nima uchun qimmatga tushadi?', "Noto'g'ri muhandislik yechimi kelajakda qanday xarajat keltiradi?", 'Materialni tejash va sifatni tushirish — bir xil narsa emas'] },
+    { rubric: 'Yangi qurilish madaniyati', titles: ['Qurilishda madaniyat nimadan boshlanadi?', "O'zbek me'morchiligidan zamonaviy qurilish nimani o'rganishi mumkin?", 'Nima uchun tartib — tezlikning asosi?', 'Buyurtmachi xotirjamligi qurilish xizmatining bir qismi bo\'lishi kerak'] },
+    { rubric: 'Tarix va zamonaviylik', titles: ['Girih naqshidan zamonaviy grid tizimigacha', 'Koshin va zamonaviy fasad materiallari', 'Gumbazdan long-span konstruksiyalargacha', 'Amir Temur davridagi bunyodkorlik ruhi va bugungi qurilish'] },
+  ]
+  const list = []
+  let i = 0
+  for (const r of seed) for (const t of r.titles) {
+    list.push({ id: genId() + (i++), title: t, rubric: r.rubric, content: '', hasImage: false, status: 'draft', createdAt: new Date().toISOString(), publishedAt: null })
+  }
+  await writeJson('blog', list)
+}
 
 // ---------- Statistika (saqlanmaydi, faqat default — hero faktlar bilan almashtirilgan) ----------
 const DEFAULT_STATS = [
@@ -276,6 +293,18 @@ export async function handleApi(req, res) {
     if (p === '/api/stats' && method === 'GET') {
       return json(200, { ok: true, stats: await readStats() })
     }
+    if (p === '/api/blog' && method === 'GET') {
+      await ensureBlog()
+      const id = q.get('id')
+      const all = await readArray('blog')
+      if (id) {
+        const article = all.find((x) => x.id === id && x.status === 'published')
+        if (!article) return json(404, { ok: false, error: 'Maqola topilmadi' })
+        return json(200, { ok: true, article })
+      }
+      // Faqat chop etilgan (published) maqolalar
+      return json(200, { ok: true, articles: all.filter((x) => x.status === 'published') })
+    }
     if (p === '/api/socials' && method === 'GET') {
       const s = await readSettings()
       return json(200, { ok: true, socials: s.socials || {}, contact: s.contactInfo || {} })
@@ -316,6 +345,13 @@ export async function handleApi(req, res) {
       const key = q.get('key') || ''
       if (!/^[a-z0-9-]+$/.test(key)) { res.statusCode = 400; return res.end('Bad request') }
       const fp = await findImagePath('section', key); if (!fp) return notFound()
+      const f = await getFile('image', fp); if (!f) return notFound()
+      return binary(f.contentType || mimeFromExt(extFromName(fp)), f.buffer)
+    }
+    if (p === '/api/blog-image' && method === 'GET') {
+      const id = q.get('id') || ''
+      if (!id || /[\/\\]/.test(id) || id.includes('..')) { res.statusCode = 400; return res.end('Bad request') }
+      const fp = await findImagePath('blog', id); if (!fp) return notFound()
       const f = await getFile('image', fp); if (!f) return notFound()
       return binary(f.contentType || mimeFromExt(extFromName(fp)), f.buffer)
     }
@@ -385,7 +421,7 @@ export async function handleApi(req, res) {
     // ===== ADMIN: barcha ma'lumot =====
     if (p === '/api/admin/data' && method === 'GET') {
       const admin = await requireAdmin(); if (!admin) return
-      await ensureOrnaments(); await ensureStandards(); await ensureInvestors()
+      await ensureOrnaments(); await ensureStandards(); await ensureInvestors(); await ensureBlog()
       const isSuper = admin.role === 'superadmin'
       let tasks = await readArray('tasks')
       if (!isSuper) tasks = tasks.filter((t) => t.assignee === admin.username)
@@ -400,6 +436,7 @@ export async function handleApi(req, res) {
           ornaments: await readArray('ornaments'),
           standards: await readArray('standards'),
           investors: await readArray('investors'),
+          blog: await readArray('blog'),
           history: (await readArray('history')).slice(0, 10),
           tasks,
           me: { username: admin.username, name: admin.name, role: admin.role || 'admin', perms: isSuper ? defaultPerms(true) : (admin.perms || defaultPerms(true)) },
@@ -651,6 +688,32 @@ export async function handleApi(req, res) {
       else if (action === 'delete') { const pr = projects.find((x) => x.id === body.id); projects = projects.filter((x) => x.id !== body.id); const old = await listFiles('image', 'project'); await deleteFiles('image', old.filter((n) => n.startsWith(body.id + '.')).map((n) => `project/${n}`)); await logHistory(admin.name, `loyihani o'chirdi: "${pr?.name || ''}"`) }
       else return json(400, { ok: false, error: "Noma'lum amal" })
       await writeArray('projects', projects); return json(200, { ok: true, projects })
+    }
+    if (p === '/api/admin/blog' && method === 'POST') {
+      const admin = await requirePerm('blog'); if (!admin) return
+      await ensureBlog(); const body = fields(req); const action = body.action; const f = file(req)
+      let items = await readArray('blog')
+      const saveImg = async (id) => { if (!f || !f.buffer) return; const old = await listFiles('image', 'blog'); await deleteFiles('image', old.filter((n) => n.startsWith(id + '.')).map((n) => `blog/${n}`)); const ext = extFromName(f.originalname) || '.jpg'; await putFile('image', `blog/${id}${ext}`, f.buffer, f.mimetype) }
+      if (action === 'create') {
+        const id = genId(); await saveImg(id)
+        items.unshift({ id, title: body.title || 'Nomsiz maqola', rubric: body.rubric || '', content: body.content || '', hasImage: !!(f && f.buffer), status: 'draft', createdAt: new Date().toISOString(), publishedAt: null })
+        await logHistory(admin.name, `yangi maqola (qoralama) qo'shdi: "${body.title || ''}"`)
+      } else if (action === 'update') {
+        await saveImg(body.id)
+        items = items.map((a) => a.id === body.id ? { ...a, title: body.title, rubric: body.rubric, content: body.content, hasImage: (f && f.buffer) ? true : a.hasImage } : a)
+        await logHistory(admin.name, `maqolani tahrirladi: "${body.title || ''}"`)
+      } else if (action === 'publish') {
+        items = items.map((a) => a.id === body.id ? { ...a, status: 'published', publishedAt: a.publishedAt || new Date().toISOString() } : a)
+        const it = items.find((a) => a.id === body.id); await logHistory(admin.name, `maqolani chop etdi: "${it ? it.title : ''}"`)
+      } else if (action === 'unpublish') {
+        items = items.map((a) => a.id === body.id ? { ...a, status: 'draft' } : a)
+        const it = items.find((a) => a.id === body.id); await logHistory(admin.name, `maqolani qoralamaga qaytardi: "${it ? it.title : ''}"`)
+      } else if (action === 'delete') {
+        const it = items.find((a) => a.id === body.id); items = items.filter((a) => a.id !== body.id)
+        const old = await listFiles('image', 'blog'); await deleteFiles('image', old.filter((n) => n.startsWith(body.id + '.')).map((n) => `blog/${n}`))
+        await logHistory(admin.name, `maqolani o'chirdi: "${it ? it.title : ''}"`)
+      } else return json(400, { ok: false, error: "Noma'lum amal" })
+      await writeArray('blog', items); return json(200, { ok: true, blog: items })
     }
     if (p === '/api/admin/section-image' && method === 'POST') {
       const admin = await requirePerm('sections'); if (!admin) return

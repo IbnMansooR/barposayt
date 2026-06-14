@@ -19,7 +19,12 @@ function loadCreds(): Creds | null {
   }
 }
 
-type Tab = "projects" | "ornaments" | "offers" | "standards" | "investors" | "sections" | "stats" | "suggestions" | "hr" | "contacts" | "settings" | "tasks" | "admins";
+type Tab = "projects" | "ornaments" | "offers" | "standards" | "investors" | "blog" | "sections" | "stats" | "suggestions" | "hr" | "contacts" | "settings" | "tasks" | "admins";
+
+interface BlogArticle {
+  id: string; title: string; rubric: string; content: string;
+  hasImage?: boolean; status: "draft" | "published"; createdAt: string; publishedAt?: string | null;
+}
 
 // Bo'lim ruxsatlari (superadmin boshqaradi)
 const PERM_LABELS: { key: string; label: string }[] = [
@@ -27,6 +32,7 @@ const PERM_LABELS: { key: string; label: string }[] = [
   { key: "ornaments", label: "Naqshlar" },
   { key: "standards", label: "Standartlar" },
   { key: "investors", label: "Investorlar" },
+  { key: "blog", label: "Bilim markazi" },
   { key: "offers", label: "Takliflar" },
   { key: "sections", label: "Bo'lim rasmlari" },
   { key: "stats", label: "Statistika" },
@@ -135,6 +141,7 @@ interface AdminData {
   projects: Project[]; ornaments: Ornament[]; standards: Standard[]; investors: Investor[];
   hr: HRRecord[]; offers: Offer[];
   suggestions: Suggestion[]; contacts: Contact[]; history: HistoryEntry[];
+  blog?: BlogArticle[];
   tasks?: TaskItem[]; me?: Me; admins?: AdminUser[];
 }
 
@@ -173,6 +180,8 @@ export function AdminPage() {
   const [showStandardModal, setShowStandardModal] = useState(false);
   const [editingInvestor, setEditingInvestor] = useState<Investor | null>(null);
   const [showInvestorModal, setShowInvestorModal] = useState(false);
+  const [editingBlog, setEditingBlog] = useState<BlogArticle | null>(null);
+  const [showBlogModal, setShowBlogModal] = useState(false);
   const [editingAdmin, setEditingAdmin] = useState<AdminUser | null>(null);
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [showTaskModal, setShowTaskModal] = useState(false);
@@ -527,6 +536,36 @@ export function AdminPage() {
     try { await investorAction({ action: "delete", id }); loadData(); } catch {}
   };
 
+  // ---- Blog / Bilim markazi amallari (FormData — rasm bilan) ----
+  const blogAction = async (fd: FormData) => {
+    const res = await fetch(`/api/admin/blog?${authQS()}`, { method: "POST", body: fd });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || !json.ok) throw new Error(json.error || "Xatolik");
+    return json;
+  };
+  const saveBlog = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSaving(true);
+    const fd = new FormData(e.currentTarget);
+    fd.append("action", editingBlog ? "update" : "create");
+    if (editingBlog) fd.append("id", editingBlog.id);
+    try {
+      await blogAction(fd);
+      setShowBlogModal(false); setEditingBlog(null); loadData();
+    } catch (err) { alert(err instanceof Error ? err.message : "Xatolik"); } finally { setSaving(false); }
+  };
+  const blogSimple = async (action: string, id: string) => {
+    const fd = new FormData();
+    fd.append("action", action); fd.append("id", id);
+    try { await blogAction(fd); loadData(); } catch (err) { alert(err instanceof Error ? err.message : "Xatolik"); }
+  };
+  const publishBlog = (id: string) => blogSimple("publish", id);
+  const unpublishBlog = (id: string) => blogSimple("unpublish", id);
+  const deleteBlog = (id: string) => {
+    if (!confirm("Bu maqola butunlay o'chirilsinmi?")) return;
+    blogSimple("delete", id);
+  };
+
   // ---- Bo'lim rasmlari (culture / services boxlari) ----
   const uploadSectionImage = async (key: string, file: File) => {
     const fd = new FormData();
@@ -624,6 +663,7 @@ export function AdminPage() {
     { id: "ornaments" as Tab, label: "Naqshlar", count: data?.ornaments?.length ?? 0 },
     { id: "standards" as Tab, label: "Standartlar", count: data?.standards?.length ?? 0 },
     { id: "investors" as Tab, label: "Investorlar", count: data?.investors?.length ?? 0 },
+    { id: "blog" as Tab, label: "Bilim markazi", count: data?.blog?.length ?? 0 },
     { id: "offers" as Tab, label: "Cheklangan takliflar", count: data?.offers.length ?? 0 },
     { id: "sections" as Tab, label: "Bo'lim rasmlari", count: Object.keys(sectionImages).length },
     { id: "stats" as Tab, label: "Statistika", count: stats.length },
@@ -904,6 +944,55 @@ export function AdminPage() {
                     </div>
                   </motion.div>
                 ))}
+              </div>
+            )}
+
+            {/* ===== BILIM MARKAZI (BLOG) ===== */}
+            {activeTab === "blog" && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between mb-2 flex-wrap gap-3">
+                  <div>
+                    <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">Bilim markazi — maqolalar ({data.blog?.length ?? 0})</h2>
+                    <p style={{ fontFamily: "var(--font-body)" }} className="text-xs text-[#060920]/50 mt-1">
+                      Maqolalar avval <b>qoralama</b> sifatida saqlanadi. "Chop etish" bosilsa — saytda ko'rinadi.
+                    </p>
+                  </div>
+                  <button onClick={() => { setEditingBlog(null); setShowBlogModal(true); }} style={{ fontFamily: "var(--font-body)" }}
+                    className="px-5 py-2.5 bg-[#060920] text-white rounded-xl text-sm tracking-wide hover:shadow-lg transition-all">
+                    + Yangi maqola
+                  </button>
+                </div>
+                {(data.blog?.length ?? 0) === 0 ? <EmptyState text="Hozircha maqola yo'q. '+ Yangi maqola' tugmasini bosing." /> : [...(data.blog || [])]
+                  .sort((a, b) => (a.status === "published" ? 1 : 0) - (b.status === "published" ? 1 : 0) || String(b.createdAt).localeCompare(String(a.createdAt)))
+                  .map((a, i) => {
+                    const published = a.status === "published";
+                    return (
+                      <motion.div key={a.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
+                        className={`p-5 bg-white/60 border rounded-2xl flex gap-4 items-start ${published ? "border-[#060920]/15" : "border-dashed border-[#060920]/20"}`}>
+                        <div className="w-20 h-16 rounded-lg bg-[#060920]/5 overflow-hidden flex-shrink-0 flex items-center justify-center">
+                          {a.hasImage ? <img src={`/api/blog-image?id=${a.id}`} alt={a.title} className="w-full h-full object-cover" />
+                            : <span style={{ fontFamily: "var(--font-display)" }} className="text-[#060920]/20 text-xs">BARPO</span>}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span style={{ fontFamily: "var(--font-body)" }} className={`px-2.5 py-0.5 text-xs tracking-wide uppercase rounded-full ${published ? "bg-[#060920] text-white" : "bg-[#060920]/10 text-[#060920]/60"}`}>
+                              {published ? "Chop etilgan" : "Qoralama"}
+                            </span>
+                            {a.rubric && <span style={{ fontFamily: "var(--font-body)" }} className="text-xs text-[#060920]/45 uppercase tracking-wide">{a.rubric}</span>}
+                          </div>
+                          <div style={{ fontFamily: "var(--font-display)" }} className="text-base text-[#060920] mt-1.5">{a.title}</div>
+                          {a.content && <p style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]/55 mt-1 line-clamp-1">{a.content}</p>}
+                          <div className="flex gap-2 mt-3 flex-wrap" style={{ fontFamily: "var(--font-body)" }}>
+                            <button onClick={() => { setEditingBlog(a); setShowBlogModal(true); }} className={btnGhost}>Tahrirlash</button>
+                            {published
+                              ? <button onClick={() => unpublishBlog(a.id)} className={btnGhost}>Qoralamaga qaytarish</button>
+                              : <button onClick={() => publishBlog(a.id)} className="px-3 py-1.5 rounded-lg text-xs tracking-wide bg-[#060920] text-white hover:shadow-lg transition-all">Chop etish</button>}
+                            <button onClick={() => deleteBlog(a.id)} className={btnDanger}>O'chirish</button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
               </div>
             )}
 
@@ -1449,6 +1538,45 @@ export function AdminPage() {
           </ModalShell>
         )}
       </AnimatePresence>
+
+      {/* ===== BLOG / BILIM MARKAZI MODAL ===== */}
+      <AnimatePresence>
+        {showBlogModal && (
+          <ModalShell wide title={editingBlog ? "Maqolani tahrirlash" : "Yangi maqola (qoralama)"} onClose={() => { setShowBlogModal(false); setEditingBlog(null); }}>
+            <form onSubmit={saveBlog} className="space-y-4">
+              <input name="title" required defaultValue={editingBlog?.title || ""} placeholder="Maqola sarlavhasi *" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              <div>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">Rubrika (bo'lim nomi)</label>
+                <input name="rubric" defaultValue={editingBlog?.rubric || ""} placeholder="Masalan: BARPO Standarti" style={{ fontFamily: "var(--font-body)" }} className={inputClass} list="blog-rubrics" />
+                <datalist id="blog-rubrics">
+                  <option value="BARPO Standarti" />
+                  <option value="Mijoz iqtisodiy foydasi" />
+                  <option value="Yangi qurilish madaniyati" />
+                  <option value="Tarix va zamonaviylik" />
+                </datalist>
+              </div>
+              <div>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">Maqola matni (har bir xatboshi yangi qatordan)</label>
+                <textarea name="content" rows={10} defaultValue={editingBlog?.content || ""} placeholder="Maqola to'liq matni..." style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+              </div>
+              <div>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">
+                  Maqola rasmi {editingBlog?.hasImage ? "(yangi rasm yuklasangiz, eskisi almashadi)" : "(ixtiyoriy)"}
+                </label>
+                <input type="file" name="image" accept="image/*" style={{ fontFamily: "var(--font-body)" }}
+                  className="w-full text-sm text-[#060920]/70 file:mr-4 file:px-4 file:py-2 file:rounded-lg file:border file:border-[#060920]/15 file:bg-white file:text-[#060920]/70 file:cursor-pointer cursor-pointer" />
+              </div>
+              {editingBlog && (
+                <p style={{ fontFamily: "var(--font-body)" }} className="text-xs text-[#060920]/50">
+                  Holat: <b>{editingBlog.status === "published" ? "Chop etilgan" : "Qoralama"}</b>. Chop etish/qoralamaga qaytarishni ro'yxatdagi tugmalar orqali qiling.
+                </p>
+              )}
+              <SaveBtn saving={saving} editing={!!editingBlog} />
+            </form>
+          </ModalShell>
+        )}
+      </AnimatePresence>
+
       {/* ===== ADMIN MODAL (faqat superadmin) ===== */}
       <AnimatePresence>
         {showAdminModal && (
