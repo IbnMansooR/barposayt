@@ -194,3 +194,9 @@
     line-height: 1.5;
   }
 }
+
+/* Kartalar uchun eng minimal soya (oq fonda ajralib turishi uchun) */
+.card-shadow {
+  box-shadow: 0 2px 14px -8px rgba(6, 9, 32, 0.12);
+  border: 1px solid rgba(6, 9, 32, 0.05);
+}
