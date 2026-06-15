@@ -1,37 +1,39 @@
 import { useState } from "react";
 import { motion } from "motion/react";
+import { useT } from "../i18n";
 
-// Yo'nalishga qarab sohalar ro'yxati
-const FIELDS_BY_DIRECTION: Record<string, string[]> = {
+// Yo'nalishga qarab sohalar ro'yxati — [uz, ru], saqlanadigan qiymat uz bo'lib qoladi
+const FIELDS_BY_DIRECTION: Record<string, [string, string][]> = {
   Qurilish: [
-    "Bosh pudratchi",
-    "Qurilish-montaj ishlari",
-    "Pardozlash ishlari",
-    "Muhandislik tizimlari",
-    "Fasad va tashqi ishlar",
-    "Loyihalash / Smeta",
-    "Loyiha menejmenti",
-    "HR / Ofis / Administratsiya",
-    "Boshqa",
+    ["Bosh pudratchi", "Генеральный подрядчик"],
+    ["Qurilish-montaj ishlari", "Строительно-монтажные работы"],
+    ["Pardozlash ishlari", "Отделочные работы"],
+    ["Muhandislik tizimlari", "Инженерные системы"],
+    ["Fasad va tashqi ishlar", "Фасад и наружные работы"],
+    ["Loyihalash / Smeta", "Проектирование / Смета"],
+    ["Loyiha menejmenti", "Управление проектами"],
+    ["HR / Ofis / Administratsiya", "HR / Офис / Администрация"],
+    ["Boshqa", "Другое"],
   ],
   Marketing: [
-    "Marketolog",
-    "SMM mutaxassisi",
-    "Kontent menejer",
-    "Grafik dizayner",
-    "Motion dizayner",
-    "Videograf",
-    "Mobilograf",
-    "Kopirayter",
-    "Targetolog",
-    "PR",
-    "Boshqa",
+    ["Marketolog", "Маркетолог"],
+    ["SMM mutaxassisi", "SMM-специалист"],
+    ["Kontent menejer", "Контент-менеджер"],
+    ["Grafik dizayner", "Графический дизайнер"],
+    ["Motion dizayner", "Motion-дизайнер"],
+    ["Videograf", "Видеограф"],
+    ["Mobilograf", "Мобилограф"],
+    ["Kopirayter", "Копирайтер"],
+    ["Targetolog", "Таргетолог"],
+    ["PR", "PR"],
+    ["Boshqa", "Другое"],
   ],
 };
 
 type Status = "idle" | "sending" | "success" | "error";
 
 export function JoinFamily() {
+  const t = useT();
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [fileName, setFileName] = useState("");
@@ -46,14 +48,14 @@ export function JoinFamily() {
       const data = new FormData(formEl);
       const res = await fetch("/api/apply", { method: "POST", body: data });
       const json = await res.json().catch(() => ({}));
-      if (!res.ok || !json.ok) throw new Error(json.error || "Yuborishda xatolik yuz berdi");
+      if (!res.ok || !json.ok) throw new Error(json.error || t("Yuborishda xatolik yuz berdi", "Произошла ошибка при отправке"));
       setStatus("success");
       formEl.reset();
       setFileName("");
       setDirection("");
     } catch (err) {
       setStatus("error");
-      setErrorMsg(err instanceof Error ? err.message : "Yuborishda xatolik yuz berdi");
+      setErrorMsg(err instanceof Error ? err.message : t("Yuborishda xatolik yuz berdi", "Произошла ошибка при отправке"));
     }
   };
 
@@ -77,7 +79,7 @@ export function JoinFamily() {
             style={{ fontFamily: "var(--font-body)" }}
             className="opacity-60 tracking-[0.2em] uppercase text-sm text-[#060920]"
           >
-            BIZGA QO'SHILING
+            {t("BIZGA QO'SHILING", "ПРИСОЕДИНЯЙТЕСЬ К НАМ")}
           </p>
           <h2
             style={{
@@ -87,14 +89,16 @@ export function JoinFamily() {
             }}
             className="leading-[1.15] tracking-tight"
           >
-            BARPO oilasiga qo'shiling
+            {t("BARPO oilasiga qo'shiling", "Присоединяйтесь к семье BARPO")}
           </h2>
           <p
             style={{ fontFamily: "var(--font-body)" }}
             className="max-w-xl mx-auto leading-relaxed tracking-wide text-[#060920]/70"
           >
-            Tartib, nazorat va sifatni qadrlaydigan jamoaga qo'shiling. O'zingiz haqingizda
-            ma'lumot qoldiring va rezyumeingizni yuklang — biz siz bilan bog'lanamiz.
+            {t(
+              "Tartib, nazorat va sifatni qadrlaydigan jamoaga qo'shiling. O'zingiz haqingizda ma'lumot qoldiring va rezyumeingizni yuklang — biz siz bilan bog'lanamiz.",
+              "Присоединяйтесь к команде, которая ценит порядок, контроль и качество. Оставьте информацию о себе и загрузите резюме — мы с вами свяжемся.",
+            )}
           </p>
         </motion.div>
 
@@ -109,20 +113,20 @@ export function JoinFamily() {
               style={{ fontFamily: "var(--font-display)" }}
               className="text-2xl text-[#060920]"
             >
-              Rahmat! Murojaatingiz qabul qilindi.
+              {t("Rahmat! Murojaatingiz qabul qilindi.", "Спасибо! Ваша заявка принята.")}
             </div>
             <p
               style={{ fontFamily: "var(--font-body)" }}
               className="text-[#060920]/70 tracking-wide"
             >
-              Ma'lumotlaringiz bazaga saqlandi. Tez orada siz bilan bog'lanamiz.
+              {t("Ma'lumotlaringiz bazaga saqlandi. Tez orada siz bilan bog'lanamiz.", "Ваши данные сохранены в базе. Мы свяжемся с вами в ближайшее время.")}
             </p>
             <button
               onClick={() => setStatus("idle")}
               style={{ fontFamily: "var(--font-body)" }}
               className="mt-2 px-6 py-2 text-sm tracking-[0.15em] uppercase text-[#060920]/70 hover:text-[#060920] transition-colors"
             >
-              Yana yuborish
+              {t("Yana yuborish", "Отправить ещё")}
             </button>
           </motion.div>
         ) : (
@@ -139,7 +143,7 @@ export function JoinFamily() {
                 type="text"
                 name="fullName"
                 required
-                placeholder="Ism-sharif *"
+                placeholder={t("Ism-sharif *", "Ф.И.О. *")}
                 style={{ fontFamily: "var(--font-body)" }}
                 className={inputClass}
               />
@@ -147,7 +151,7 @@ export function JoinFamily() {
                 type="tel"
                 name="phone"
                 required
-                placeholder="Telefon raqam *"
+                placeholder={t("Telefon raqam *", "Телефон *")}
                 inputMode="tel"
                 onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/[^\d+()\-\s]/g, ""); }}
                 style={{ fontFamily: "var(--font-body)" }}
@@ -164,10 +168,10 @@ export function JoinFamily() {
                 className={inputClass}
               >
                 <option value="" disabled>
-                  Yo'nalish *
+                  {t("Yo'nalish *", "Направление *")}
                 </option>
-                <option value="Qurilish">Qurilish</option>
-                <option value="Marketing">Marketing</option>
+                <option value="Qurilish">{t("Qurilish", "Строительство")}</option>
+                <option value="Marketing">{t("Marketing", "Маркетинг")}</option>
               </select>
               <select
                 name="field"
@@ -179,11 +183,11 @@ export function JoinFamily() {
                 className={`${inputClass} disabled:opacity-50`}
               >
                 <option value="" disabled>
-                  {direction ? "Qaysi soha bo'yicha? *" : "Avval yo'nalishni tanlang"}
+                  {direction ? t("Qaysi soha bo'yicha? *", "По какому направлению? *") : t("Avval yo'nalishni tanlang", "Сначала выберите направление")}
                 </option>
                 {(FIELDS_BY_DIRECTION[direction] || []).map((f) => (
-                  <option key={f} value={f}>
-                    {f}
+                  <option key={f[0]} value={f[0]}>
+                    {t(f[0], f[1])}
                   </option>
                 ))}
               </select>
@@ -194,7 +198,7 @@ export function JoinFamily() {
               name="experienceYears"
               min={0}
               max={60}
-              placeholder="Soha bo'yicha tajriba (yil)"
+              placeholder={t("Soha bo'yicha tajriba (yil)", "Опыт по направлению (лет)")}
               style={{ fontFamily: "var(--font-body)" }}
               className={inputClass}
             />
@@ -202,10 +206,10 @@ export function JoinFamily() {
             <input
               type="email"
               name="email"
-              placeholder="Email pochtangiz (javob shu manzilga yuboriladi)"
+              placeholder={t("Email pochtangiz (javob shu manzilga yuboriladi)", "Ваш email (ответ придёт на этот адрес)")}
               inputMode="email"
               pattern="[^@\s]+@[^@\s]+\.[^@\s]{2,}"
-              title="To'g'ri email kiriting, masalan: ism@gmail.com"
+              title={t("To'g'ri email kiriting, masalan: ism@gmail.com", "Введите корректный email, например: name@gmail.com")}
               onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/[^A-Za-z0-9@._%+\-]/g, ""); }}
               style={{ fontFamily: "var(--font-body)" }}
               className={inputClass}
@@ -214,7 +218,7 @@ export function JoinFamily() {
             <input
               type="text"
               name="contact"
-              placeholder="Telegram yoki boshqa aloqa (masalan @username)"
+              placeholder={t("Telegram yoki boshqa aloqa (masalan @username)", "Telegram или другой контакт (например @username)")}
               style={{ fontFamily: "var(--font-body)" }}
               className={inputClass}
             />
@@ -225,7 +229,7 @@ export function JoinFamily() {
               className="flex items-center gap-3 w-full px-4 py-3 bg-white/50 border border-dashed border-[#060920]/25 text-[#060920]/70 hover:border-[#060920]/50 transition-colors rounded-lg cursor-pointer"
             >
               <span className="truncate">
-                {fileName || "Rezyumeni yuklash (PDF, DOC, DOCX)"}
+                {fileName || t("Rezyumeni yuklash (PDF, DOC, DOCX)", "Загрузить резюме (PDF, DOC, DOCX)")}
               </span>
               <input
                 type="file"
@@ -251,14 +255,14 @@ export function JoinFamily() {
               style={{ fontFamily: "var(--font-body)" }}
               className="w-full px-8 py-4 bg-[#060920] text-white tracking-[0.15em] uppercase font-medium border border-[#060920]/20 shadow-lg transition-all hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] rounded-2xl flex items-center justify-center gap-3 disabled:opacity-70 disabled:hover:scale-100"
             >
-              {status === "sending" ? "Yuborilmoqda..." : "Murojaatni yuborish"}
+              {status === "sending" ? t("Yuborilmoqda...", "Отправляется...") : t("Murojaatni yuborish", "Отправить заявку")}
             </button>
 
             <p
               style={{ fontFamily: "var(--font-body)" }}
               className="text-xs text-[#060920]/40 text-center tracking-wide"
             >
-              * bilan belgilangan maydonlar majburiy
+              {t("* bilan belgilangan maydonlar majburiy", "Поля, отмеченные *, обязательны")}
             </p>
           </motion.form>
         )}
