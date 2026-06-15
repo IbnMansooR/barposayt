@@ -2,6 +2,16 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { SoftDivider } from "../app/components/SoftDivider";
 import { BarpoWord, barpo } from "../app/components/Barpo";
+import { useT } from "../app/i18n";
+
+// Variant qiymatlarining ruscha ko'rinishi (qiymatning o'zi hisoblash uchun o'zgarmaydi)
+const OPT_RU: Record<string, string> = {
+  "Turar joy majmuasi": "Жилой комплекс", "Biznes markaz": "Бизнес-центр", "Savdo markazi": "Торговый центр",
+  "Klinika": "Клиника", "Ishlab chiqarish": "Производство", "Boshqa": "Другое",
+  "kichik": "малый", "o'rta": "средний", "katta": "большой",
+  "ha": "да", "qisman": "частично", "yo'q": "нет",
+  "oddiy": "простая", "premium": "премиум", "aralash": "смешанно", "o'zim": "сам",
+};
 
 interface Answers {
   type: string;
@@ -19,15 +29,15 @@ const initial: Answers = {
   shortDeadline: "", engineering: "", finishLevel: "", material: "",
 };
 
-const FIELDS: { name: keyof Answers; label: string; options: string[] }[] = [
-  { name: "type", label: "Obyekt turi", options: ["Turar joy majmuasi", "Biznes markaz", "Savdo markazi", "Klinika", "Ishlab chiqarish", "Boshqa"] },
-  { name: "area", label: "Maydon", options: ["kichik", "o'rta", "katta"] },
-  { name: "projectReady", label: "Loyiha tayyormi?", options: ["ha", "qisman", "yo'q"] },
-  { name: "brigades", label: "Brigadalar soni", options: ["1", "2", "3+"] },
-  { name: "shortDeadline", label: "Muddat qisqami?", options: ["ha", "yo'q"] },
-  { name: "engineering", label: "Muhandislik tizimlari bormi?", options: ["ha", "yo'q"] },
-  { name: "finishLevel", label: "Pardoz darajasi", options: ["oddiy", "o'rta", "premium"] },
-  { name: "material", label: "Materialni kim oladi?", options: ["BARPO", "aralash", "o'zim"] },
+const FIELDS: { name: keyof Answers; label: [string, string]; options: string[] }[] = [
+  { name: "type", label: ["Obyekt turi", "Тип объекта"], options: ["Turar joy majmuasi", "Biznes markaz", "Savdo markazi", "Klinika", "Ishlab chiqarish", "Boshqa"] },
+  { name: "area", label: ["Maydon", "Площадь"], options: ["kichik", "o'rta", "katta"] },
+  { name: "projectReady", label: ["Loyiha tayyormi?", "Проект готов?"], options: ["ha", "qisman", "yo'q"] },
+  { name: "brigades", label: ["Brigadalar soni", "Количество бригад"], options: ["1", "2", "3+"] },
+  { name: "shortDeadline", label: ["Muddat qisqami?", "Срок сжатый?"], options: ["ha", "yo'q"] },
+  { name: "engineering", label: ["Muhandislik tizimlari bormi?", "Есть инженерные системы?"], options: ["ha", "yo'q"] },
+  { name: "finishLevel", label: ["Pardoz darajasi", "Уровень отделки"], options: ["oddiy", "o'rta", "premium"] },
+  { name: "material", label: ["Materialni kim oladi?", "Кто закупает материал?"], options: ["BARPO", "aralash", "o'zim"] },
 ];
 
 // Har bir javob 4 ta xavf yo'nalishiga ball qo'shadi:
@@ -80,25 +90,25 @@ const WEIGHTS: Record<string, Record<string, Partial<Dims>>> = {
 };
 
 // Tavsiyalar — qaysi javob xavf keltirsa, o'shanga mos aniq yechim
-const RECS: { match: (a: Answers) => boolean; title: string; rec: string }[] = [
-  { match: (a) => a.projectReady === "yo'q", title: "Loyiha hujjatlari tayyor emas", rec: "Loyihasiz boshlangan ish davomida qarorlar qayta-qayta o'zgaradi — bu qayta ishlash, material isrofi va muddat cho'zilishiga olib keladi. BARPO avval loyihani to'liq tahlil qiladi, keyin ish boshlaydi." },
-  { match: (a) => a.projectReady === "qisman", title: "Loyiha qisman tayyor", rec: "Yetishmayotgan qismlar ish jarayonida aniqlanadi — bu kutilmagan xarajat manbai. Bo'shliqlarni boshida yopish eng arzon yechim." },
-  { match: (a) => a.shortDeadline === "ha", title: "Muddat qisqa — shoshilish xavfi", rec: "Qisqa muddat sifatni buzmasligi uchun GPR (grafik-progressiv reja) shart. To'g'ri rejada tezlik intizomdan keladi, shoshilishdan emas." },
-  { match: (a) => a.brigades === "3+", title: "Ko'p brigada — to'qnashuv xavfi", rec: "3 va undan ortiq brigada bir zonada to'qnashadi, bir-birini kutadi. Yagona koordinatsiya markazi bo'lmasa, har kuni vaqt yo'qoladi." },
-  { match: (a) => a.brigades === "2", title: "Brigadalararo koordinatsiya", rec: "Ikki brigada ham aniq navbat va zona taqsimoti talab qiladi — aks holda ishlar bir-birini bloklaydi." },
-  { match: (a) => a.engineering === "ha", title: "Muhandislik–pardoz ketma-ketligi", rec: "Elektrika, santexnika va ventilyatsiya pardozdan oldin tugashi va tekshirilishi kerak. Tartib buzilsa, tayyor pardozni qayta buzishga to'g'ri keladi." },
-  { match: (a) => a.material === "o'zim", title: "Material ta'minoti sizning zimmangizda", rec: "Material o'z vaqtida kelmasa, butun grafik to'xtaydi. Ta'minotni qurilish grafigiga bog'lash kechikishlarning oldini oladi." },
-  { match: (a) => a.material === "aralash", title: "Aralash ta'minot — mas'uliyat chegarasi", rec: "Kim qaysi materialni olishini aniq belgilamasa, kechikishda mas'uliyat noaniq qoladi. Chegaralarni boshida kelishib olish kerak." },
-  { match: (a) => a.area === "katta", title: "Katta hajm — nazorat murakkabligi", rec: "Katta obyektda har bir zonani kuzatish qiyinlashadi. Kunlik texnik nazorat va hisobot tizimisiz muammolar kech ko'rinadi." },
-  { match: (a) => a.finishLevel === "premium", title: "Premium pardoz — aniqlik talabi", rec: "Premium darajada har bir tutashuv, chiziq va faktura seziladi. Qattiq qabul mezonlari va malakali ijro bo'lmasa, natija premium ko'rinmaydi." },
-  { match: (a) => a.type === "Klinika", title: "Tibbiy obyekt — nol xato talabi", rec: "Klinikada steril zonalar, ventilyatsiya va oqimlar ajratilishi aniqlik talab qiladi. Bu yerda \"keyin to'g'rilaymiz\" yondashuvi ishlamaydi." },
+const RECS: { match: (a: Answers) => boolean; title: [string, string]; rec: [string, string] }[] = [
+  { match: (a) => a.projectReady === "yo'q", title: ["Loyiha hujjatlari tayyor emas", "Проектная документация не готова"], rec: ["Loyihasiz boshlangan ish davomida qarorlar qayta-qayta o'zgaradi — bu qayta ishlash, material isrofi va muddat cho'zilishiga olib keladi. BARPO avval loyihani to'liq tahlil qiladi, keyin ish boshlaydi.", "В работе, начатой без проекта, решения постоянно меняются — это ведёт к переделкам, перерасходу материалов и затягиванию сроков. BARPO сначала полностью анализирует проект, затем начинает работу."] },
+  { match: (a) => a.projectReady === "qisman", title: ["Loyiha qisman tayyor", "Проект готов частично"], rec: ["Yetishmayotgan qismlar ish jarayonida aniqlanadi — bu kutilmagan xarajat manbai. Bo'shliqlarni boshida yopish eng arzon yechim.", "Недостающие части выявляются в процессе работ — это источник непредвиденных расходов. Закрыть пробелы в начале — самое дешёвое решение."] },
+  { match: (a) => a.shortDeadline === "ha", title: ["Muddat qisqa — shoshilish xavfi", "Сжатый срок — риск спешки"], rec: ["Qisqa muddat sifatni buzmasligi uchun GPR (grafik-progressiv reja) shart. To'g'ri rejada tezlik intizomdan keladi, shoshilishdan emas.", "Чтобы сжатый срок не повредил качеству, нужен ГПР (график производства работ). При правильном плане скорость идёт от дисциплины, а не от спешки."] },
+  { match: (a) => a.brigades === "3+", title: ["Ko'p brigada — to'qnashuv xavfi", "Много бригад — риск столкновений"], rec: ["3 va undan ortiq brigada bir zonada to'qnashadi, bir-birini kutadi. Yagona koordinatsiya markazi bo'lmasa, har kuni vaqt yo'qoladi.", "3 и более бригад сталкиваются в одной зоне, ждут друг друга. Без единого центра координации каждый день теряется время."] },
+  { match: (a) => a.brigades === "2", title: ["Brigadalararo koordinatsiya", "Координация между бригадами"], rec: ["Ikki brigada ham aniq navbat va zona taqsimoti talab qiladi — aks holda ishlar bir-birini bloklaydi.", "Даже две бригады требуют чёткой очерёдности и распределения зон — иначе работы блокируют друг друга."] },
+  { match: (a) => a.engineering === "ha", title: ["Muhandislik–pardoz ketma-ketligi", "Очерёдность инженерии и отделки"], rec: ["Elektrika, santexnika va ventilyatsiya pardozdan oldin tugashi va tekshirilishi kerak. Tartib buzilsa, tayyor pardozni qayta buzishga to'g'ri keladi.", "Электрика, сантехника и вентиляция должны завершиться и быть проверены до отделки. При нарушении порядка готовую отделку приходится ломать заново."] },
+  { match: (a) => a.material === "o'zim", title: ["Material ta'minoti sizning zimmangizda", "Снабжение материалами на вас"], rec: ["Material o'z vaqtida kelmasa, butun grafik to'xtaydi. Ta'minotni qurilish grafigiga bog'lash kechikishlarning oldini oladi.", "Если материал не приходит вовремя, весь график останавливается. Привязка снабжения к графику стройки предотвращает задержки."] },
+  { match: (a) => a.material === "aralash", title: ["Aralash ta'minot — mas'uliyat chegarasi", "Смешанное снабжение — граница ответственности"], rec: ["Kim qaysi materialni olishini aniq belgilamasa, kechikishda mas'uliyat noaniq qoladi. Chegaralarni boshida kelishib olish kerak.", "Если не определить чётко, кто какой материал закупает, при задержке ответственность остаётся неясной. Границы нужно согласовать в начале."] },
+  { match: (a) => a.area === "katta", title: ["Katta hajm — nazorat murakkabligi", "Большой объём — сложность контроля"], rec: ["Katta obyektda har bir zonani kuzatish qiyinlashadi. Kunlik texnik nazorat va hisobot tizimisiz muammolar kech ko'rinadi.", "На большом объекте сложно следить за каждой зоной. Без ежедневного технадзора и системы отчётности проблемы видны поздно."] },
+  { match: (a) => a.finishLevel === "premium", title: ["Premium pardoz — aniqlik talabi", "Премиум-отделка — требование точности"], rec: ["Premium darajada har bir tutashuv, chiziq va faktura seziladi. Qattiq qabul mezonlari va malakali ijro bo'lmasa, natija premium ko'rinmaydi.", "На премиум-уровне заметны каждый стык, линия и фактура. Без жёстких критериев приёмки и квалифицированного исполнения результат не выглядит премиальным."] },
+  { match: (a) => a.type === "Klinika", title: ["Tibbiy obyekt — nol xato talabi", "Медицинский объект — требование нуля ошибок"], rec: ["Klinikada steril zonalar, ventilyatsiya va oqimlar ajratilishi aniqlik talab qiladi. Bu yerda \"keyin to'g'rilaymiz\" yondashuvi ishlamaydi.", "В клинике стерильные зоны, вентиляция и разделение потоков требуют точности. Здесь подход «потом исправим» не работает."] },
 ];
 
 interface Result {
   overall: number;
   level: "Past" | "O'rta" | "Yuqori";
-  dims: { key: string; label: string; pct: number }[];
-  recs: { title: string; rec: string }[];
+  dims: { key: string; label: [string, string]; pct: number }[];
+  recs: { title: [string, string]; rec: [string, string] }[];
   answered: number;
   accuracy: number;
 }
@@ -130,16 +140,17 @@ function analyze(a: Answers): Result {
   return {
     overall, level,
     dims: [
-      { key: "schedule", label: "Muddat xavfi", pct: dimsRaw.schedule },
-      { key: "budget", label: "Byudjet / xarajat xavfi", pct: dimsRaw.budget },
-      { key: "quality", label: "Sifat xavfi", pct: dimsRaw.quality },
-      { key: "coord", label: "Koordinatsiya xavfi", pct: dimsRaw.coord },
+      { key: "schedule", label: ["Muddat xavfi", "Риск сроков"], pct: dimsRaw.schedule },
+      { key: "budget", label: ["Byudjet / xarajat xavfi", "Риск бюджета / расходов"], pct: dimsRaw.budget },
+      { key: "quality", label: ["Sifat xavfi", "Риск качества"], pct: dimsRaw.quality },
+      { key: "coord", label: ["Koordinatsiya xavfi", "Риск координации"], pct: dimsRaw.coord },
     ],
     recs, answered, accuracy,
   };
 }
 
 export function KalkulyatorPage() {
+  const tr = useT();
   const [a, setA] = useState<Answers>(initial);
   const [result, setResult] = useState<Result | null>(null);
 
@@ -151,13 +162,12 @@ export function KalkulyatorPage() {
       <section className="px-8 md:px-16 pt-12 pb-16">
         <div className="max-w-4xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="mb-10">
-            <p style={{ fontFamily: "var(--font-body)" }} className="text-sm tracking-[0.2em] uppercase text-[#060920]/50 mb-4">XAVF KALKULYATORI</p>
+            <p style={{ fontFamily: "var(--font-body)" }} className="text-sm tracking-[0.2em] uppercase text-[#060920]/50 mb-4">{tr("XAVF KALKULYATORI", "КАЛЬКУЛЯТОР РИСКОВ")}</p>
             <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 5vw, 4rem)", color: "#060920" }} className="tracking-tight leading-[1.1]">
-              Obyektingizning xavf darajasini hisoblang
+              {tr("Obyektingizning xavf darajasini hisoblang", "Рассчитайте уровень риска вашего объекта")}
             </h1>
             <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/65 leading-relaxed mt-5 max-w-2xl">
-              Bu narx kalkulyatori emas. Obyektingiz haqida savollarga javob bering — tizim 4 ta yo'nalish bo'yicha
-              xavf darajasini foizda hisoblab, aniq tavsiyalar beradi.
+              {tr("Bu narx kalkulyatori emas. Obyektingiz haqida savollarga javob bering — tizim 4 ta yo'nalish bo'yicha xavf darajasini foizda hisoblab, aniq tavsiyalar beradi.", "Это не калькулятор цены. Ответьте на вопросы о вашем объекте — система рассчитает уровень риска в процентах по 4 направлениям и даст конкретные рекомендации.")}
             </p>
           </motion.div>
 
@@ -165,7 +175,7 @@ export function KalkulyatorPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {FIELDS.map((f) => (
               <div key={f.name} className="space-y-2">
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-[0.15em] uppercase text-[#060920]/50">{f.label}</label>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-[0.15em] uppercase text-[#060920]/50">{tr(f.label[0], f.label[1])}</label>
                 <div className="flex flex-wrap gap-2">
                   {f.options.map((o) => (
                     <button
@@ -178,7 +188,7 @@ export function KalkulyatorPage() {
                           : "bg-white text-[#060920]/65 border-[#060920]/15 hover:border-[#060920]/35"
                       }`}
                     >
-                      {barpo(o)}
+                      {barpo(tr(o, OPT_RU[o] || o))}
                     </button>
                   ))}
                 </div>
@@ -193,9 +203,9 @@ export function KalkulyatorPage() {
               style={{ fontFamily: "var(--font-body)" }}
               className="px-8 py-3.5 bg-[#060920] text-white tracking-[0.15em] uppercase text-sm font-medium rounded-2xl hover:shadow-xl transition-all disabled:opacity-50"
             >
-              Xavf darajasini hisoblash
+              {tr("Xavf darajasini hisoblash", "Рассчитать уровень риска")}
             </button>
-            {!canCompute && <span style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]/40">Aniq natija uchun kamida 5 ta savolga javob bering ({filled}/8)</span>}
+            {!canCompute && <span style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]/40">{tr("Aniq natija uchun kamida 5 ta savolga javob bering", "Для точного результата ответьте минимум на 5 вопросов")} ({filled}/8)</span>}
           </div>
 
           {/* Natija */}
@@ -224,31 +234,31 @@ export function KalkulyatorPage() {
                       </svg>
                       <div className="absolute inset-0 flex flex-col items-center justify-center">
                         <span style={{ fontFamily: "var(--font-display)" }} className="text-4xl text-[#060920] leading-none">{result.overall}%</span>
-                        <span style={{ fontFamily: "var(--font-body)" }} className="text-xs tracking-wide uppercase text-[#060920]/45 mt-1">umumiy xavf</span>
+                        <span style={{ fontFamily: "var(--font-body)" }} className="text-xs tracking-wide uppercase text-[#060920]/45 mt-1">{tr("umumiy xavf", "общий риск")}</span>
                       </div>
                     </div>
 
                     <div className="flex-1">
                       <div className="flex items-center gap-3 flex-wrap mb-3">
-                        <h2 style={{ fontFamily: "var(--font-display)" }} className="text-2xl text-[#060920]">Xavf darajasi:</h2>
+                        <h2 style={{ fontFamily: "var(--font-display)" }} className="text-2xl text-[#060920]">{tr("Xavf darajasi:", "Уровень риска:")}</h2>
                         <span style={{ fontFamily: "var(--font-body)" }}
                           className={`px-4 py-1 rounded-full text-sm tracking-wide uppercase ${
                             result.level === "Yuqori" ? "bg-[#060920] text-white"
                             : result.level === "O'rta" ? "bg-[#060920]/15 text-[#060920]"
                             : "bg-[#060920]/8 text-[#060920]/60"
                           }`}>
-                          {result.level}
+                          {tr(result.level, result.level === "Yuqori" ? "Высокий" : result.level === "O'rta" ? "Средний" : "Низкий")}
                         </span>
                       </div>
                       <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/65 leading-relaxed">
                         {result.level === "Yuqori"
-                          ? "Obyektingizda bir nechta xavf omili birlashgan. Tizimli boshqaruvsiz muddat, xarajat va sifat jiddiy xavf ostida."
+                          ? tr("Obyektingizda bir nechta xavf omili birlashgan. Tizimli boshqaruvsiz muddat, xarajat va sifat jiddiy xavf ostida.", "На вашем объекте сочетаются несколько факторов риска. Без системного управления сроки, расходы и качество под серьёзной угрозой.")
                           : result.level === "O'rta"
-                          ? "Obyektingizda boshqariladigan, lekin e'tibordan chetda qolsa xarajatga aylanadigan xavflar bor."
-                          : "Obyektingizdagi xavflar past, lekin tartibli nazorat natijani kafolatlaydi."}
+                          ? tr("Obyektingizda boshqariladigan, lekin e'tibordan chetda qolsa xarajatga aylanadigan xavflar bor.", "На вашем объекте есть управляемые риски, которые при невнимании превращаются в расходы.")
+                          : tr("Obyektingizdagi xavflar past, lekin tartibli nazorat natijani kafolatlaydi.", "Риски вашего объекта низкие, но системный контроль гарантирует результат.")}
                       </p>
                       <p style={{ fontFamily: "var(--font-body)" }} className="text-xs text-[#060920]/40 mt-3">
-                        Tahlil aniqligi: {result.accuracy}% ({result.answered}/8 savol) — qancha ko'p javob bersangiz, shuncha aniq.
+                        {tr("Tahlil aniqligi:", "Точность анализа:")} {result.accuracy}% ({result.answered}/8 {tr("savol", "вопросов")}) — {tr("qancha ko'p javob bersangiz, shuncha aniq.", "чем больше ответов, тем точнее.")}
                       </p>
                     </div>
                   </div>
@@ -258,7 +268,7 @@ export function KalkulyatorPage() {
                     {result.dims.map((d, i) => (
                       <div key={d.key}>
                         <div className="flex items-center justify-between mb-1.5">
-                          <span style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]/70">{d.label}</span>
+                          <span style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]/70">{tr(d.label[0], d.label[1])}</span>
                           <span style={{ fontFamily: "var(--font-display)" }} className="text-sm text-[#060920]">{d.pct}%</span>
                         </div>
                         <div className="h-2 rounded-full bg-[#060920]/8 overflow-hidden">
@@ -278,13 +288,13 @@ export function KalkulyatorPage() {
                 {result.recs.length > 0 && (
                   <div className="bg-white rounded-3xl border border-[#060920]/10 p-8 md:p-10">
                     <div className="w-fit mb-6">
-                      <h2 style={{ fontFamily: "var(--font-display)" }} className="text-2xl text-[#060920]">Aniqlangan xavflar va yechimlar</h2>
+                      <h2 style={{ fontFamily: "var(--font-display)" }} className="text-2xl text-[#060920]">{tr("Aniqlangan xavflar va yechimlar", "Выявленные риски и решения")}</h2>
                       <SoftDivider className="mt-3" />
                     </div>
                     <div className="space-y-6">
                       {result.recs.map((r, i) => (
                         <motion.div
-                          key={r.title}
+                          key={r.title[0]}
                           initial={{ opacity: 0, x: 12 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: 0.1 + i * 0.06 }}
@@ -292,8 +302,8 @@ export function KalkulyatorPage() {
                         >
                           <span style={{ fontFamily: "var(--font-display)" }} className="text-[#060920]/20 text-2xl leading-none mt-0.5 shrink-0">{String(i + 1).padStart(2, "0")}</span>
                           <div>
-                            <h3 style={{ fontFamily: "var(--font-display)" }} className="text-lg text-[#060920] mb-1">{barpo(r.title)}</h3>
-                            <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/65 leading-relaxed text-sm">{barpo(r.rec)}</p>
+                            <h3 style={{ fontFamily: "var(--font-display)" }} className="text-lg text-[#060920] mb-1">{barpo(tr(r.title[0], r.title[1]))}</h3>
+                            <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/65 leading-relaxed text-sm">{barpo(tr(r.rec[0], r.rec[1]))}</p>
                           </div>
                         </motion.div>
                       ))}
@@ -304,14 +314,14 @@ export function KalkulyatorPage() {
                 {/* CTA */}
                 <div className="relative rounded-3xl bg-[#060920] p-8 md:p-12 text-center">
                   <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.4rem, 3.5vw, 2.2rem)", color: "#FFFFFF" }} className="tracking-tight">
-                    Bu xavflarni boshida tahlil qilish — eng arzon qaror
+                    {tr("Bu xavflarni boshida tahlil qilish — eng arzon qaror", "Анализ этих рисков в начале — самое дешёвое решение")}
                   </h2>
                   <p style={{ fontFamily: "var(--font-body)" }} className="text-white/55 max-w-xl mx-auto mt-4 leading-relaxed">
-<BarpoWord /> mutaxassisi obyektingizni ko'rib chiqib, har bir xavfni qanday boshqarish mumkinligini aniq aytadi.
+<BarpoWord /> {tr("mutaxassisi obyektingizni ko'rib chiqib, har bir xavfni qanday boshqarish mumkinligini aniq aytadi.", "специалист рассмотрит ваш объект и точно скажет, как управлять каждым риском.")}
                   </p>
                   <a href="#contact" style={{ fontFamily: "var(--font-body)", textDecoration: "none" }}
                     className="inline-block mt-7 px-8 py-3.5 bg-white text-[#060920] tracking-[0.15em] uppercase text-sm font-medium rounded-2xl hover:shadow-xl transition-all">
-<BarpoWord light /> bilan xavflarni tahlil qilish
+<BarpoWord light /> {tr("bilan xavflarni tahlil qilish", "— анализ рисков вместе")}
                   </a>
                 </div>
               </motion.div>
