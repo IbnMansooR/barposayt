@@ -152,30 +152,27 @@ export default function App() {
             >
               <motion.a
                 href="#contact"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileTap={{ scale: 0.97 }}
                 style={{ fontFamily: 'var(--font-body)', textDecoration: 'none' }}
-                className="px-8 py-3 bg-[#060920] text-white tracking-[0.15em] uppercase text-sm font-medium border border-[#060920]/20 shadow-lg transition-all hover:shadow-xl rounded-2xl inline-block"
+                className="px-8 py-3 bg-white text-[#060920] border border-[#060920] hover:bg-[#060920] hover:text-white tracking-[0.15em] uppercase text-sm font-medium rounded-2xl transition-colors duration-300 inline-block"
               >
                 Loyihani muhokama qilish
               </motion.a>
               <motion.a
                 href="#takliflar"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileTap={{ scale: 0.97 }}
                 style={{ fontFamily: 'var(--font-body)', textDecoration: 'none' }}
-                className="px-8 py-3 bg-transparent text-[#060920] tracking-[0.15em] uppercase text-sm border border-[#060920]/25 hover:border-[#060920]/60 transition-all rounded-2xl inline-block"
+                className="px-8 py-3 bg-white text-[#060920] border border-[#060920] hover:bg-[#060920] hover:text-white tracking-[0.15em] uppercase text-sm font-medium rounded-2xl transition-colors duration-300 inline-block"
               >
                 Investorlar uchun takliflar
               </motion.a>
               <motion.a
                 href="#standard"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileTap={{ scale: 0.97 }}
                 style={{ fontFamily: 'var(--font-body)', textDecoration: 'none' }}
-                className="px-8 py-3 bg-transparent text-[#060920] tracking-[0.15em] uppercase text-sm border border-[#060920]/25 hover:border-[#060920]/60 transition-all rounded-2xl inline-block"
+                className="group px-8 py-3 bg-white text-[#060920] border border-[#060920] hover:bg-[#060920] hover:text-white tracking-[0.15em] uppercase text-sm font-medium rounded-2xl transition-colors duration-300 inline-flex items-center"
               >
-                <BarpoWord /> standartlari bilan tanishish
+                <BarpoWord className="mr-2 transition-[filter] duration-300 group-hover:brightness-0 group-hover:invert" /> standartlari bilan tanishish
               </motion.a>
             </motion.div>
           </motion.div>
