@@ -3,8 +3,10 @@ import { useState, useEffect } from "react";
 import { SoftDivider } from "../app/components/SoftDivider";
 import { BarpoWord } from "../app/components/Barpo";
 import { Instagram, Facebook, Youtube, Send } from "lucide-react";
+import { useT } from "../app/i18n";
 
 export function ContactPage() {
+  const t = useT();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -47,19 +49,19 @@ export function ContactPage() {
 
   const contactMethods = [
     {
-      title: "Telefon",
+      title: ["Telefon", "Телефон"],
       details: contactInfo.phone || "",
-      description: "Qo'ng'iroq qiling — biz bilan bog'laning"
+      description: ["Qo'ng'iroq qiling — biz bilan bog'laning", "Позвоните — свяжитесь с нами"]
     },
     {
-      title: "Email",
+      title: ["Email", "Email"],
       details: contactInfo.email || "",
-      description: "Javob vaqti: 24 soat ichida"
+      description: ["Javob vaqti: 24 soat ichida", "Время ответа: в течение 24 часов"]
     },
     {
-      title: "Manzil",
+      title: ["Manzil", "Адрес"],
       details: contactInfo.address || "",
-      description: "Ofis manzili va uchrashuv joyi"
+      description: ["Ofis manzili va uchrashuv joyi", "Адрес офиса и место встречи"]
     }
   ].filter((m) => m.details);
 
@@ -97,7 +99,7 @@ export function ContactPage() {
             style={{ fontFamily: 'var(--font-display)' }}
             className="text-sm tracking-[0.15em] uppercase text-[#060920]/50"
           >
-            Biz bilan bog'laning
+            {t("Biz bilan bog'laning", "Свяжитесь с нами")}
           </motion.p>
 
           <motion.h1
@@ -110,7 +112,7 @@ export function ContactPage() {
             }}
             className="text-[#060920] tracking-tight font-light leading-tight"
           >
-            Loyihangizni Muhokama Qilaylik
+            {t("Loyihangizni Muhokama Qilaylik", "Обсудим ваш проект")}
           </motion.h1>
 
           <motion.p
@@ -120,7 +122,7 @@ export function ContactPage() {
             style={{ fontFamily: 'var(--font-body)' }}
             className="text-lg text-[#060920]/60 max-w-2xl mx-auto"
           >
-            Biz avval vazifani tushunamiz, keyin yechim taklif qilamiz. Har bir loyiha noyob, shuning uchun har biriga alohida yondashamiz.
+            {t("Biz avval vazifani tushunamiz, keyin yechim taklif qilamiz. Har bir loyiha noyob, shuning uchun har biriga alohida yondashamiz.", "Сначала мы понимаем задачу, затем предлагаем решение. Каждый проект уникален, поэтому к каждому подходим индивидуально.")}
           </motion.p>
         </div>
       </section>
@@ -131,7 +133,7 @@ export function ContactPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-10">
             {contactMethods.map((method, i) => (
               <motion.div
-                key={method.title}
+                key={method.title[0]}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -143,7 +145,7 @@ export function ContactPage() {
                     style={{ fontFamily: 'var(--font-display)' }}
                     className="text-2xl text-[#060920]"
                   >
-                    {method.title}
+                    {t(method.title[0], method.title[1])}
                   </h3>
                   <SoftDivider className="mt-3" />
                 </div>
@@ -157,7 +159,7 @@ export function ContactPage() {
                   style={{ fontFamily: 'var(--font-body)' }}
                   className="text-[#060920]/60 leading-relaxed"
                 >
-                  {method.description}
+                  {t(method.description[0], method.description[1])}
                 </p>
               </motion.div>
             ))}
@@ -180,30 +182,30 @@ export function ContactPage() {
                     style={{ fontFamily: 'var(--font-display)' }}
                     className="text-sm tracking-[0.15em] uppercase text-[#060920]/50 mb-3"
                   >
-                    Tezkor aloqa
+                    {t("Tezkor aloqa", "Быстрая связь")}
                   </p>
                   <h2
                     style={{ fontFamily: 'var(--font-display)' }}
                     className="text-3xl font-light text-[#060920]"
                   >
-                    Murojaatni yuboring
+                    {t("Murojaatni yuboring", "Отправьте заявку")}
                   </h2>
                 </div>
 
                 {formStatus === "success" ? (
                 <div className="p-8 border border-[#060920]/15 bg-white/60 rounded-2xl text-center space-y-3">
                   <div style={{ fontFamily: 'var(--font-display)' }} className="text-xl text-[#060920]">
-                    Rahmat! Murojaatingiz qabul qilindi.
+                    {t("Rahmat! Murojaatingiz qabul qilindi.", "Спасибо! Ваша заявка принята.")}
                   </div>
                   <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/70 text-sm">
-                    Tez orada siz bilan bog'lanamiz.
+                    {t("Tez orada siz bilan bog'lanamiz.", "Мы свяжемся с вами в ближайшее время.")}
                   </p>
                   <button
                     onClick={() => setFormStatus("idle")}
                     style={{ fontFamily: 'var(--font-body)' }}
                     className="mt-1 px-6 py-2 text-sm tracking-[0.15em] uppercase text-[#060920]/70 hover:text-[#060920] transition-colors"
                   >
-                    Yana yuborish
+                    {t("Yana yuborish", "Отправить ещё")}
                   </button>
                 </div>
                 ) : (
@@ -211,7 +213,7 @@ export function ContactPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input
                       type="text"
-                      placeholder="Sizning ismingiz *"
+                      placeholder={t("Sizning ismingiz *", "Ваше имя *")}
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       style={{ fontFamily: 'var(--font-body)' }}
@@ -220,7 +222,7 @@ export function ContactPage() {
                     />
                     <input
                       type="email"
-                      placeholder="Email manzilingiz *"
+                      placeholder={t("Email manzilingiz *", "Ваш email *")}
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       style={{ fontFamily: 'var(--font-body)' }}
@@ -232,7 +234,7 @@ export function ContactPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input
                       type="tel"
-                      placeholder="Telefon raqam *"
+                      placeholder={t("Telefon raqam *", "Телефон *")}
                       value={formData.phone}
                       inputMode="tel"
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/[^\d+()\-\s]/g, "") })}
@@ -242,7 +244,7 @@ export function ContactPage() {
                     />
                     <input
                       type="text"
-                      placeholder="Kompaniya nomi"
+                      placeholder={t("Kompaniya nomi", "Название компании")}
                       value={formData.company}
                       onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                       style={{ fontFamily: 'var(--font-body)' }}
@@ -251,7 +253,7 @@ export function ContactPage() {
                   </div>
 
                   <textarea
-                    placeholder="Loyihangiz haqida qisqacha ma'lumot *"
+                    placeholder={t("Loyihangiz haqida qisqacha ma'lumot *", "Кратко о вашем проекте *")}
                     rows={6}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
@@ -271,7 +273,7 @@ export function ContactPage() {
                     style={{ fontFamily: 'var(--font-body)' }}
                     className="w-full px-8 py-4 bg-[#060920] text-white tracking-[0.15em] uppercase font-medium border border-[#060920]/20 shadow-lg transition-all hover:shadow-xl rounded-2xl disabled:opacity-70"
                   >
-                    {formStatus === "sending" ? "Yuborilmoqda..." : "Murojaatni yuborish"}
+                    {formStatus === "sending" ? t("Yuborilmoqda...", "Отправляется...") : t("Murojaatni yuborish", "Отправить заявку")}
                   </motion.button>
                 </form>
                 )}
@@ -280,7 +282,7 @@ export function ContactPage() {
                   style={{ fontFamily: 'var(--font-body)' }}
                   className="text-xs text-[#060920]/40"
                 >
-                  Yulduzcha (*) bilan belgilangan maydonlar to'ldirilishi shart.
+                  {t("Yulduzcha (*) bilan belgilangan maydonlar to'ldirilishi shart.", "Поля, отмеченные звёздочкой (*), обязательны для заполнения.")}
                 </p>
               </div>
             </motion.div>
@@ -302,13 +304,13 @@ export function ContactPage() {
                 style={{ fontFamily: 'var(--font-display)' }}
                 className="text-sm tracking-[0.15em] uppercase text-[#060920]/50 mb-3"
               >
-                Ijtimoiy tarmoqlar
+                {t("Ijtimoiy tarmoqlar", "Социальные сети")}
               </p>
               <h2
                 style={{ fontFamily: 'var(--font-display)' }}
                 className="text-2xl md:text-3xl font-light text-[#060920]"
               >
-                Bizni kuzatib boring
+                {t("Bizni kuzatib boring", "Следите за нами")}
               </h2>
             </div>
 
@@ -397,7 +399,7 @@ export function ContactPage() {
             style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', color: '#FFFFFF' }}
             className="tracking-tight"
           >
-            <BarpoWord light /> bilan qurilish — bu xotirjamlik
+            <BarpoWord light /> {t("bilan qurilish — bu xotirjamlik", "— строительство со спокойствием")}
           </motion.h2>
           <motion.div
             initial={{ opacity: 0 }}
@@ -407,9 +409,9 @@ export function ContactPage() {
             style={{ fontFamily: 'var(--font-body)' }}
             className="space-y-1 text-white/50 text-base leading-relaxed"
           >
-            <p>Tizim bor joyda tartib bor.</p>
-            <p>Tartib bor joyda sifat bor.</p>
-            <p>Sifat bor joyda natija bor.</p>
+            <p>{t("Tizim bor joyda tartib bor.", "Где система — там порядок.")}</p>
+            <p>{t("Tartib bor joyda sifat bor.", "Где порядок — там качество.")}</p>
+            <p>{t("Sifat bor joyda natija bor.", "Где качество — там результат.")}</p>
           </motion.div>
           <motion.a
             href="#contact"
@@ -418,7 +420,7 @@ export function ContactPage() {
             style={{ fontFamily: 'var(--font-body)', textDecoration: 'none' }}
             className="inline-block px-8 py-3 bg-white text-[#060920] tracking-[0.15em] uppercase text-sm font-medium rounded-2xl shadow-lg hover:shadow-xl transition-all"
           >
-            Biz bilan bog'lanish
+            {t("Biz bilan bog'lanish", "Связаться с нами")}
           </motion.a>
         </div>
       </section>
