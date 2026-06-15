@@ -308,53 +308,37 @@ export default function App() {
         </div>
       </FloorSection>
 
-      {/* Floor 2 - NIMA UCHUN BARPO? */}
+      {/* Floor 5 - NIMA UCHUN BARPO? */}
       <FloorSection
         floorNumber={5}
-        subtitle="NIMA UCHUN BARPO?"
-        title="Qurilishda asosiy muammo ishchi kuchida emas. Muammo — boshqaruv yo'qligida"
-        description="Ko'p obyektlarda kechikish, ortiqcha xarajat, qayta buzish, brigadalar orasidagi kelishmovchilik va mijozning charchashi bitta sababdan kelib chiqadi: jarayon tizimga solinmagan bo'ladi."
+        subtitle=""
+        title="Nima uchun BARPO?"
+        description=""
         alignment="right"
       >
-        <div className="mt-8">
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: false }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            style={{ fontFamily: 'var(--font-body)' }}
-            className="text-xs tracking-[0.25em] uppercase text-[#060920]/50 mb-6"
-          >
-            BARPO yechimi
-          </motion.p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
-            {[
-              { title: "Reja", desc: "Har bosqich oldindan hisoblanadi: kim ishlaydi, qachon ishlaydi, qanday material kerak, qaysi ish qaysi bosqichdan keyin boshlanadi." },
-              { title: "Nazorat", desc: "Har ish \"bo'ldi\" degan gap bilan emas, tekshiruv va qabul mezonlari bilan yopiladi." },
-              { title: "Mas'uliyat", desc: "Jarayon kimning zimmasida ekanligi aniq bo'ladi. Bu esa mijozni har kuni muammo ortidan yugurishdan ozod qiladi." },
-              { title: "Sifat", desc: "Sifat — va'da emas. Sifat — qabul qilinadigan standart." },
-              { title: "Xotirjamlik", desc: "Buyurtmachi obyektni nazorat qilayotganini his qiladi, lekin har bir mayda ishni o'zi boshqarishga majbur bo'lmaydi." }
-            ].map((item, i) => (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false }}
-                transition={{ duration: 0.8, delay: 0.4 + i * 0.08 }}
-                className="space-y-3"
-              >
-                <div className="w-fit">
-                  <div style={{ fontFamily: 'var(--font-display)' }} className="text-2xl text-[#060920]">
-                    {item.title}
-                  </div>
-                  <SoftDivider className="mt-3" />
-                </div>
-                <div style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/60 leading-relaxed text-sm">
-                  {item.desc}
-                </div>
-              </motion.div>
-            ))}
-          </div>
+        <div className="space-y-6 mt-2">
+          {[
+            { num: "1", title: "Chunki biz jarayonni ko'ramiz", desc: "Ko'pchilik natijani oxirida ko'radi. Biz esa natijani boshidan rejalashtiramiz." },
+            { num: "2", title: "Chunki biz xarajatni nazorat qilamiz", desc: "Ortiqcha xarajat ko'pincha qimmat materialdan emas, noto'g'ri qarordan boshlanadi." },
+            { num: "3", title: "Chunki biz sifatni har kuni tekshiramiz", desc: "Sifat yakunda \"to'g'rilanadigan\" narsa emas. Sifat har bosqichda quriladi." },
+            { num: "4", title: "Chunki biz investor vaqtini qadrlaymiz", desc: "Investor obyekt ortidan yugurmasligi kerak. U qaror qabul qilishi kerak. Jarayon esa tizim bilan boshqarilishi kerak." },
+            { num: "5", title: "Chunki biz javobgarlikni bo'lib tashlamaymiz", desc: "Obyektda muammo bo'lsa, bahona emas, yechim kerak. BARPO mas'uliyatni jarayonning markaziga qo'yadi." },
+          ].map((item, i) => (
+            <motion.div
+              key={item.num}
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.8, delay: 0.3 + i * 0.08 }}
+              className="flex gap-4 items-start"
+            >
+              <span style={{ fontFamily: 'var(--font-display)' }} className="text-xl font-bold text-[#060920]/20 shrink-0 leading-none mt-1">{item.num}</span>
+              <div>
+                <div style={{ fontFamily: 'var(--font-display)' }} className="text-lg text-[#060920] mb-1">{item.title}</div>
+                <p style={{ fontFamily: 'var(--font-body)' }} className="text-sm text-[#060920]/60 leading-relaxed">{item.desc}</p>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </FloorSection>
 
