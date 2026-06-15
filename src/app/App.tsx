@@ -133,7 +133,7 @@ export default function App() {
               style={{ fontFamily: 'var(--font-display)', textShadow: 'none' }}
               className="max-w-3xl mx-auto leading-relaxed tracking-wide text-[#060920] text-xl md:text-2xl"
             >
-              <BarpoWord /> {t("— tadbirkorlar, investorlar va yirik loyihalar uchun qurilish jarayonini tizim, sifat, nazorat va mas'uliyat asosida boshqaradigan kompaniya.", "— компания, которая управляет строительным процессом для предпринимателей, инвесторов и крупных проектов на основе системы, качества, контроля и ответственности.")}
+              <BarpoWord /> {t("— tadbirkorlar, investorlar va yirik loyihalar uchun qurilish jarayonini tizim, sifat, nazorat va mas'uliyat asosida boshqaradigan kompaniya.", "Компания, которая управляет строительным процессом для предпринимателей, инвесторов и крупных проектов на основе системы, качества, контроля и ответственности.")}
             </motion.p>
 
             <motion.p
@@ -221,7 +221,7 @@ export default function App() {
           style={{ fontFamily: 'var(--font-display)' }}
           className="mt-8 text-2xl text-[#060920] leading-snug max-w-2xl"
         >
-<BarpoWord /> {t("uchun sifat — alohida va'da emas.", "— качество не просто обещание.")}
+<BarpoWord /> {t("uchun sifat — alohida va'da emas.", "Качество — не просто обещание.")}
         </motion.p>
         <p style={{ fontFamily: 'var(--font-body)' }} className="mt-3 text-[#060920]/65 leading-relaxed max-w-2xl">
           {t("Bu ish boshlanishidan obyekt topshirilishigacha amal qilinadigan mezon.", "Это критерий, который действует от начала работ до сдачи объекта.")}
@@ -233,7 +233,7 @@ export default function App() {
         floorNumber={2}
         subtitle={t("BIZ HAQIMIZDA", "О НАС")}
         title={t("Qurilish jarayonini tizimga, obyektni qiymatga aylantiramiz.", "Превращаем строительный процесс в систему, а объект — в ценность.")}
-        description={t("BARPO yirik va o'rta hajmdagi obyektlarni qurish, boshqarish va yakuniy natijagacha olib borishga ixtisoslashgan qurilish kompaniyasi.", "BARPO — строительная компания, специализирующаяся на возведении, управлении и доведении до конечного результата крупных и средних объектов.")}
+        description={t("BARPO yirik va o'rta hajmdagi obyektlarni qurish, boshqarish va yakuniy natijagacha olib borishga ixtisoslashgan qurilish kompaniyasi.", "Строительная компания, специализирующаяся на возведении, управлении и доведении до конечного результата крупных и средних объектов.")}
         alignment="right"
       >
         <div className="mt-8 space-y-5 max-w-2xl">
@@ -245,7 +245,7 @@ export default function App() {
           </p>
           <div className="pl-5 border-l-2 border-[#060920]/30">
             <p style={{ fontFamily: 'var(--font-display)' }} className="text-lg text-[#060920] italic leading-snug">
-<BarpoWord /> {t("— bu qurilishdagi tartib, nazorat va mas'uliyat. Biz obyektni shunchaki qurmaymiz. Uni tizim bilan barpo etamiz.", "— это порядок, контроль и ответственность в строительстве. Мы не просто строим объект. Мы созидаем его с помощью системы.")}
+<BarpoWord /> {t("— bu qurilishdagi tartib, nazorat va mas'uliyat. Biz obyektni shunchaki qurmaymiz. Uni tizim bilan barpo etamiz.", "Это порядок, контроль и ответственность в строительстве. Мы не просто строим объект. Мы созидаем его с помощью системы.")}
             </p>
           </div>
         </div>
@@ -264,7 +264,7 @@ export default function App() {
             {t("Qurilishda sifatsizlik, kechikish, ortiqcha xarajat, tartibsiz boshqaruv va noaniq javobgarlik odatiy holat bo'lmasligi kerak.", "Низкое качество, задержки, лишние расходы, беспорядочное управление и неясная ответственность не должны быть нормой в строительстве.")}
           </p>
           <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/70 leading-relaxed">
-<BarpoWord /> {t("sifat, intizom, shaffoflik va mas'uliyatni bozordagi norma darajasiga olib chiqishni maqsad qilgan.", "ставит цель сделать качество, дисциплину, прозрачность и ответственность нормой рынка.")}
+<BarpoWord /> {t("sifat, intizom, shaffoflik va mas'uliyatni bozordagi norma darajasiga olib chiqishni maqsad qilgan.", "Мы ставим целью сделать качество, дисциплину, прозрачность и ответственность нормой рынка.")}
           </p>
           <div className="pl-5 border-l-2 border-[#060920]/30">
             <p style={{ fontFamily: 'var(--font-display)' }} className="text-lg text-[#060920] italic leading-snug">
@@ -277,7 +277,7 @@ export default function App() {
       {/* Floor 4 - BARPO nima qiladi? */}
       <FloorSection
         floorNumber={4}
-        subtitle={t("BARPO NIMA QILADI?", "ЧТО ДЕЛАЕТ BARPO?")}
+        subtitle={t("BARPO NIMA QILADI?", "ЧТО МЫ ДЕЛАЕМ?")}
         title={t("Qurilish jarayonini boshidan oxirigacha tizimga soladigan hamkor", "Партнёр, который выстраивает строительный процесс в систему от начала до конца")}
         description={t("Biz obyektni faqat qurilish maydonidagi ishchi kuchi bilan emas, balki reja, grafika, texnik nazorat, brigadalar koordinatsiyasi, materiallar boshqaruvi va sifat qabul qilish tizimi orqali olib boramiz.", "Мы ведём объект не только рабочей силой на площадке, но через план, графику, технический контроль, координацию бригад, управление материалами и систему приёмки качества.")}
         alignment="left"
@@ -312,7 +312,7 @@ export default function App() {
       <FloorSection
         floorNumber={5}
         subtitle=""
-        title={t("Nima uchun BARPO?", "Почему BARPO?")}
+        title={t("Nima uchun BARPO?", "Почему мы?")}
         description=""
         alignment="right"
       >
@@ -322,7 +322,7 @@ export default function App() {
             { num: "2", title: ["Chunki biz xarajatni nazorat qilamiz", "Потому что мы контролируем расходы"], desc: ["Ortiqcha xarajat ko'pincha qimmat materialdan emas, noto'g'ri qarordan boshlanadi.", "Лишние расходы чаще начинаются не с дорогого материала, а с неверного решения."] },
             { num: "3", title: ["Chunki biz sifatni har kuni tekshiramiz", "Потому что мы проверяем качество каждый день"], desc: ["Sifat yakunda \"to'g'rilanadigan\" narsa emas. Sifat har bosqichda quriladi.", "Качество — не то, что «исправляют» в конце. Качество создаётся на каждом этапе."] },
             { num: "4", title: ["Chunki biz investor vaqtini qadrlaymiz", "Потому что мы ценим время инвестора"], desc: ["Investor obyekt ortidan yugurmasligi kerak. U qaror qabul qilishi kerak. Jarayon esa tizim bilan boshqarilishi kerak.", "Инвестор не должен бегать за объектом. Он должен принимать решения. А процессом должна управлять система."] },
-            { num: "5", title: ["Chunki biz javobgarlikni bo'lib tashlamaymiz", "Потому что мы не перекладываем ответственность"], desc: ["Obyektda muammo bo'lsa, bahona emas, yechim kerak. BARPO mas'uliyatni jarayonning markaziga qo'yadi.", "Если на объекте проблема — нужно решение, а не оправдание. BARPO ставит ответственность в центр процесса."] },
+            { num: "5", title: ["Chunki biz javobgarlikni bo'lib tashlamaymiz", "Потому что мы не перекладываем ответственность"], desc: ["Obyektda muammo bo'lsa, bahona emas, yechim kerak. BARPO mas'uliyatni jarayonning markaziga qo'yadi.", "Если на объекте проблема — нужно решение, а не оправдание. Мы ставим ответственность в центр процесса."] },
           ].map((item, i) => (
             <motion.div
               key={item.num}
@@ -345,9 +345,9 @@ export default function App() {
       {/* Floor 3 - BARPO STANDARTI */}
       <FloorSection
         floorNumber={6}
-        subtitle={t("BARPO STANDARTI", "СТАНДАРТ BARPO")}
+        subtitle={t("BARPO STANDARTI", "НАШ СТАНДАРТ")}
         title={t("Sifat — qabul qilinadigan mezon", "Качество — критерий приёмки")}
-        description={t("BARPO sifatni gap bilan emas, tizim bilan boshqaradi. Har bir bosqichni tekshirish, xatoni vaqtida ko'rish, natijani aniq mezon bilan qabul qilish tizimi.", "BARPO управляет качеством не словами, а системой. Это система проверки каждого этапа, своевременного выявления ошибки и приёмки результата по чётким критериям.")}
+        description={t("BARPO sifatni gap bilan emas, tizim bilan boshqaradi. Har bir bosqichni tekshirish, xatoni vaqtida ko'rish, natijani aniq mezon bilan qabul qilish tizimi.", "Мы управляем качеством не словами, а системой. Это система проверки каждого этапа, своевременного выявления ошибки и приёмки результата по чётким критериям.")}
         alignment="left"
       >
         <motion.div
@@ -417,7 +417,7 @@ export default function App() {
         floorNumber={8}
         subtitle={t("LOYIHALAR", "ПРОЕКТЫ")}
         title={t("Bajarilgan ishlarni ko'rish", "Посмотреть выполненные работы")}
-        description={t("Har bir loyiha BARPO'ning jarayonni boshqarish va sifatni nazorat qilish salohiyatini ko'rsatadi. Bu faqat bitirilgan loyihalar emas — bu tizim bilan bajarilgan loyihalar.", "Каждый проект показывает способность BARPO управлять процессом и контролировать качество. Это не просто завершённые проекты — это проекты, выполненные с помощью системы.")}
+        description={t("Har bir loyiha BARPO'ning jarayonni boshqarish va sifatni nazorat qilish salohiyatini ko'rsatadi. Bu faqat bitirilgan loyihalar emas — bu tizim bilan bajarilgan loyihalar.", "Каждый проект показывает нашу способность управлять процессом и контролировать качество. Это не просто завершённые проекты — это проекты, выполненные с помощью системы.")}
         alignment="left"
       >
         {homeProjects.length === 0 ? (
@@ -478,7 +478,7 @@ export default function App() {
         floorNumber={9}
         subtitle={t("HISOBOT VA NAZORAT", "ОТЧЁТНОСТЬ И КОНТРОЛЬ")}
         title={t("Investor uchun shaffof qurilish", "Прозрачное строительство для инвестора")}
-        description={t("Qurilishda eng katta xavflardan biri — investor jarayonni real ko'rmasligi. BARPO'da obyekt bo'yicha kunlik nazorat tizimi yuritiladi.", "Один из самых больших рисков в строительстве — инвестор не видит процесс реально. В BARPO по объекту ведётся система ежедневного контроля.")}
+        description={t("Qurilishda eng katta xavflardan biri — investor jarayonni real ko'rmasligi. BARPO'da obyekt bo'yicha kunlik nazorat tizimi yuritiladi.", "Один из самых больших рисков в строительстве — инвестор не видит процесс реально. У нас по объекту ведётся система ежедневного контроля.")}
         alignment="left"
       >
         <div className="mt-8 space-y-6">
@@ -576,7 +576,7 @@ export default function App() {
         floorNumber={11}
         subtitle={t("MILLIY IDENTITET", "НАЦИОНАЛЬНАЯ ИДЕНТИЧНОСТЬ")}
         title={t("Zamonaviy qurilish. Milliy ildiz.", "Современное строительство. Национальные корни.")}
-        description={t("BARPO zamonaviy qurilish kompaniyasi, lekin bizning estetikamiz va fikrlashimiz O'zbekistonning boy me'moriy merosi bilan bog'langan.", "BARPO — современная строительная компания, но наша эстетика и мышление связаны с богатым архитектурным наследием Узбекистана.")}
+        description={t("BARPO zamonaviy qurilish kompaniyasi, lekin bizning estetikamiz va fikrlashimiz O'zbekistonning boy me'moriy merosi bilan bog'langan.", "Мы — современная строительная компания, но наша эстетика и мышление связаны с богатым архитектурным наследием Узбекистана.")}
         alignment="left"
       >
         <div className="mt-8 space-y-6">

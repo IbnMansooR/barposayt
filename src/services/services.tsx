@@ -31,7 +31,7 @@ export function ServicesPage() {
     {
       number: "1",
       title: ["Bosh pudratchi xizmatlari", "Услуги генподрядчика"],
-      description: ["BARPO bosh pudratchi sifatida obyektning umumiy qurilish jarayonini boshqaradi: rejalashtirish, ishchi kuchi, materiallar, muhandislik tizimlari, pudratchilar, grafik va sifat nazorati.", "BARPO как генподрядчик управляет общим строительным процессом объекта: планирование, рабочая сила, материалы, инженерные системы, подрядчики, график и контроль качества."],
+      description: ["BARPO bosh pudratchi sifatida obyektning umumiy qurilish jarayonini boshqaradi: rejalashtirish, ishchi kuchi, materiallar, muhandislik tizimlari, pudratchilar, grafik va sifat nazorati.", "Как генподрядчик мы управляем общим строительным процессом объекта: планирование, рабочая сила, материалы, инженерные системы, подрядчики, график и контроль качества."],
       detailsLabel: ["Nimalarni o'z ichiga oladi", "Что включает"],
       details: [
         ["Ish jarayonini rejalashtirish", "Планирование рабочего процесса"],
@@ -47,35 +47,35 @@ export function ServicesPage() {
     {
       number: "2",
       title: ["Qurilish-montaj ishlari", "Строительно-монтажные работы"],
-      description: ["Qurilish-montaj ishlari har qanday obyektning asosiy poydevoridir. Bu bosqichda xato qilish keyingi barcha jarayonlarga ta'sir qiladi. BARPO konstruktiv yechimlar, montaj sifati, texnologik ketma-ketlik va xavfsizlik talablariga qat'iy amal qiladi.", "Строительно-монтажные работы — основа любого объекта. Ошибка на этом этапе влияет на все последующие процессы. BARPO строго соблюдает конструктивные решения, качество монтажа, технологическую последовательность и требования безопасности."],
+      description: ["Qurilish-montaj ishlari har qanday obyektning asosiy poydevoridir. Bu bosqichda xato qilish keyingi barcha jarayonlarga ta'sir qiladi. BARPO konstruktiv yechimlar, montaj sifati, texnologik ketma-ketlik va xavfsizlik talablariga qat'iy amal qiladi.", "Строительно-монтажные работы — основа любого объекта. Ошибка на этом этапе влияет на все последующие процессы. Мы строго соблюдаем конструктивные решения, качество монтажа, технологическую последовательность и требования безопасности."],
       detailsLabel: ["", ""], details: [],
       highlight: ["Biz tezlikni shoshilish deb tushunmaymiz. Tezlik — bu oldindan tuzilgan reja va intizom natijasi.", "Мы не понимаем скорость как спешку. Скорость — результат заранее составленного плана и дисциплины."],
     },
     {
       number: "3",
       title: ["Fasad va tashqi ishlar", "Фасад и наружные работы"],
-      description: ["Fasad — obyektning birinchi taassuroti. Lekin u faqat ko'rinish emas. Fasad binoning himoyasi, energetik samaradorligi, arxitekturaviy xarakteri va uzoq muddatli qiymatiga ta'sir qiladi. BARPO fasad ishlarida estetika, texnik yechim va ekspluatatsion mustahkamlikni birlashtiradi.", "Фасад — первое впечатление об объекте. Но это не только внешний вид. Фасад влияет на защиту здания, энергоэффективность, архитектурный характер и долгосрочную ценность. BARPO в фасадных работах объединяет эстетику, техническое решение и эксплуатационную прочность."],
+      description: ["Fasad — obyektning birinchi taassuroti. Lekin u faqat ko'rinish emas. Fasad binoning himoyasi, energetik samaradorligi, arxitekturaviy xarakteri va uzoq muddatli qiymatiga ta'sir qiladi. BARPO fasad ishlarida estetika, texnik yechim va ekspluatatsion mustahkamlikni birlashtiradi.", "Фасад — первое впечатление об объекте. Но это не только внешний вид. Фасад влияет на защиту здания, энергоэффективность, архитектурный характер и долгосрочную ценность. В фасадных работах мы объединяем эстетику, техническое решение и эксплуатационную прочность."],
       detailsLabel: ["", ""], details: [],
       highlight: ["Biz uchun chiroyli fasad — bu bugun ko'rinadigan, ertaga esa o'z sifatini saqlaydigan yechim.", "Для нас красивый фасад — это решение, которое выглядит хорошо сегодня и сохраняет качество завтра."],
     },
     {
       number: "4",
       title: ["Pardozlash ishlari", "Отделочные работы"],
-      description: ["Pardoz — obyektning yakuniy hissiyoti. Aynan shu bosqichda mijoz, ijarachi yoki foydalanuvchi sifatni ko'radi, his qiladi va baholaydi. BARPO pardozlash ishlarida detal, aniqlik, material tanlovi va ijro madaniyatiga e'tibor beradi.", "Отделка — финальное ощущение от объекта. Именно на этом этапе клиент, арендатор или пользователь видит, чувствует и оценивает качество. BARPO в отделочных работах уделяет внимание деталям, точности, выбору материалов и культуре исполнения."],
+      description: ["Pardoz — obyektning yakuniy hissiyoti. Aynan shu bosqichda mijoz, ijarachi yoki foydalanuvchi sifatni ko'radi, his qiladi va baholaydi. BARPO pardozlash ishlarida detal, aniqlik, material tanlovi va ijro madaniyatiga e'tibor beradi.", "Отделка — финальное ощущение от объекта. Именно на этом этапе клиент, арендатор или пользователь видит, чувствует и оценивает качество. В отделочных работах мы уделяем внимание деталям, точности, выбору материалов и культуре исполнения."],
       detailsLabel: ["", ""], details: [],
       highlight: ["Chiroyli ko'rinish yetarli emas. To'g'ri bajarilgan pardoz uzoq xizmat qilishi kerak.", "Красивого вида недостаточно. Правильно выполненная отделка должна служить долго."],
     },
     {
       number: "5",
       title: ["Muhandislik tizimlari", "Инженерные системы"],
-      description: ["Muhandislik tizimlari — obyektning ko'rinmaydigan, lekin eng muhim qismi. Elektr, ventilyatsiya, isitish, sovutish, suv, kanalizatsiya, yong'in xavfsizligi va zaif tok tizimlari binoning ishlash sifatini belgilaydi. BARPO muhandislik tizimlariga alohida e'tibor beradi, chunki obyektning haqiqiy qulayligi aynan shu yerda boshlanadi.", "Инженерные системы — невидимая, но самая важная часть объекта. Электрика, вентиляция, отопление, охлаждение, водоснабжение, канализация, пожарная безопасность и слаботочные системы определяют качество работы здания. BARPO уделяет инженерным системам особое внимание, ведь реальный комфорт объекта начинается именно здесь."],
+      description: ["Muhandislik tizimlari — obyektning ko'rinmaydigan, lekin eng muhim qismi. Elektr, ventilyatsiya, isitish, sovutish, suv, kanalizatsiya, yong'in xavfsizligi va zaif tok tizimlari binoning ishlash sifatini belgilaydi. BARPO muhandislik tizimlariga alohida e'tibor beradi, chunki obyektning haqiqiy qulayligi aynan shu yerda boshlanadi.", "Инженерные системы — невидимая, но самая важная часть объекта. Электрика, вентиляция, отопление, охлаждение, водоснабжение, канализация, пожарная безопасность и слаботочные системы определяют качество работы здания. Мы уделяем инженерным системам особое внимание, ведь реальный комфорт объекта начинается именно здесь."],
       detailsLabel: ["", ""], details: [],
       highlight: ["Yaxshi bino faqat chiroyli bo'lmaydi. U to'g'ri ishlaydi.", "Хорошее здание не просто красиво. Оно правильно работает."],
     },
     {
       number: "6",
       title: ["Premium pardoz va interyer ijrosi", "Премиум-отделка и реализация интерьера"],
-      description: ["Premium segmentda sifat ko'zga tashlanishi shart emas — u sezilishi kerak. Materiallar, chiziqlar, yoritish, tutashuvlar, faktura va umumiy atmosfera bir butun bo'lishi kerak. BARPO premium pardozda nozik detal, yuqori ijro intizomi va muvozanatli estetika bilan ishlaydi.", "В премиум-сегменте качество не обязано бросаться в глаза — оно должно ощущаться. Материалы, линии, освещение, стыки, фактура и общая атмосфера должны быть единым целым. BARPO в премиум-отделке работает с тонкими деталями, высокой дисциплиной исполнения и сбалансированной эстетикой."],
+      description: ["Premium segmentda sifat ko'zga tashlanishi shart emas — u sezilishi kerak. Materiallar, chiziqlar, yoritish, tutashuvlar, faktura va umumiy atmosfera bir butun bo'lishi kerak. BARPO premium pardozda nozik detal, yuqori ijro intizomi va muvozanatli estetika bilan ishlaydi.", "В премиум-сегменте качество не обязано бросаться в глаза — оно должно ощущаться. Материалы, линии, освещение, стыки, фактура и общая атмосфера должны быть единым целым. В премиум-отделке мы работаем с тонкими деталями, высокой дисциплиной исполнения и сбалансированной эстетикой."],
       detailsLabel: ["", ""], details: [],
       highlight: ["Premium — bu qimmat material emas. Premium — bu xato ko'rinmaydigan darajadagi aniqlik.", "Премиум — это не дорогой материал. Премиум — это точность, при которой не видно ошибок."],
     },
@@ -102,7 +102,7 @@ export function ServicesPage() {
           </motion.h1>
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.2 }}
             style={{ fontFamily: 'var(--font-body)' }} className="text-lg text-[#060920]/60 max-w-3xl mx-auto">
-            <BarpoWord /> {t("qurilish jarayonining alohida bosqichlarini emas, butun tizimini ko'radi. Shu sababli har bir xizmatimiz yakuniy natija, foydalanish qulayligi va investor manfaatiga bog'langan.", "видит не отдельные этапы строительного процесса, а всю систему. Поэтому каждая наша услуга связана с конечным результатом, удобством эксплуатации и интересами инвестора.")}
+            <BarpoWord /> {t("qurilish jarayonining alohida bosqichlarini emas, butun tizimini ko'radi. Shu sababli har bir xizmatimiz yakuniy natija, foydalanish qulayligi va investor manfaatiga bog'langan.", "Мы видим не отдельные этапы строительного процесса, а всю систему. Поэтому каждая наша услуга связана с конечным результатом, удобством эксплуатации и интересами инвестора.")}
           </motion.p>
         </div>
       </section>
@@ -168,7 +168,7 @@ export function ServicesPage() {
       <section className="relative py-24 px-8 md:px-16 bg-white">
         <div className="max-w-6xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="text-center mb-16">
-            <p style={{ fontFamily: 'var(--font-display)' }} className="text-sm tracking-[0.15em] uppercase text-[#060920]/50 mb-4">{t("Nima uchun", "Почему")} <BarpoWord /></p>
+            <p style={{ fontFamily: 'var(--font-display)' }} className="text-sm tracking-[0.15em] uppercase text-[#060920]/50 mb-4">{barpo(t("Nima uchun BARPO", "Почему мы"))}</p>
             <h2 style={{ fontFamily: 'var(--font-display)' }} className="text-4xl md:text-5xl font-light text-[#060920]">
               {t("Tizim — Tartib — Natija", "Система — Порядок — Результат")}
             </h2>
@@ -192,7 +192,7 @@ export function ServicesPage() {
         <div className="max-w-4xl mx-auto text-center space-y-6">
           <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 0.8 }}
             style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', color: '#FFFFFF' }} className="tracking-tight">
-            <BarpoWord light /> {t("bilan qurilish — bu xotirjamlik", "— строительство со спокойствием")}
+            <BarpoWord light /> {t("bilan qurilish — bu xotirjamlik", "Строительство со спокойствием")}
           </motion.h2>
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: false }} transition={{ duration: 0.8, delay: 0.2 }}
             style={{ fontFamily: 'var(--font-body)' }} className="space-y-1 text-white/50 text-base leading-relaxed">

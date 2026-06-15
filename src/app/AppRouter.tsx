@@ -285,7 +285,7 @@ export function AppRouter() {
                   style={{ fontFamily: 'var(--font-body)' }}
                   className="text-xs tracking-[0.2em] uppercase text-white/40"
                 >
-                  BARPO — {t("Navigatsiya", "Навигация")}
+                  {t("BARPO — Navigatsiya", "Навигация")}
                 </p>
               </div>
 

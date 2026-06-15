@@ -11,6 +11,7 @@ const OPT_RU: Record<string, string> = {
   "kichik": "малый", "o'rta": "средний", "katta": "большой",
   "ha": "да", "qisman": "частично", "yo'q": "нет",
   "oddiy": "простая", "premium": "премиум", "aralash": "смешанно", "o'zim": "сам",
+  "BARPO": "Подрядчик",
 };
 
 interface Answers {
@@ -91,7 +92,7 @@ const WEIGHTS: Record<string, Record<string, Partial<Dims>>> = {
 
 // Tavsiyalar — qaysi javob xavf keltirsa, o'shanga mos aniq yechim
 const RECS: { match: (a: Answers) => boolean; title: [string, string]; rec: [string, string] }[] = [
-  { match: (a) => a.projectReady === "yo'q", title: ["Loyiha hujjatlari tayyor emas", "Проектная документация не готова"], rec: ["Loyihasiz boshlangan ish davomida qarorlar qayta-qayta o'zgaradi — bu qayta ishlash, material isrofi va muddat cho'zilishiga olib keladi. BARPO avval loyihani to'liq tahlil qiladi, keyin ish boshlaydi.", "В работе, начатой без проекта, решения постоянно меняются — это ведёт к переделкам, перерасходу материалов и затягиванию сроков. BARPO сначала полностью анализирует проект, затем начинает работу."] },
+  { match: (a) => a.projectReady === "yo'q", title: ["Loyiha hujjatlari tayyor emas", "Проектная документация не готова"], rec: ["Loyihasiz boshlangan ish davomida qarorlar qayta-qayta o'zgaradi — bu qayta ishlash, material isrofi va muddat cho'zilishiga olib keladi. BARPO avval loyihani to'liq tahlil qiladi, keyin ish boshlaydi.", "В работе, начатой без проекта, решения постоянно меняются — это ведёт к переделкам, перерасходу материалов и затягиванию сроков. Мы сначала полностью анализируем проект, затем начинаем работу."] },
   { match: (a) => a.projectReady === "qisman", title: ["Loyiha qisman tayyor", "Проект готов частично"], rec: ["Yetishmayotgan qismlar ish jarayonida aniqlanadi — bu kutilmagan xarajat manbai. Bo'shliqlarni boshida yopish eng arzon yechim.", "Недостающие части выявляются в процессе работ — это источник непредвиденных расходов. Закрыть пробелы в начале — самое дешёвое решение."] },
   { match: (a) => a.shortDeadline === "ha", title: ["Muddat qisqa — shoshilish xavfi", "Сжатый срок — риск спешки"], rec: ["Qisqa muddat sifatni buzmasligi uchun GPR (grafik-progressiv reja) shart. To'g'ri rejada tezlik intizomdan keladi, shoshilishdan emas.", "Чтобы сжатый срок не повредил качеству, нужен ГПР (график производства работ). При правильном плане скорость идёт от дисциплины, а не от спешки."] },
   { match: (a) => a.brigades === "3+", title: ["Ko'p brigada — to'qnashuv xavfi", "Много бригад — риск столкновений"], rec: ["3 va undan ortiq brigada bir zonada to'qnashadi, bir-birini kutadi. Yagona koordinatsiya markazi bo'lmasa, har kuni vaqt yo'qoladi.", "3 и более бригад сталкиваются в одной зоне, ждут друг друга. Без единого центра координации каждый день теряется время."] },
@@ -317,11 +318,11 @@ export function KalkulyatorPage() {
                     {tr("Bu xavflarni boshida tahlil qilish — eng arzon qaror", "Анализ этих рисков в начале — самое дешёвое решение")}
                   </h2>
                   <p style={{ fontFamily: "var(--font-body)" }} className="text-white/55 max-w-xl mx-auto mt-4 leading-relaxed">
-<BarpoWord /> {tr("mutaxassisi obyektingizni ko'rib chiqib, har bir xavfni qanday boshqarish mumkinligini aniq aytadi.", "специалист рассмотрит ваш объект и точно скажет, как управлять каждым риском.")}
+<BarpoWord /> {tr("mutaxassisi obyektingizni ko'rib chiqib, har bir xavfni qanday boshqarish mumkinligini aniq aytadi.", "Наш специалист рассмотрит ваш объект и точно скажет, как управлять каждым риском.")}
                   </p>
                   <a href="#contact" style={{ fontFamily: "var(--font-body)", textDecoration: "none" }}
                     className="inline-block mt-7 px-8 py-3.5 bg-white text-[#060920] tracking-[0.15em] uppercase text-sm font-medium rounded-2xl hover:shadow-xl transition-all">
-<BarpoWord light /> {tr("bilan xavflarni tahlil qilish", "— анализ рисков вместе")}
+<BarpoWord light /> {tr("bilan xavflarni tahlil qilish", "Анализ рисков вместе")}
                   </a>
                 </div>
               </motion.div>

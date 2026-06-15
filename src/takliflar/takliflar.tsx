@@ -109,7 +109,7 @@ export function TakliflarPage() {
               style={{ fontFamily: "var(--font-body)" }}
               className="max-w-xl mx-auto leading-relaxed tracking-wide text-[#060920]/70"
             >
-<BarpoWord /> {t("hamkorlik, xizmat va imkoniyatlar bo'yicha cheklangan miqdordagi maxsus takliflarni taqdim etadi. Imkoniyatni boy bermang.", "предоставляет ограниченное количество специальных предложений по сотрудничеству, услугам и возможностям. Не упустите шанс.")}
+<BarpoWord /> {t("hamkorlik, xizmat va imkoniyatlar bo'yicha cheklangan miqdordagi maxsus takliflarni taqdim etadi. Imkoniyatni boy bermang.", "Мы предоставляем ограниченное количество специальных предложений по сотрудничеству, услугам и возможностям. Не упустите шанс.")}
             </p>
           </motion.div>
 
@@ -189,7 +189,7 @@ export function TakliflarPage() {
               </h2>
               <div style={{ fontFamily: "var(--font-body)" }} className="max-w-2xl mx-auto leading-relaxed tracking-wide text-[#060920]/70 space-y-3">
                 <p>{t("Investor uchun qurilish — bu faqat bino qurish emas. Bu kapitalni to'g'ri joylashtirish, risklarni kamaytirish va kelajakdagi daromad modelini barpo etish.", "Для инвестора строительство — это не просто возведение здания. Это верное размещение капитала, снижение рисков и создание будущей модели дохода.")}</p>
-                <p><BarpoWord /> {t("investorlar uchun turli yo'nalishdagi obyektlarni konsepsiyadan qurilishgacha tizimli yondashuv asosida ko'rib chiqadi.", "рассматривает для инвесторов объекты разных направлений — от концепции до строительства — на основе системного подхода.")}</p>
+                <p><BarpoWord /> {t("investorlar uchun turli yo'nalishdagi obyektlarni konsepsiyadan qurilishgacha tizimli yondashuv asosida ko'rib chiqadi.", "Мы рассматриваем для инвесторов объекты разных направлений — от концепции до строительства — на основе системного подхода.")}</p>
                 <p>{t("Biz har bir loyiha bo'yicha nafaqat \"qanday quriladi?\" degan savolga, balki \"bu obyekt qanday ishlaydi, kimga xizmat qiladi va qanday qiymat yaratadi?\" degan savolga ham javob izlaymiz.", "По каждому проекту мы ищем ответ не только на вопрос «как это будет построено?», но и на вопрос «как этот объект работает, кому служит и какую ценность создаёт?».")}</p>
               </div>
             </motion.div>

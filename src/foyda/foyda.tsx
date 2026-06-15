@@ -25,7 +25,7 @@ const blocks = [
     title: ["Qarorlarni optimallashtirish", "Оптимизация решений"],
     desc: [
       "Ba'zi yechimlar ko'rinishda chiroyli, lekin iqtisodiy jihatdan og'ir bo'lishi mumkin. BARPO vazifani tushunib, samaraliroq variant taklif qiladi.",
-      "Некоторые решения красивы на вид, но тяжелы экономически. BARPO понимает задачу и предлагает более эффективный вариант.",
+      "Некоторые решения красивы на вид, но тяжелы экономически. Мы понимаем задачу и предлагаем более эффективный вариант.",
     ],
   },
   {
@@ -93,7 +93,7 @@ export function FoydaPage() {
           >
             <BarpoWord /> {t(
               "mijoz mablag'ini faqat narxni tushirish orqali emas, xatolar, ortiqcha sarf, qayta ishlash va noto'g'ri qarorlarning oldini olish orqali himoya qiladi.",
-              "защищает средства заказчика не только снижением цены, но и предотвращением ошибок, перерасхода, переделок и неверных решений.",
+              "Мы защищаем средства заказчика не только снижением цены, но и предотвращением ошибок, перерасхода, переделок и неверных решений.",
             )}
           </motion.p>
         </div>

@@ -49,10 +49,10 @@ export function RahbarPage() {
             </div>
             <div style={{ fontFamily: "var(--font-body)" }} className="space-y-4 text-[#060920]/75 leading-relaxed text-lg">
               <p>
-<BarpoWord /> {t("asoschisi Farruxon Shohdiyorxon Umidxon o'g'li qurilishga tasodifan kelmagan. Uning arxitektura va dizayn bo'yicha ta'limi, davlat tizimidagi tajribasi, ishlab chiqarish va biznesdagi amaliyoti bir fikrga olib kelgan: O'zbekistonda sifatli qurilish faqat yaxshi ustalar bilan emas, kuchli boshqaruv madaniyati bilan rivojlanadi.", "основатель Фаррухон Шохдиёрхон Умидхон ўғли пришёл в строительство не случайно. Его образование в области архитектуры и дизайна, опыт в государственной системе, практика в производстве и бизнесе привели к одной мысли: качественное строительство в Узбекистане развивается не только хорошими мастерами, но и сильной культурой управления.")}
+<BarpoWord /> {t("asoschisi Farruxon Shohdiyorxon Umidxon o'g'li qurilishga tasodifan kelmagan. Uning arxitektura va dizayn bo'yicha ta'limi, davlat tizimidagi tajribasi, ishlab chiqarish va biznesdagi amaliyoti bir fikrga olib kelgan: O'zbekistonda sifatli qurilish faqat yaxshi ustalar bilan emas, kuchli boshqaruv madaniyati bilan rivojlanadi.", "Основатель компании Фаррухон Шохдиёрхон Умидхон ўғли пришёл в строительство не случайно. Его образование в области архитектуры и дизайна, опыт в государственной системе, практика в производстве и бизнесе привели к одной мысли: качественное строительство в Узбекистане развивается не только хорошими мастерами, но и сильной культурой управления.")}
               </p>
               <p>
-<BarpoWord /> {t("ana shu qarashning natijasi. Kompaniya har bir obyektga shunchaki pudratchi sifatida emas, mijoz kapitali, vaqti va ishonchini himoya qiladigan mas'ul tizim sifatida kiradi.", "— результат именно этого взгляда. Компания подходит к каждому объекту не просто как подрядчик, а как ответственная система, защищающая капитал, время и доверие клиента.")}
+<BarpoWord /> {t("ana shu qarashning natijasi. Kompaniya har bir obyektga shunchaki pudratchi sifatida emas, mijoz kapitali, vaqti va ishonchini himoya qiladigan mas'ul tizim sifatida kiradi.", "Компания — результат именно этого взгляда. К каждому объекту она подходит не просто как подрядчик, а как ответственная система, защищающая капитал, время и доверие клиента.")}
               </p>
             </div>
           </motion.div>
@@ -63,7 +63,7 @@ export function RahbarPage() {
       <section className="relative py-16 px-8 md:px-16 bg-[#060920]">
         <div className="max-w-4xl mx-auto text-center space-y-6">
           <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.5rem, 4vw, 2.5rem)", color: "#FFFFFF" }} className="tracking-tight">
-<BarpoWord light /> {t("bilan tizimli qurilishni boshlang", "— начните системное строительство")}
+<BarpoWord light /> {t("bilan tizimli qurilishni boshlang", "Начните системное строительство")}
           </h2>
           <a href="#contact" style={{ fontFamily: "var(--font-body)" }}
             className="inline-block px-8 py-3 bg-white text-[#060920] tracking-[0.15em] uppercase text-sm font-medium rounded-2xl shadow-lg hover:shadow-xl transition-all">

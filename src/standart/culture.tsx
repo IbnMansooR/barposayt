@@ -62,7 +62,7 @@ export function CulturePage() {
     {
       title: ["Hurmat", "Уважение"],
       description: ["Buyurtmachining vaqti, mablag'i va ishonchi hurmat qilinadi. Qurilish mijozni charchatadigan jarayon bo'lmasligi kerak.", "Время, средства и доверие заказчика уважаются. Строительство не должно быть процессом, утомляющим клиента."],
-      details: ["BARPO falsafasida mijoz — bu hamkor. Uning vaqti, mablag'i va ishonchi — qimmatli manba. Biz mijozni noaniqlik bilan charchatmaymiz: darhol tushuntiramiz, maslahat beramiz va muammoning yechimini taklif etamiz.", "В философии BARPO клиент — это партнёр. Его время, средства и доверие — ценный ресурс. Мы не утомляем клиента неопределённостью: сразу объясняем, советуем и предлагаем решение проблемы."],
+      details: ["BARPO falsafasida mijoz — bu hamkor. Uning vaqti, mablag'i va ishonchi — qimmatli manba. Biz mijozni noaniqlik bilan charchatmaymiz: darhol tushuntiramiz, maslahat beramiz va muammoning yechimini taklif etamiz.", "В нашей философии клиент — это партнёр. Его время, средства и доверие — ценный ресурс. Мы не утомляем клиента неопределённостью: сразу объясняем, советуем и предлагаем решение проблемы."],
       principles: [
         ["Kunlik hisobot va jarayon haqida muntazam ma'lumot", "Ежедневный отчёт и регулярная информация о процессе"],
         ["Tushuntirish va maslahat berish", "Разъяснение и консультирование"],
@@ -74,7 +74,7 @@ export function CulturePage() {
     {
       title: ["Meros", "Наследие"],
       description: ["O'zbekiston me'moriy merosi bizga shuni o'rgatadi: mustahkam inshoot faqat material bilan emas, fikr, o'lchov va tartib bilan barpo bo'ladi.", "Архитектурное наследие Узбекистана учит нас: прочное сооружение создаётся не только материалом, но и мыслью, расчётом и порядком."],
-      details: ["Qadimiy o'zbek me'morchiligi — asrlar davomida to'plangan texnik bilim va badiiy tafakkur belgisidir. Girih naqshi, zanjira naqshi, turunj, koshin, gumbaz — bu detallarning har birida chuqur aql va hisob borligini ko'ramiz. BARPO shu merosga tayanadi:", "Древнее узбекское зодчество — знак технических знаний и художественного мышления, накопленных веками. Гирих, занджира, турундж, кошин, купол — в каждой из этих деталей мы видим глубокий ум и расчёт. BARPO опирается на это наследие:"],
+      details: ["Qadimiy o'zbek me'morchiligi — asrlar davomida to'plangan texnik bilim va badiiy tafakkur belgisidir. Girih naqshi, zanjira naqshi, turunj, koshin, gumbaz — bu detallarning har birida chuqur aql va hisob borligini ko'ramiz. BARPO shu merosga tayanadi:", "Древнее узбекское зодчество — знак технических знаний и художественного мышления, накопленных веками. Гирих, занджира, турундж, кошин, купол — в каждой из этих деталей мы видим глубокий ум и расчёт. Мы опираемся на это наследие:"],
       principles: [
         ["Zamonaviy texnologiya va qadimiy me'moriy tafakkur birligi", "Единство современных технологий и древнего архитектурного мышления"],
         ["Har bir detal va konstruksiyaning ma'nosi", "Смысл каждой детали и конструкции"],
@@ -106,7 +106,7 @@ export function CulturePage() {
               {t("Bu har kuni obyekt ichida ko'rinadigan tartib.", "Это порядок, видимый на объекте каждый день.")}
             </p>
             <p style={{ fontFamily: 'var(--font-body)' }} className="text-base text-[#060920]/60 max-w-2xl mx-auto">
-              <BarpoWord /> {t("uchun qurilish madaniyati — bu ish joyining tozaligi, chizmadagi aniqlik, materialdagi hisob, brigadadagi intizom, nazoratdagi qat'iylik va mijozga bo'lgan hurmatdir.", "для нас культура строительства — это чистота рабочего места, точность в чертеже, расчёт в материалах, дисциплина в бригаде, твёрдость в контроле и уважение к клиенту.")}
+              <BarpoWord /> {t("uchun qurilish madaniyati — bu ish joyining tozaligi, chizmadagi aniqlik, materialdagi hisob, brigadadagi intizom, nazoratdagi qat'iylik va mijozga bo'lgan hurmatdir.", "Для нас культура строительства — это чистота рабочего места, точность в чертеже, расчёт в материалах, дисциплина в бригаде, твёрдость в контроле и уважение к клиенту.")}
             </p>
           </motion.div>
         </div>
@@ -213,7 +213,7 @@ export function CulturePage() {
         <div className="max-w-4xl mx-auto text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="space-y-6">
             <h2 style={{ fontFamily: 'var(--font-display)' }} className="text-3xl md:text-4xl font-light text-[#060920]">
-              <BarpoWord /> {t("bilan yangi madaniyatni birgalikda yarataylik", "— давайте вместе создадим новую культуру")}
+              <BarpoWord /> {t("bilan yangi madaniyatni birgalikda yarataylik", "Давайте вместе создадим новую культуру")}
             </h2>
             <p style={{ fontFamily: 'var(--font-body)' }} className="text-lg text-[#060920]/60 max-w-2xl mx-auto">
               {t("Qurilish — bu faqat material va ishchi kuchi emas. Bu fikr, tartib va mas'uliyatning birlashuvidir.", "Строительство — это не только материал и рабочая сила. Это соединение мысли, порядка и ответственности.")}

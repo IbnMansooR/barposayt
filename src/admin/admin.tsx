@@ -696,7 +696,7 @@ export function AdminPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-10 flex-wrap gap-4">
           <div>
-            <p style={{ fontFamily: "var(--font-body)" }} className="opacity-60 tracking-[0.2em] uppercase text-sm text-[#060920] mb-1"><BarpoWord /> · {t("BOSHQARUV", "УПРАВЛЕНИЕ")}</p>
+            <p style={{ fontFamily: "var(--font-body)" }} className="opacity-60 tracking-[0.2em] uppercase text-sm text-[#060920] mb-1"><BarpoWord /> {t("· BOSHQARUV", "УПРАВЛЕНИЕ")}</p>
             <h1 style={{ fontFamily: "var(--font-display)", fontSize: "2rem", color: "#060920" }}>{t("Boshqaruv Paneli", "Панель управления")}</h1>
           </div>
           <div className="flex items-center gap-4">

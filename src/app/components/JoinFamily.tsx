@@ -89,7 +89,7 @@ export function JoinFamily() {
             }}
             className="leading-[1.15] tracking-tight"
           >
-            {t("BARPO oilasiga qo'shiling", "Присоединяйтесь к семье BARPO")}
+            {t("BARPO oilasiga qo'shiling", "Присоединяйтесь к нашей команде")}
           </h2>
           <p
             style={{ fontFamily: "var(--font-body)" }}

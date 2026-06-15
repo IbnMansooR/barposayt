@@ -399,7 +399,7 @@ export function ContactPage() {
             style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', color: '#FFFFFF' }}
             className="tracking-tight"
           >
-            <BarpoWord light /> {t("bilan qurilish — bu xotirjamlik", "— строительство со спокойствием")}
+            <BarpoWord light /> {t("bilan qurilish — bu xotirjamlik", "Строительство со спокойствием")}
           </motion.h2>
           <motion.div
             initial={{ opacity: 0 }}

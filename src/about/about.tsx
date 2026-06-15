@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { SoftDivider } from "../app/components/SoftDivider";
-import { BarpoWord, barpo } from "../app/components/Barpo";
+import { barpo } from "../app/components/Barpo";
 import { useT } from "../app/i18n";
 
 export function AboutPage() {
@@ -28,7 +28,7 @@ export function AboutPage() {
     { num: "02", title: ["Chunki biz xarajatni nazorat qilamiz", "Потому что мы контролируем расходы"], desc: ["Ortiqcha xarajat ko'pincha qimmat materialdan emas, noto'g'ri qarordan boshlanadi.", "Лишние расходы чаще начинаются не с дорогого материала, а с неверного решения."] },
     { num: "03", title: ["Chunki biz sifatni har kuni tekshiramiz", "Потому что мы проверяем качество каждый день"], desc: ["Sifat yakunda \"to'g'rilanadigan\" narsa emas. Sifat har bosqichda quriladi.", "Качество — не то, что «исправляют» в конце. Качество создаётся на каждом этапе."] },
     { num: "04", title: ["Chunki biz investor vaqtini qadrlaymiz", "Потому что мы ценим время инвестора"], desc: ["Investor obyekt ortidan yugurmasligi kerak. U qaror qabul qilishi kerak. Jarayon esa tizim bilan boshqarilishi kerak.", "Инвестор не должен бегать за объектом. Он должен принимать решения. А процессом должна управлять система."] },
-    { num: "05", title: ["Chunki biz javobgarlikni bo'lib tashlamaymiz", "Потому что мы не перекладываем ответственность"], desc: ["Obyektda muammo bo'lsa, bahona emas, yechim kerak. BARPO mas'uliyatni jarayonning markaziga qo'yadi.", "Если на объекте проблема — нужно решение, а не оправдание. BARPO ставит ответственность в центр процесса."] },
+    { num: "05", title: ["Chunki biz javobgarlikni bo'lib tashlamaymiz", "Потому что мы не перекладываем ответственность"], desc: ["Obyektda muammo bo'lsa, bahona emas, yechim kerak. BARPO mas'uliyatni jarayonning markaziga qo'yadi.", "Если на объекте проблема — нужно решение, а не оправдание. Мы ставим ответственность в центр процесса."] },
   ];
 
   const trust = [
@@ -49,7 +49,7 @@ export function AboutPage() {
             style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 5vw, 4rem)', color: '#060920' }}
             className="tracking-tight"
           >
-            <BarpoWord /> {t("— qurilishdagi tartib g'oyasidan tug'ilgan kompaniya", "— компания, рождённая из идеи порядка в строительстве")}
+            {barpo(t("BARPO — qurilishdagi tartib g'oyasidan tug'ilgan kompaniya", "Компания, рождённая из идеи порядка в строительстве"))}
           </motion.h1>
 
           <motion.div
@@ -64,10 +64,10 @@ export function AboutPage() {
             style={{ fontFamily: 'var(--font-body)', color: '#060920' }} className="space-y-4 leading-relaxed opacity-60 text-base"
           >
             <p>
-              <BarpoWord /> {t("oddiy qurilish kompaniyasi bo'lish uchun yaratilmagan. Biz bozorning og'riqli nuqtalarini ko'rdik: tartibsiz brigadalar, noaniq muddatlar, qayta-qayta tuzatishlar, mijozning charchashi, sifatga bo'lgan befarqlik.", "создана не для того, чтобы быть обычной строительной компанией. Мы увидели болевые точки рынка: беспорядочные бригады, неясные сроки, постоянные переделки, усталость клиента, безразличие к качеству.")}
+              {barpo(t("BARPO oddiy qurilish kompaniyasi bo'lish uchun yaratilmagan. Biz bozorning og'riqli nuqtalarini ko'rdik: tartibsiz brigadalar, noaniq muddatlar, qayta-qayta tuzatishlar, mijozning charchashi, sifatga bo'lgan befarqlik.", "Мы созданы не для того, чтобы быть обычной строительной компанией. Мы увидели болевые точки рынка: беспорядочные бригады, неясные сроки, постоянные переделки, усталость клиента, безразличие к качеству."))}
             </p>
             <p>
-              {t("Shu sababli", "Поэтому")} <BarpoWord /> {t("o'z oldiga boshqa vazifa qo'ydi — qurilish jarayoniga tizim olib kirish. Har bir ishda reja, nazorat, intizom va mijozga hurmat bo'lishi kerak.", "поставила перед собой иную задачу — внедрить систему в строительный процесс. В каждой работе должны быть план, контроль, дисциплина и уважение к клиенту.")}
+              {barpo(t("Shu sababli BARPO o'z oldiga boshqa vazifa qo'ydi — qurilish jarayoniga tizim olib kirish. Har bir ishda reja, nazorat, intizom va mijozga hurmat bo'lishi kerak.", "Поэтому мы поставили перед собой иную задачу — внедрить систему в строительный процесс. В каждой работе должны быть план, контроль, дисциплина и уважение к клиенту."))}
             </p>
             <p>
               {t("Biz uchun qurilish — bu shunchaki devor ko'tarish emas. Bu kelajakda ishlaydigan, foyda keltiradigan, odamlar foydalanadigan muhit yaratishdir.", "Для нас строительство — это не просто возведение стен. Это создание среды, которая будет работать в будущем, приносить пользу и служить людям.")}
@@ -84,7 +84,7 @@ export function AboutPage() {
               {t("Bizning missiyamiz", "Наша миссия")}
             </h2>
             <p style={{ fontFamily: 'var(--font-body)', color: '#060920' }} className="text-lg opacity-70 leading-relaxed">
-              {t("Bizning missiyamiz — O'zbekistonda qurilish madaniyatini yangi bosqichga olib chiqish. Qurilishda sifatsizlik, kechikish, ortiqcha xarajat, tartibsiz boshqaruv va noaniq javobgarlik odatiy holat bo'lmasligi kerak.", "Наша миссия — вывести культуру строительства в Узбекистане на новый уровень. Низкое качество, задержки, лишние расходы, беспорядочное управление и неясная ответственность не должны быть нормой в строительстве.")} <BarpoWord /> {t("sifat, intizom, shaffoflik va mas'uliyatni bozordagi norma darajasiga olib chiqishni maqsad qilgan. Biz uchun har bir obyekt — bu faqat loyiha emas. Bu mijoz ishonchi, investor kapitali va shahar kelajagi oldidagi javobgarlik.", "ставит цель сделать качество, дисциплину, прозрачность и ответственность нормой рынка. Для нас каждый объект — это не просто проект. Это доверие клиента, капитал инвестора и ответственность перед будущим города.")}
+              {t("Bizning missiyamiz — O'zbekistonda qurilish madaniyatini yangi bosqichga olib chiqish. Qurilishda sifatsizlik, kechikish, ortiqcha xarajat, tartibsiz boshqaruv va noaniq javobgarlik odatiy holat bo'lmasligi kerak.", "Наша миссия — вывести культуру строительства в Узбекистане на новый уровень. Низкое качество, задержки, лишние расходы, беспорядочное управление и неясная ответственность не должны быть нормой в строительстве.")} {barpo(t("BARPO sifat, intizom, shaffoflik va mas'uliyatni bozordagi norma darajasiga olib chiqishni maqsad qilgan. Biz uchun har bir obyekt — bu faqat loyiha emas. Bu mijoz ishonchi, investor kapitali va shahar kelajagi oldidagi javobgarlik.", "Мы ставим целью сделать качество, дисциплину, прозрачность и ответственность нормой рынка. Для нас каждый объект — это не просто проект. Это доверие клиента, капитал инвестора и ответственность перед будущим города."))}
             </p>
           </motion.div>
 
@@ -96,7 +96,7 @@ export function AboutPage() {
               {t("Biz qurilishda \"qandaydir qilib tugatish\" yondashuvi o'rniga aniq tizim, chuqur reja va professional nazoratga asoslangan madaniyatni ko'ramiz. Kelajak qurilishi — bu faqat baland binolar emas. Bu yaxshi boshqarilgan jarayon, uzoq xizmat qiladigan sifat, iqtisodiy jihatdan to'g'ri qaror va mijoz uchun xotirjamlik.", "Вместо подхода «как-нибудь закончить» мы видим культуру, основанную на чёткой системе, глубоком плане и профессиональном контроле. Строительство будущего — это не только высокие здания. Это хорошо управляемый процесс, долговечное качество, экономически верное решение и спокойствие для клиента.")}
             </p>
             <p style={{ fontFamily: 'var(--font-body)', color: '#060920' }} className="text-lg opacity-70 leading-relaxed mt-4">
-              <BarpoWord /> {t("shu kelajakni bugundan barpo etadi", "созидает это будущее уже сегодня")}
+              {barpo(t("BARPO shu kelajakni bugundan barpo etadi", "Мы созидаем это будущее уже сегодня"))}
             </p>
           </motion.div>
         </div>
@@ -127,7 +127,7 @@ export function AboutPage() {
         <div className="max-w-6xl mx-auto">
           <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 0.8 }}
             style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', color: '#060920' }} className="mb-4 tracking-tight">
-            {t("Nima uchun", "Почему")} <BarpoWord />?
+            {barpo(t("Nima uchun BARPO?", "Почему мы?"))}
           </motion.h2>
           <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 0.6, delay: 0.1 }} className="mb-12 w-16 h-1 rounded-full bg-[#060920]" />
 
@@ -159,10 +159,10 @@ export function AboutPage() {
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 0.8, delay: 0.2 }}
             style={{ fontFamily: 'var(--font-body)' }} className="space-y-4 text-[#060920]/70 leading-relaxed text-lg">
             <p>
-              <BarpoWord /> {t("asoschisi Farruxon Shohdiyorxon Umidxon o'g'li qurilishga tasodifan kelmagan. Uning arxitektura va dizayn bo'yicha ta'limi, davlat tizimidagi tajribasi, ishlab chiqarish va biznesdagi amaliyoti bir fikrga olib kelgan: O'zbekistonda sifatli qurilish faqat yaxshi ustalar bilan emas, kuchli boshqaruv madaniyati bilan rivojlanadi.", "основатель Фаррухон Шохдиёрхон Умидхон ўғли пришёл в строительство не случайно. Его образование в области архитектуры и дизайна, опыт в государственной системе, практика в производстве и бизнесе привели к одной мысли: качественное строительство в Узбекистане развивается не только хорошими мастерами, но и сильной культурой управления.")}
+              {barpo(t("BARPO asoschisi Farruxon Shohdiyorxon Umidxon o'g'li qurilishga tasodifan kelmagan. Uning arxitektura va dizayn bo'yicha ta'limi, davlat tizimidagi tajribasi, ishlab chiqarish va biznesdagi amaliyoti bir fikrga olib kelgan: O'zbekistonda sifatli qurilish faqat yaxshi ustalar bilan emas, kuchli boshqaruv madaniyati bilan rivojlanadi.", "Основатель компании Фаррухон Шохдиёрхон Умидхон ўғли пришёл в строительство не случайно. Его образование в области архитектуры и дизайна, опыт в государственной системе, практика в производстве и бизнесе привели к одной мысли: качественное строительство в Узбекистане развивается не только хорошими мастерами, но и сильной культурой управления."))}
             </p>
             <p>
-              <BarpoWord /> {t("ana shu qarashning natijasi. Kompaniya har bir obyektga shunchaki pudratchi sifatida emas, mijoz kapitali, vaqti va ishonchini himoya qiladigan mas'ul tizim sifatida kiradi.", "— результат именно этого взгляда. Компания подходит к каждому объекту не просто как подрядчик, а как ответственная система, защищающая капитал, время и доверие клиента.")}
+              {barpo(t("BARPO ana shu qarashning natijasi. Kompaniya har bir obyektga shunchaki pudratchi sifatida emas, mijoz kapitali, vaqti va ishonchini himoya qiladigan mas'ul tizim sifatida kiradi.", "Компания — результат именно этого взгляда. К каждому объекту она подходит не просто как подрядчик, а как ответственная система, защищающая капитал, время и доверие клиента."))}
             </p>
           </motion.div>
         </div>
@@ -174,7 +174,7 @@ export function AboutPage() {
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 0.8 }} className="mb-14">
             <p style={{ fontFamily: 'var(--font-display)' }} className="text-sm tracking-[0.15em] uppercase text-[#060920]/50 mb-3">{t("Biz haqimizda", "О нас")}</p>
             <h2 style={{ fontFamily: 'var(--font-display)' }} className="text-3xl font-light text-[#060920] leading-tight">
-              {t("Nima uchun", "Почему стоит доверять")} <BarpoWord />{t("'ga ishonish kerak?", "?")}
+              {barpo(t("Nima uchun BARPO'ga ishonish kerak?", "Почему стоит доверять нам?"))}
             </h2>
           </motion.div>
 
@@ -231,7 +231,7 @@ export function AboutPage() {
         <div className="max-w-4xl mx-auto text-center space-y-6">
           <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 0.8 }}
             style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', color: '#FFFFFF' }} className="tracking-tight">
-            <BarpoWord light /> {t("bilan qurilish — bu xotirjamlik", "— строительство со спокойствием")}
+            {barpo(t("BARPO bilan qurilish — bu xotirjamlik", "Строительство со спокойствием"), true)}
           </motion.h2>
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: false }} transition={{ duration: 0.8, delay: 0.2 }}
             style={{ fontFamily: 'var(--font-body)' }} className="space-y-1 text-white/50 text-base leading-relaxed">

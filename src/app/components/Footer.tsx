@@ -37,7 +37,7 @@ export function Footer() {
               />
             </a>
             <p style={{ fontFamily: 'var(--font-body)' }} className="tracking-wide text-white/50 max-w-md text-sm leading-relaxed">
-              {t("BARPO — O'zbekistonda yangi qurilish madaniyatini shakllantirayotgan qurilish kompaniyasi.", "BARPO — строительная компания, формирующая новую культуру строительства в Узбекистане.")}
+              {t("BARPO — O'zbekistonda yangi qurilish madaniyatini shakllantirayotgan qurilish kompaniyasi.", "Строительная компания, формирующая новую культуру строительства в Узбекистане.")}
             </p>
             <p style={{ fontFamily: 'var(--font-body)' }} className="tracking-wide text-white/50 max-w-md text-sm leading-relaxed mt-3">
               {t("Biz tizim, sifat, nazorat, mas'uliyat va investor xotirjamligi asosida obyektlarni barpo etamiz.", "Мы возводим объекты на основе системы, качества, контроля, ответственности и спокойствия инвестора.")}

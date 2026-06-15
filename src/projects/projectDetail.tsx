@@ -79,7 +79,7 @@ export function ProjectDetailPage({ id }: { id: string }) {
     { label: t("Ish turi", "Тип работ"), value: project.workType },
     { label: t("Maydon", "Площадь"), value: project.area },
     { label: t("Muddat", "Срок"), value: project.duration },
-    { label: t("BARPO roli", "Роль BARPO"), value: project.role },
+    { label: t("BARPO roli", "Наша роль"), value: project.role },
     { label: t("Yil", "Год"), value: project.year },
     { label: t("Holati", "Статус"), value: project.status },
   ].filter((m) => m.value);
@@ -87,7 +87,7 @@ export function ProjectDetailPage({ id }: { id: string }) {
   const tsr = [
     { label: t("Vazifa", "Задача"), value: project.task },
     { label: t("Murakkablik", "Сложность"), value: project.problem },
-    { label: t("BARPO yechimi", "Решение BARPO"), value: project.solution },
+    { label: t("BARPO yechimi", "Наше решение"), value: project.solution },
     { label: t("Jarayon", "Процесс"), value: project.process },
     { label: t("Natija", "Результат"), value: project.result },
   ].filter((m) => m.value);
