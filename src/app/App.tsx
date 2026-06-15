@@ -111,16 +111,16 @@ export default function App() {
               }}
               className="tracking-tight"
             >
+              Biz qurmaymiz.<br />
               <span className="inline-flex items-baseline justify-center gap-3 flex-wrap">
-                biz 
+                Biz
                 <img
                   src={logoHero}
                   alt="BARPO"
                   style={{ height: '1em', display: 'inline-block', transform: 'translateY(0.05em)' }}
                 />
-                  etamiz
-              </span><br />
-              <span className="text-[#060920]">—</span>
+                etamiz.
+              </span>
             </motion.h1>
 
             <motion.p
@@ -130,7 +130,7 @@ export default function App() {
               style={{ fontFamily: 'var(--font-display)', textShadow: 'none' }}
               className="max-w-3xl mx-auto leading-relaxed tracking-wide text-[#060920] text-xl md:text-2xl"
             >
-              Biz shunchaki qurmaymiz. Qurilish jarayonini boshqaramiz.
+              BARPO — tadbirkorlar, investorlar va yirik loyihalar uchun qurilish jarayonini tizim, sifat, nazorat va mas'uliyat asosida boshqaradigan kompaniya.
             </motion.p>
 
             <motion.p
@@ -140,7 +140,7 @@ export default function App() {
               style={{ fontFamily: 'var(--font-body)', textShadow: 'none' }}
               className="max-w-3xl mx-auto leading-relaxed tracking-wide text-[#060920]/75 text-lg"
             >
-              BARPO — tijorat obyektlari, biznes markazlar, klinikalar, savdo markazlari, ishlab chiqarish binolari va turar joy majmualari uchun tizimli qurilish hamkori.
+              Qurilish — bu faqat beton, armatura va ishchi kuchi emas. Qurilish — bu reja, intizom, muhandislik fikri, moliyaviy nazorat va natijaga bo'lgan mas'uliyat.
             </motion.p>
 
             <motion.div
@@ -159,13 +159,22 @@ export default function App() {
                 Loyihani muhokama qilish
               </motion.a>
               <motion.a
-                href="#services"
+                href="#takliflar"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 style={{ fontFamily: 'var(--font-body)', textDecoration: 'none' }}
-                className="px-8 py-3 bg-[#060920] text-white tracking-[0.15em] uppercase text-sm border border-white/30 hover:border-white transition-all rounded-2xl shadow-lg hover:shadow-xl inline-block"
+                className="px-8 py-3 bg-transparent text-[#060920] tracking-[0.15em] uppercase text-sm border border-[#060920]/25 hover:border-[#060920]/60 transition-all rounded-2xl inline-block"
               >
-                Xizmatlarni ko'rish
+                Investorlar uchun takliflar
+              </motion.a>
+              <motion.a
+                href="#standard"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                style={{ fontFamily: 'var(--font-body)', textDecoration: 'none' }}
+                className="px-8 py-3 bg-transparent text-[#060920] tracking-[0.15em] uppercase text-sm border border-[#060920]/25 hover:border-[#060920]/60 transition-all rounded-2xl inline-block"
+              >
+                BARPO standartlari bilan tanishish
               </motion.a>
             </motion.div>
           </motion.div>
@@ -196,9 +205,78 @@ export default function App() {
         </div>
       </section>
 
-      {/* Floor 1 - BARPO nima qiladi? */}
+      {/* Floor 1 - BRAND STATEMENT */}
       <FloorSection
         floorNumber={1}
+        subtitle="YANGI YO'NALISH"
+        title="Yangi qurilish madaniyati"
+        description="Biz qurilish bozorida yangi yondashuvni shakllantiryapmiz: tartibli jarayon, aniq grafik, shaffof xarajat, sifat nazorati va mijoz xotirjamligi."
+        alignment="left"
+      >
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          style={{ fontFamily: 'var(--font-display)' }}
+          className="mt-8 text-2xl text-[#060920] leading-snug max-w-2xl"
+        >
+          BARPO uchun sifat — alohida va'da emas.
+        </motion.p>
+        <p style={{ fontFamily: 'var(--font-body)' }} className="mt-3 text-[#060920]/65 leading-relaxed max-w-2xl">
+          Bu ish boshlanishidan obyekt topshirilishigacha amal qilinadigan mezon.
+        </p>
+      </FloorSection>
+
+      {/* Floor 2 - BIZ HAQIMIZDA */}
+      <FloorSection
+        floorNumber={2}
+        subtitle="BIZ HAQIMIZDA"
+        title="Qurilish jarayonini tizimga, obyektni qiymatga aylantiramiz."
+        description="BARPO yirik va o'rta hajmdagi obyektlarni qurish, boshqarish va yakuniy natijagacha olib borishga ixtisoslashgan qurilish kompaniyasi."
+        alignment="right"
+      >
+        <div className="mt-8 space-y-5 max-w-2xl">
+          <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/70 leading-relaxed">
+            Biz turar joy majmualari, biznes markazlar, savdo obyektlari, klinikalar, ofis binolari, ishlab chiqarish va boshqa tijoriy loyihalarda ishlaymiz.
+          </p>
+          <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/70 leading-relaxed">
+            Bizning asosiy farqimiz — qurilishga faqat ijro sifatida emas, boshqaruv tizimi sifatida qarashimizda. Har bir bosqich rejalashtiriladi. Har bir ish hajmi hisoblanadi. Har bir jarayon nazorat qilinadi. Har bir qaror investorning vaqtiga, xarajatiga va natijasiga ta'siri bilan baholanadi.
+          </p>
+          <div className="pl-5 border-l-2 border-[#060920]/30">
+            <p style={{ fontFamily: 'var(--font-display)' }} className="text-lg text-[#060920] italic leading-snug">
+              BARPO — bu qurilishdagi tartib, nazorat va mas'uliyat. Biz obyektni shunchaki qurmaymiz. Uni tizim bilan barpo etamiz.
+            </p>
+          </div>
+        </div>
+      </FloorSection>
+
+      {/* Floor 3 - MISSIYA */}
+      <FloorSection
+        floorNumber={3}
+        subtitle="MISSIYA"
+        title="Bizning missiyamiz"
+        description="Bizning missiyamiz — O'zbekistonda qurilish madaniyatini yangi bosqichga olib chiqish."
+        alignment="left"
+      >
+        <div className="mt-8 space-y-5 max-w-2xl">
+          <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/70 leading-relaxed">
+            Qurilishda sifatsizlik, kechikish, ortiqcha xarajat, tartibsiz boshqaruv va noaniq javobgarlik odatiy holat bo'lmasligi kerak.
+          </p>
+          <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/70 leading-relaxed">
+            BARPO sifat, intizom, shaffoflik va mas'uliyatni bozordagi norma darajasiga olib chiqishni maqsad qilgan.
+          </p>
+          <div className="pl-5 border-l-2 border-[#060920]/30">
+            <p style={{ fontFamily: 'var(--font-display)' }} className="text-lg text-[#060920] italic leading-snug">
+              Biz uchun har bir obyekt — bu faqat loyiha emas. Bu mijoz ishonchi, investor kapitali va shahar kelajagi oldidagi javobgarlik.
+            </p>
+          </div>
+        </div>
+      </FloorSection>
+
+      {/* Floor 4 - BARPO nima qiladi? */}
+      <FloorSection
+        floorNumber={4}
         subtitle="BARPO NIMA QILADI?"
         title="Qurilish jarayonini boshidan oxirigacha tizimga soladigan hamkor"
         description="Biz obyektni faqat qurilish maydonidagi ishchi kuchi bilan emas, balki reja, grafika, texnik nazorat, brigadalar koordinatsiyasi, materiallar boshqaruvi va sifat qabul qilish tizimi orqali olib boramiz."
@@ -232,7 +310,7 @@ export default function App() {
 
       {/* Floor 2 - NIMA UCHUN BARPO? */}
       <FloorSection
-        floorNumber={2}
+        floorNumber={5}
         subtitle="NIMA UCHUN BARPO?"
         title="Qurilishda asosiy muammo ishchi kuchida emas. Muammo — boshqaruv yo'qligida"
         description="Ko'p obyektlarda kechikish, ortiqcha xarajat, qayta buzish, brigadalar orasidagi kelishmovchilik va mijozning charchashi bitta sababdan kelib chiqadi: jarayon tizimga solinmagan bo'ladi."
@@ -282,7 +360,7 @@ export default function App() {
 
       {/* Floor 3 - BARPO STANDARTI */}
       <FloorSection
-        floorNumber={3}
+        floorNumber={6}
         subtitle="BARPO STANDARTI"
         title="Sifat — qabul qilinadigan mezon"
         description="BARPO sifatni gap bilan emas, tizim bilan boshqaradi. Har bir bosqichni tekshirish, xatoni vaqtida ko'rish, natijani aniq mezon bilan qabul qilish tizimi."
@@ -309,7 +387,7 @@ export default function App() {
 
       {/* Floor 4 - QANDAY ISHLAYMIZ? */}
       <FloorSection
-        floorNumber={4}
+        floorNumber={7}
         subtitle="QANDAY ISHLAYMIZ?"
         title="Tushunarli jarayon"
         description="Qurilishda xotirjamlik jarayon tushunarli bo'lganda paydo bo'ladi. Biz mijozni noaniqlik ichida qoldirmaymiz. Har bosqich, har qaror va har natija tushunarli tizim asosida olib boriladi."
@@ -352,7 +430,7 @@ export default function App() {
 
       {/* Floor 5 - LOYIHALAR */}
       <FloorSection
-        floorNumber={5}
+        floorNumber={8}
         subtitle="LOYIHALAR"
         title="Bajarilgan ishlarni ko'rish"
         description="Har bir loyiha BARPO'ning jarayonni boshqarish va sifatni nazorat qilish salohiyatini ko'rsatadi. Bu faqat bitirilgan loyihalar emas — bu tizim bilan bajarilgan loyihalar."
@@ -413,7 +491,7 @@ export default function App() {
 
       {/* Floor 6 - HISOBOT VA NAZORAT */}
       <FloorSection
-        floorNumber={6}
+        floorNumber={9}
         subtitle="HISOBOT VA NAZORAT"
         title="Investor uchun shaffof qurilish"
         description="Qurilishda eng katta xavflardan biri — investor jarayonni real ko'rmasligi. BARPO'da obyekt bo'yicha kunlik nazorat tizimi yuritiladi."
@@ -463,7 +541,7 @@ export default function App() {
 
       {/* Floor 7 - IQTISODIY FOYDA */}
       <FloorSection
-        floorNumber={7}
+        floorNumber={10}
         subtitle="IQTISODIY FOYDA"
         title="To'g'ri qurilish investor pulini himoya qiladi"
         description="Qurilishda tejash har doim arzon material tanlash degani emas. Ba'zan eng katta iqtisod noto'g'ri yechimni vaqtida to'xtatish va smetani chuqur tahlil qilishdan keladi."
@@ -511,7 +589,7 @@ export default function App() {
 
       {/* Floor 8 - MILLIY IDENTITET */}
       <FloorSection
-        floorNumber={8}
+        floorNumber={11}
         subtitle="MILLIY IDENTITET"
         title="Zamonaviy qurilish. Milliy ildiz."
         description="BARPO zamonaviy qurilish kompaniyasi, lekin bizning estetikamiz va fikrlashimiz O'zbekistonning boy me'moriy merosi bilan bog'langan."
@@ -550,7 +628,7 @@ export default function App() {
 
       {/* Floor 9 - ALOQA */}
       <FloorSection
-        floorNumber={9}
+        floorNumber={12}
         subtitle="ALOQA"
         title="Loyihangizni muhokama qilaylik"
         description="Biz avval vazifani tushunamiz, keyin yechim taklif qilamiz. Har bir loyiha noyob, shuning uchun har biriga alohida yondashamiz."
