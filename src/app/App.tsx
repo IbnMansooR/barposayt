@@ -6,11 +6,12 @@ import { FloorSection } from "./components/FloorSection";
 import { SoftDivider } from "./components/SoftDivider";
 import { Footer } from "./components/Footer";
 import { BarpoWord, barpo } from "./components/Barpo";
-import { useT } from "./i18n";
+import { useT, useLang } from "./i18n";
 
 export default function App() {
   const containerRef = useRef<HTMLDivElement>(null);
   const t = useT();
+  const { lang } = useLang();
   const [currentFloor, setCurrentFloor] = useState(0);
   const [contactStatus, setContactStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [contactError, setContactError] = useState("");
@@ -117,11 +118,13 @@ export default function App() {
               {t("Biz qurmaymiz.", "Мы не строим.")}<br />
               <span className="inline-flex items-baseline justify-center gap-3 flex-wrap">
                 {t("Biz", "Мы")}
-                <img
-                  src={logoHero}
-                  alt="BARPO"
-                  style={{ height: '1em', display: 'inline-block', transform: 'translateY(0.05em)' }}
-                />
+                {lang === "uz" && (
+                  <img
+                    src={logoHero}
+                    alt="BARPO"
+                    style={{ height: '1em', display: 'inline-block', transform: 'translateY(0.05em)' }}
+                  />
+                )}
                 {t("etamiz.", "созидаем.")}
               </span>
             </motion.h1>
