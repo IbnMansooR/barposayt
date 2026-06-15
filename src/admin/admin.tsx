@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { BarpoWord } from "../app/components/Barpo";
 import { Eye, EyeOff } from "lucide-react";
 
 const CREDS_KEY = "barpo_admin_creds";
@@ -687,7 +688,7 @@ export function AdminPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-10 flex-wrap gap-4">
           <div>
-            <p style={{ fontFamily: "var(--font-body)" }} className="opacity-60 tracking-[0.2em] uppercase text-sm text-[#060920] mb-1">BARPO · BOSHQARUV</p>
+            <p style={{ fontFamily: "var(--font-body)" }} className="opacity-60 tracking-[0.2em] uppercase text-sm text-[#060920] mb-1"><BarpoWord /> · BOSHQARUV</p>
             <h1 style={{ fontFamily: "var(--font-display)", fontSize: "2rem", color: "#060920" }}>Boshqaruv Paneli</h1>
           </div>
           <div className="flex items-center gap-4">
@@ -738,7 +739,7 @@ export function AdminPage() {
                       {p.hasImage ? (
                         <img src={`/api/project-image?id=${p.id}`} alt={p.name} className="w-full h-full object-cover" />
                       ) : (
-                        <div style={{ fontFamily: "var(--font-display)" }} className="w-full h-full flex items-center justify-center text-[#060920]/20 text-xs">BARPO</div>
+                        <div style={{ fontFamily: "var(--font-display)" }} className="w-full h-full flex items-center justify-center text-[#060920]/20 text-xs"><BarpoWord className="opacity-30" /></div>
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -989,7 +990,7 @@ export function AdminPage() {
                         className={`p-5 bg-white/60 border rounded-2xl flex gap-4 items-start ${published ? "border-[#060920]/15" : "border-dashed border-[#060920]/20"}`}>
                         <div className="w-20 h-16 rounded-lg bg-[#060920]/5 overflow-hidden flex-shrink-0 flex items-center justify-center">
                           {a.hasImage ? <img src={`/api/blog-image?id=${a.id}`} alt={a.title} className="w-full h-full object-cover" />
-                            : <span style={{ fontFamily: "var(--font-display)" }} className="text-[#060920]/20 text-xs">BARPO</span>}
+                            : <span style={{ fontFamily: "var(--font-display)" }} className="text-[#060920]/20 text-xs"><BarpoWord className="opacity-30" /></span>}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
@@ -1467,7 +1468,7 @@ export function AdminPage() {
                 <textarea name="problem" rows={2} defaultValue={editingProject?.problem || ""} placeholder="Asosiy muammo yoki texnik murakkablik..." style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               </div>
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">BARPO yechimi (qanday yondashuv qo'llandi?)</label>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5"><BarpoWord /> yechimi (qanday yondashuv qo'llandi?)</label>
                 <textarea name="solution" rows={2} defaultValue={editingProject?.solution || ""} placeholder="BARPO jarayonni qanday boshqardi..." style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               </div>
               <div>
