@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { BarpoWord } from "../app/components/Barpo";
+import { useT } from "../app/i18n";
 import { Eye, EyeOff } from "lucide-react";
 
 const CREDS_KEY = "barpo_admin_creds";
@@ -28,19 +29,19 @@ interface BlogArticle {
 }
 
 // Bo'lim ruxsatlari (superadmin boshqaradi)
-const PERM_LABELS: { key: string; label: string }[] = [
-  { key: "projects", label: "Loyihalar" },
-  { key: "ornaments", label: "Naqshlar" },
-  { key: "standards", label: "Standartlar" },
-  { key: "investors", label: "Investorlar" },
-  { key: "blog", label: "Bilim markazi" },
-  { key: "offers", label: "Takliflar" },
-  { key: "sections", label: "Bo'lim rasmlari" },
-  { key: "stats", label: "Statistika" },
-  { key: "suggestions", label: "Kelgan takliflar" },
-  { key: "hr", label: "HR arizalari" },
-  { key: "contacts", label: "Aloqa so'rovlari" },
-  { key: "settings", label: "Sozlamalar" },
+const PERM_LABELS: { key: string; label: string; ru: string }[] = [
+  { key: "projects", label: "Loyihalar", ru: "Проекты" },
+  { key: "ornaments", label: "Naqshlar", ru: "Орнаменты" },
+  { key: "standards", label: "Standartlar", ru: "Стандарты" },
+  { key: "investors", label: "Investorlar", ru: "Инвесторы" },
+  { key: "blog", label: "Bilim markazi", ru: "Центр знаний" },
+  { key: "offers", label: "Takliflar", ru: "Предложения" },
+  { key: "sections", label: "Bo'lim rasmlari", ru: "Изображения разделов" },
+  { key: "stats", label: "Statistika", ru: "Статистика" },
+  { key: "suggestions", label: "Kelgan takliflar", ru: "Поступившие предложения" },
+  { key: "hr", label: "HR arizalari", ru: "HR-заявки" },
+  { key: "contacts", label: "Aloqa so'rovlari", ru: "Запросы на связь" },
+  { key: "settings", label: "Sozlamalar", ru: "Настройки" },
 ];
 
 interface AdminUser {
@@ -79,26 +80,28 @@ const DEFAULT_STATS: StatItem[] = [
 ];
 
 // Madaniyat va Xizmatlar sahifalaridagi rasm boxlari
-const SECTION_IMAGE_GROUPS: { group: string; items: { key: string; label: string }[] }[] = [
+const SECTION_IMAGE_GROUPS: { group: string; groupRu: string; items: { key: string; label: string; ru: string }[] }[] = [
   {
     group: "Madaniyat sahifasi",
+    groupRu: "Страница «Культура»",
     items: [
-      { key: "culture-0", label: "Tartib" },
-      { key: "culture-1", label: "Hisob" },
-      { key: "culture-2", label: "Intizom" },
-      { key: "culture-3", label: "Hurmat" },
-      { key: "culture-4", label: "Meros" },
+      { key: "culture-0", label: "Tartib", ru: "Порядок" },
+      { key: "culture-1", label: "Hisob", ru: "Учёт" },
+      { key: "culture-2", label: "Intizom", ru: "Дисциплина" },
+      { key: "culture-3", label: "Hurmat", ru: "Уважение" },
+      { key: "culture-4", label: "Meros", ru: "Наследие" },
     ],
   },
   {
     group: "Xizmatlar sahifasi",
+    groupRu: "Страница «Услуги»",
     items: [
-      { key: "service-1", label: "1 · Bosh pudratchi xizmatlari" },
-      { key: "service-2", label: "2 · Qurilish-montaj ishlari" },
-      { key: "service-3", label: "3 · Fasad va tashqi ishlar" },
-      { key: "service-4", label: "4 · Pardozlash ishlari" },
-      { key: "service-5", label: "5 · Muhandislik tizimlari" },
-      { key: "service-6", label: "6 · Premium pardoz va interyer ijrosi" },
+      { key: "service-1", label: "1 · Bosh pudratchi xizmatlari", ru: "1 · Услуги генподрядчика" },
+      { key: "service-2", label: "2 · Qurilish-montaj ishlari", ru: "2 · Строительно-монтажные работы" },
+      { key: "service-3", label: "3 · Fasad va tashqi ishlar", ru: "3 · Фасад и наружные работы" },
+      { key: "service-4", label: "4 · Pardozlash ishlari", ru: "4 · Отделочные работы" },
+      { key: "service-5", label: "5 · Muhandislik tizimlari", ru: "5 · Инженерные системы" },
+      { key: "service-6", label: "6 · Premium pardoz va interyer ijrosi", ru: "6 · Премиум-отделка и исполнение интерьера" },
     ],
   },
 ];
@@ -155,6 +158,7 @@ function formatDate(iso: string) {
 }
 
 export function AdminPage() {
+  const t = useT();
   const [creds, setCreds] = useState<Creds | null>(() => loadCreds());
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -208,9 +212,9 @@ export function AdminPage() {
       .then((r) => r.json())
       .then((json) => {
         if (json.ok) setData(json.data);
-        else setFetchError(json.error || "Ma'lumot olishda xatolik");
+        else setFetchError(json.error || t("Ma'lumot olishda xatolik", "Ошибка при получении данных"));
       })
-      .catch(() => setFetchError("Server bilan bog'lanib bo'lmadi"))
+      .catch(() => setFetchError(t("Server bilan bog'lanib bo'lmadi", "Не удалось связаться с сервером")))
       .finally(() => setLoading(false));
     fetch("/api/section-images")
       .then((r) => r.json())
@@ -228,8 +232,12 @@ export function AdminPage() {
 
   // HR holatini o'zgartirish (qabul/rad/kutish)
   const setHrStatus = async (folder: string, status: string) => {
-    const labels: Record<string, string> = { accepted: "qabul qilish", rejected: "rad etish", pending: "kutishga qaytarish" };
-    if (!confirm(`Bu arizani ${labels[status]}ni tasdiqlaysizmi?`)) return;
+    const labels: Record<string, string> = {
+      accepted: t("qabul qilish", "принять"),
+      rejected: t("rad etish", "отклонить"),
+      pending: t("kutishga qaytarish", "вернуть в ожидание"),
+    };
+    if (!confirm(t(`Bu arizani ${labels[status]}ni tasdiqlaysizmi?`, `Подтверждаете действие «${labels[status]}» для этой заявки?`))) return;
     try {
       await fetch(`/api/admin/hr-status?${authQS()}`, {
         method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ folder, status }),
@@ -240,7 +248,7 @@ export function AdminPage() {
 
   // HR arizasini butunlay o'chirish (rezyume papkasi bilan)
   const deleteHr = async (folder: string, name: string) => {
-    if (!confirm(`"${name}" arizasi butunlay o'chirilsinmi? Rezyume fayli ham o'chadi va qaytarib bo'lmaydi.`)) return;
+    if (!confirm(t(`"${name}" arizasi butunlay o'chirilsinmi? Rezyume fayli ham o'chadi va qaytarib bo'lmaydi.`, `Полностью удалить заявку «${name}»? Файл резюме также будет удалён без возможности восстановления.`))) return;
     try {
       await fetch(`/api/admin/hr-delete?${authQS()}`, {
         method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ folder }),
@@ -264,17 +272,17 @@ export function AdminPage() {
         method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(settings),
       });
       const json = await res.json().catch(() => ({}));
-      if (!res.ok || !json.ok) throw new Error(json.error || "Xatolik");
-      setSettingsMsg("Saqlandi ✅");
-    } catch { setSettingsMsg("Saqlashda xatolik"); } finally { setSaving(false); }
+      if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
+      setSettingsMsg(t("Saqlandi ✅", "Сохранено ✅"));
+    } catch { setSettingsMsg(t("Saqlashda xatolik", "Ошибка при сохранении")); } finally { setSaving(false); }
   };
   const sendTestTelegram = async (type: TgKey) => {
-    setSettingsMsg("Yuborilmoqda...");
+    setSettingsMsg(t("Yuborilmoqda...", "Отправляется..."));
     try {
       const res = await fetch(`/api/admin/test-telegram?type=${type}&${authQS()}`, { method: "POST" });
       const json = await res.json().catch(() => ({}));
-      setSettingsMsg(json.ok ? "Telegram test xabari yuborildi ✅" : (json.error || "Xatolik"));
-    } catch { setSettingsMsg("Xatolik"); }
+      setSettingsMsg(json.ok ? t("Telegram test xabari yuborildi ✅", "Тестовое сообщение в Telegram отправлено ✅") : (json.error || t("Xatolik", "Ошибка")));
+    } catch { setSettingsMsg(t("Xatolik", "Ошибка")); }
   };
 
   // Telegram konfigini olish/yangilash (umumiy yoki tur bo'yicha)
@@ -311,7 +319,7 @@ export function AdminPage() {
       });
       const json = await res.json().catch(() => ({}));
       if (!res.ok || !json.ok) {
-        setLoginError(json.error || "Login yoki parol noto'g'ri");
+        setLoginError(json.error || t("Login yoki parol noto'g'ri", "Неверный логин или пароль"));
         return;
       }
       const newCreds: Creds = { username: username.trim(), password, name: json.name };
@@ -319,7 +327,7 @@ export function AdminPage() {
       setCreds(newCreds);
       setPassword("");
     } catch {
-      setLoginError("Server bilan bog'lanib bo'lmadi");
+      setLoginError(t("Server bilan bog'lanib bo'lmadi", "Не удалось связаться с сервером"));
     } finally {
       setLoggingIn(false);
     }
@@ -337,7 +345,7 @@ export function AdminPage() {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
     });
     const json = await res.json().catch(() => ({}));
-    if (!res.ok || !json.ok) throw new Error(json.error || "Xatolik");
+    if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
     return json;
   };
   const saveAdminUser = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -368,13 +376,13 @@ export function AdminPage() {
       }
       setShowAdminModal(false); setEditingAdmin(null); loadData();
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Xatolik");
+      alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка"));
     } finally { setSaving(false); }
   };
   const deleteAdminUser = async (username: string) => {
-    if (!confirm(`"${username}" admin o'chirilsinmi?`)) return;
+    if (!confirm(t(`"${username}" admin o'chirilsinmi?`, `Удалить администратора «${username}»?`))) return;
     try { await adminUserAction({ action: "delete", username }); loadData(); }
-    catch (err) { alert(err instanceof Error ? err.message : "Xatolik"); }
+    catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
 
   // ---- Topshiriq amallari ----
@@ -383,7 +391,7 @@ export function AdminPage() {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
     });
     const json = await res.json().catch(() => ({}));
-    if (!res.ok || !json.ok) throw new Error(json.error || "Xatolik");
+    if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
     return json;
   };
   const saveTask = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -394,14 +402,14 @@ export function AdminPage() {
       await taskAction({ action: "create", ...body });
       setShowTaskModal(false); loadData();
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Xatolik");
+      alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка"));
     } finally { setSaving(false); }
   };
   const toggleTaskDone = async (t: TaskItem) => {
     try { await taskAction({ action: t.status === "done" ? "undone" : "done", id: t.id }); loadData(); } catch {}
   };
   const deleteTask = async (id: string) => {
-    if (!confirm("Bu topshiriq o'chirilsinmi?")) return;
+    if (!confirm(t("Bu topshiriq o'chirilsinmi?", "Удалить это задание?"))) return;
     try { await taskAction({ action: "delete", id }); loadData(); } catch {}
   };
 
@@ -411,7 +419,7 @@ export function AdminPage() {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
     });
     const json = await res.json().catch(() => ({}));
-    if (!res.ok || !json.ok) throw new Error(json.error || "Xatolik");
+    if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
     return json;
   };
   const saveOffer = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -426,7 +434,7 @@ export function AdminPage() {
   };
   const toggleOffer = async (id: string) => { try { await offerAction({ action: "toggle", id }); loadData(); } catch {} };
   const deleteOffer = async (id: string) => {
-    if (!confirm("Bu taklif o'chirilsinmi?")) return;
+    if (!confirm(t("Bu taklif o'chirilsinmi?", "Удалить это предложение?"))) return;
     try { await offerAction({ action: "delete", id }); loadData(); } catch {}
   };
 
@@ -434,7 +442,7 @@ export function AdminPage() {
   const projectAction = async (fd: FormData) => {
     const res = await fetch(`/api/admin/projects?${authQS()}`, { method: "POST", body: fd });
     const json = await res.json().catch(() => ({}));
-    if (!res.ok || !json.ok) throw new Error(json.error || "Xatolik");
+    if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
     return json;
   };
   const saveProject = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -455,7 +463,7 @@ export function AdminPage() {
   };
   const toggleProject = (id: string) => projectSimple("toggle", id);
   const deleteProject = (id: string) => {
-    if (!confirm("Bu loyiha o'chirilsinmi? Rasm ham o'chadi.")) return;
+    if (!confirm(t("Bu loyiha o'chirilsinmi? Rasm ham o'chadi.", "Удалить этот проект? Изображение также будет удалено."))) return;
     projectSimple("delete", id);
   };
 
@@ -463,7 +471,7 @@ export function AdminPage() {
   const ornamentAction = async (fd: FormData) => {
     const res = await fetch(`/api/admin/ornaments?${authQS()}`, { method: "POST", body: fd });
     const json = await res.json().catch(() => ({}));
-    if (!res.ok || !json.ok) throw new Error(json.error || "Xatolik");
+    if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
     return json;
   };
   const saveOrnament = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -484,7 +492,7 @@ export function AdminPage() {
   };
   const toggleOrnament = (id: string) => ornamentSimple("toggle", id);
   const deleteOrnament = (id: string) => {
-    if (!confirm("Bu naqsh o'chirilsinmi?")) return;
+    if (!confirm(t("Bu naqsh o'chirilsinmi?", "Удалить этот орнамент?"))) return;
     ornamentSimple("delete", id);
   };
 
@@ -494,7 +502,7 @@ export function AdminPage() {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
     });
     const json = await res.json().catch(() => ({}));
-    if (!res.ok || !json.ok) throw new Error(json.error || "Xatolik");
+    if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
     return json;
   };
   const saveStandard = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -509,7 +517,7 @@ export function AdminPage() {
   };
   const toggleStandard = async (id: string) => { try { await standardAction({ action: "toggle", id }); loadData(); } catch {} };
   const deleteStandard = async (id: string) => {
-    if (!confirm("Bu standart o'chirilsinmi?")) return;
+    if (!confirm(t("Bu standart o'chirilsinmi?", "Удалить этот стандарт?"))) return;
     try { await standardAction({ action: "delete", id }); loadData(); } catch {}
   };
 
@@ -519,7 +527,7 @@ export function AdminPage() {
       method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
     });
     const json = await res.json().catch(() => ({}));
-    if (!res.ok || !json.ok) throw new Error(json.error || "Xatolik");
+    if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
     return json;
   };
   const saveInvestor = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -534,7 +542,7 @@ export function AdminPage() {
   };
   const toggleInvestor = async (id: string) => { try { await investorAction({ action: "toggle", id }); loadData(); } catch {} };
   const deleteInvestor = async (id: string) => {
-    if (!confirm("Bu bo'lim o'chirilsinmi?")) return;
+    if (!confirm(t("Bu bo'lim o'chirilsinmi?", "Удалить этот раздел?"))) return;
     try { await investorAction({ action: "delete", id }); loadData(); } catch {}
   };
 
@@ -542,7 +550,7 @@ export function AdminPage() {
   const blogAction = async (fd: FormData) => {
     const res = await fetch(`/api/admin/blog?${authQS()}`, { method: "POST", body: fd });
     const json = await res.json().catch(() => ({}));
-    if (!res.ok || !json.ok) throw new Error(json.error || "Xatolik");
+    if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
     return json;
   };
   const saveBlog = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -554,7 +562,7 @@ export function AdminPage() {
     try {
       await blogAction(fd);
       setShowBlogModal(false); setEditingBlog(null); loadData();
-    } catch (err) { alert(err instanceof Error ? err.message : "Xatolik"); } finally { setSaving(false); }
+    } catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); } finally { setSaving(false); }
   };
   const blogSimple = async (action: string, id: string) => {
     const fd = new FormData();
@@ -564,7 +572,7 @@ export function AdminPage() {
   const publishBlog = (id: string) => blogSimple("publish", id);
   const unpublishBlog = (id: string) => blogSimple("unpublish", id);
   const deleteBlog = (id: string) => {
-    if (!confirm("Bu maqola butunlay o'chirilsinmi?")) return;
+    if (!confirm(t("Bu maqola butunlay o'chirilsinmi?", "Полностью удалить эту статью?"))) return;
     blogSimple("delete", id);
   };
 
@@ -575,18 +583,18 @@ export function AdminPage() {
     fd.append("image", file);
     const res = await fetch(`/api/admin/section-image?${authQS()}`, { method: "POST", body: fd });
     const json = await res.json().catch(() => ({}));
-    if (!res.ok || !json.ok) throw new Error(json.error || "Xatolik");
+    if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
     loadData();
   };
   const deleteSectionImage = async (key: string) => {
-    if (!confirm("Bu rasm o'chirilsinmi?")) return;
+    if (!confirm(t("Bu rasm o'chirilsinmi?", "Удалить это изображение?"))) return;
     const fd = new FormData();
     fd.append("key", key);
     fd.append("action", "delete");
     try {
       const res = await fetch(`/api/admin/section-image?${authQS()}`, { method: "POST", body: fd });
       const json = await res.json().catch(() => ({}));
-      if (!res.ok || !json.ok) throw new Error(json.error || "Xatolik");
+      if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
       loadData();
     } catch {}
   };
@@ -604,7 +612,7 @@ export function AdminPage() {
         method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ stats }),
       });
       const json = await res.json().catch(() => ({}));
-      if (!res.ok || !json.ok) throw new Error(json.error || "Xatolik");
+      if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
       if (Array.isArray(json.stats)) setStats(json.stats);
       setStatsSaved(true);
       loadData();
@@ -613,7 +621,7 @@ export function AdminPage() {
 
   // ---- Kelgan taklif / aloqani o'chirish ----
   const deleteItem = async (type: "suggestion" | "contact", id: string) => {
-    if (!confirm("O'chirilsinmi?")) return;
+    if (!confirm(t("O'chirilsinmi?", "Удалить?"))) return;
     try {
       await fetch(`/api/admin/delete?${authQS()}`, {
         method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type, id }),
@@ -628,19 +636,19 @@ export function AdminPage() {
       <div className="pt-24 min-h-screen flex items-center justify-center px-8">
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="w-full max-w-md">
           <div className="text-center mb-10 space-y-3">
-            <p style={{ fontFamily: "var(--font-body)" }} className="opacity-60 tracking-[0.2em] uppercase text-sm text-[#060920]">BOSHQARUV PANELI</p>
-            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "2rem", color: "#060920" }}>Boshqaruvga kirish</h2>
+            <p style={{ fontFamily: "var(--font-body)" }} className="opacity-60 tracking-[0.2em] uppercase text-sm text-[#060920]">{t("BOSHQARUV PANELI", "ПАНЕЛЬ УПРАВЛЕНИЯ")}</p>
+            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "2rem", color: "#060920" }}>{t("Boshqaruvga kirish", "Вход в управление")}</h2>
           </div>
           <form onSubmit={handleLogin} className="space-y-4">
             <input type="text" value={username} onChange={(e) => setUsername(e.target.value)}
-              placeholder="Login (username)" autoComplete="username"
+              placeholder={t("Login (username)", "Логин (username)")} autoComplete="username"
               style={{ fontFamily: "var(--font-body)" }} className={inputClass} autoFocus />
             <div className="relative">
               <input type={showLoginPass ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)}
-                placeholder="Parol" autoComplete="current-password"
+                placeholder={t("Parol", "Пароль")} autoComplete="current-password"
                 style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} pr-12`} />
               <button type="button" onClick={() => setShowLoginPass((v) => !v)}
-                aria-label={showLoginPass ? "Parolni yashirish" : "Parolni ko'rsatish"}
+                aria-label={showLoginPass ? t("Parolni yashirish", "Скрыть пароль") : t("Parolni ko'rsatish", "Показать пароль")}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-[#060920]/40 hover:text-[#060920] transition-colors">
                 {showLoginPass ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
@@ -648,7 +656,7 @@ export function AdminPage() {
             {loginError && <p style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]">{loginError}</p>}
             <button type="submit" disabled={loggingIn} style={{ fontFamily: "var(--font-body)" }}
               className="w-full px-8 py-4 bg-[#060920] text-white tracking-[0.15em] uppercase font-medium rounded-2xl hover:shadow-xl transition-all disabled:opacity-70">
-              {loggingIn ? "Tekshirilmoqda..." : "Kirish"}
+              {loggingIn ? t("Tekshirilmoqda...", "Проверяется...") : t("Kirish", "Войти")}
             </button>
           </form>
         </motion.div>
@@ -661,23 +669,23 @@ export function AdminPage() {
   const hasPerm = (key: string) => isSuper || !me || me.perms?.[key] !== false;
 
   const tabs = [
-    { id: "projects" as Tab, label: "Loyihalar", count: data?.projects.length ?? 0 },
-    { id: "ornaments" as Tab, label: "Naqshlar", count: data?.ornaments?.length ?? 0 },
-    { id: "standards" as Tab, label: "Standartlar", count: data?.standards?.length ?? 0 },
-    { id: "investors" as Tab, label: "Investorlar", count: data?.investors?.length ?? 0 },
-    { id: "blog" as Tab, label: "Bilim markazi", count: data?.blog?.length ?? 0 },
-    { id: "offers" as Tab, label: "Cheklangan takliflar", count: data?.offers.length ?? 0 },
-    { id: "sections" as Tab, label: "Bo'lim rasmlari", count: Object.keys(sectionImages).length },
-    { id: "stats" as Tab, label: "Statistika", count: stats.length },
-    { id: "suggestions" as Tab, label: "Kelgan takliflar", count: data?.suggestions.length ?? 0 },
-    { id: "hr" as Tab, label: "HR Arizalari", count: data?.hr.length ?? 0 },
-    { id: "contacts" as Tab, label: "Aloqa So'rovlari", count: data?.contacts.length ?? 0 },
-    { id: "settings" as Tab, label: "Sozlamalar", count: (settings.telegram?.chatIds || []).filter(Boolean).length },
-  ].filter((t) => hasPerm(t.id));
+    { id: "projects" as Tab, label: t("Loyihalar", "Проекты"), count: data?.projects.length ?? 0 },
+    { id: "ornaments" as Tab, label: t("Naqshlar", "Орнаменты"), count: data?.ornaments?.length ?? 0 },
+    { id: "standards" as Tab, label: t("Standartlar", "Стандарты"), count: data?.standards?.length ?? 0 },
+    { id: "investors" as Tab, label: t("Investorlar", "Инвесторы"), count: data?.investors?.length ?? 0 },
+    { id: "blog" as Tab, label: t("Bilim markazi", "Центр знаний"), count: data?.blog?.length ?? 0 },
+    { id: "offers" as Tab, label: t("Cheklangan takliflar", "Ограниченные предложения"), count: data?.offers.length ?? 0 },
+    { id: "sections" as Tab, label: t("Bo'lim rasmlari", "Изображения разделов"), count: Object.keys(sectionImages).length },
+    { id: "stats" as Tab, label: t("Statistika", "Статистика"), count: stats.length },
+    { id: "suggestions" as Tab, label: t("Kelgan takliflar", "Поступившие предложения"), count: data?.suggestions.length ?? 0 },
+    { id: "hr" as Tab, label: t("HR Arizalari", "HR-заявки"), count: data?.hr.length ?? 0 },
+    { id: "contacts" as Tab, label: t("Aloqa So'rovlari", "Запросы на связь"), count: data?.contacts.length ?? 0 },
+    { id: "settings" as Tab, label: t("Sozlamalar", "Настройки"), count: (settings.telegram?.chatIds || []).filter(Boolean).length },
+  ].filter((tab) => hasPerm(tab.id));
 
   // Topshiriqlar hammaga, Adminlar faqat superadminga
-  tabs.push({ id: "tasks" as Tab, label: "Topshiriqlar", count: (data?.tasks || []).filter((t) => t.status !== "done").length });
-  if (isSuper) tabs.push({ id: "admins" as Tab, label: "Adminlar", count: data?.admins?.length ?? 0 });
+  tabs.push({ id: "tasks" as Tab, label: t("Topshiriqlar", "Задания"), count: (data?.tasks || []).filter((tk) => tk.status !== "done").length });
+  if (isSuper) tabs.push({ id: "admins" as Tab, label: t("Adminlar", "Администраторы"), count: data?.admins?.length ?? 0 });
 
   const btnGhost = "px-3 py-1.5 rounded-lg text-xs tracking-wide border border-[#060920]/15 text-[#060920]/70 hover:bg-[#060920]/5 transition-colors";
   const btnDanger = "px-3 py-1.5 rounded-lg text-xs tracking-wide border border-[#060920]/30 text-[#060920] hover:bg-[#060920]/10 transition-colors";
@@ -688,17 +696,17 @@ export function AdminPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-10 flex-wrap gap-4">
           <div>
-            <p style={{ fontFamily: "var(--font-body)" }} className="opacity-60 tracking-[0.2em] uppercase text-sm text-[#060920] mb-1"><BarpoWord /> · BOSHQARUV</p>
-            <h1 style={{ fontFamily: "var(--font-display)", fontSize: "2rem", color: "#060920" }}>Boshqaruv Paneli</h1>
+            <p style={{ fontFamily: "var(--font-body)" }} className="opacity-60 tracking-[0.2em] uppercase text-sm text-[#060920] mb-1"><BarpoWord /> · {t("BOSHQARUV", "УПРАВЛЕНИЕ")}</p>
+            <h1 style={{ fontFamily: "var(--font-display)", fontSize: "2rem", color: "#060920" }}>{t("Boshqaruv Paneli", "Панель управления")}</h1>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right">
-              <div style={{ fontFamily: "var(--font-body)" }} className="text-xs tracking-[0.15em] uppercase text-[#060920]/40">Kirgan admin</div>
+              <div style={{ fontFamily: "var(--font-body)" }} className="text-xs tracking-[0.15em] uppercase text-[#060920]/40">{t("Kirgan admin", "Вошедший администратор")}</div>
               <div style={{ fontFamily: "var(--font-display)" }} className="text-[#060920]">{creds?.name}</div>
             </div>
             <button onClick={handleLogout} style={{ fontFamily: "var(--font-body)" }}
               className="px-5 py-2.5 border border-[#060920]/20 text-[#060920]/70 hover:text-[#060920] rounded-xl transition-colors text-sm tracking-wide">
-              Chiqish
+              {t("Chiqish", "Выход")}
             </button>
           </div>
         </div>
@@ -716,7 +724,7 @@ export function AdminPage() {
           ))}
         </div>
 
-        {loading && <div className="text-center py-20"><div style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/50 tracking-wide animate-pulse">Ma'lumotlar yuklanmoqda...</div></div>}
+        {loading && <div className="text-center py-20"><div style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/50 tracking-wide animate-pulse">{t("Ma'lumotlar yuklanmoqda...", "Данные загружаются...")}</div></div>}
         {fetchError && <div className="text-center py-20"><p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]">{fetchError}</p></div>}
 
         {!loading && !fetchError && data && (
@@ -726,13 +734,13 @@ export function AdminPage() {
             {activeTab === "projects" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-2 flex-wrap gap-3">
-                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">Loyihalar ({data.projects.length})</h2>
+                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("Loyihalar", "Проекты")} ({data.projects.length})</h2>
                   <button onClick={() => { setEditingProject(null); setShowProjectModal(true); }} style={{ fontFamily: "var(--font-body)" }}
                     className="px-5 py-2.5 bg-[#060920] text-white rounded-xl text-sm tracking-wide hover:shadow-lg transition-all">
-                    + Yangi loyiha
+                    + {t("Yangi loyiha", "Новый проект")}
                   </button>
                 </div>
-                {data.projects.length === 0 ? <EmptyState text="Hozircha loyiha qo'shilmagan. '+ Yangi loyiha' tugmasini bosing." /> : data.projects.map((p, i) => (
+                {data.projects.length === 0 ? <EmptyState text={t("Hozircha loyiha qo'shilmagan. '+ Yangi loyiha' tugmasini bosing.", "Пока проекты не добавлены. Нажмите кнопку «+ Новый проект».")} /> : data.projects.map((p, i) => (
                   <motion.div key={p.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
                     className={`p-5 bg-white/60 border rounded-2xl flex gap-5 items-start ${p.active ? "border-[#060920]/10" : "border-[#060920]/10 opacity-60"}`}>
                     <div className="w-24 h-24 rounded-xl bg-[#060920]/5 overflow-hidden flex-shrink-0">
@@ -745,7 +753,7 @@ export function AdminPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <div style={{ fontFamily: "var(--font-display)" }} className="text-lg text-[#060920]">{p.name}</div>
-                        {!p.active && <span style={{ fontFamily: "var(--font-body)" }} className="px-2.5 py-0.5 text-xs tracking-wide uppercase bg-[#060920]/10 text-[#060920] rounded-full">Yashirin</span>}
+                        {!p.active && <span style={{ fontFamily: "var(--font-body)" }} className="px-2.5 py-0.5 text-xs tracking-wide uppercase bg-[#060920]/10 text-[#060920] rounded-full">{t("Yashirin", "Скрыт")}</span>}
                       </div>
                       <div style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]/55 mt-1 space-x-2">
                         {p.location && <span>{p.location}</span>}
@@ -754,9 +762,9 @@ export function AdminPage() {
                       </div>
                       {p.description && <p style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]/60 mt-2 line-clamp-2">{p.description}</p>}
                       <div className="flex gap-2 mt-3 flex-wrap" style={{ fontFamily: "var(--font-body)" }}>
-                        <button onClick={() => { setEditingProject(p); setShowProjectModal(true); }} className={btnGhost}>Tahrirlash</button>
-                        <button onClick={() => toggleProject(p.id)} className={btnGhost}>{p.active ? "Yashirish" : "Ko'rsatish"}</button>
-                        <button onClick={() => deleteProject(p.id)} className={btnDanger}>O'chirish</button>
+                        <button onClick={() => { setEditingProject(p); setShowProjectModal(true); }} className={btnGhost}>{t("Tahrirlash", "Редактировать")}</button>
+                        <button onClick={() => toggleProject(p.id)} className={btnGhost}>{p.active ? t("Yashirish", "Скрыть") : t("Ko'rsatish", "Показать")}</button>
+                        <button onClick={() => deleteProject(p.id)} className={btnDanger}>{t("O'chirish", "Удалить")}</button>
                       </div>
                     </div>
                   </motion.div>
@@ -769,35 +777,35 @@ export function AdminPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-2 flex-wrap gap-3">
                   <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">
-                    Topshiriqlar ({(data.tasks || []).length})
+                    {t("Topshiriqlar", "Задания")} ({(data.tasks || []).length})
                   </h2>
                   {isSuper && (
                     <button onClick={() => setShowTaskModal(true)} style={{ fontFamily: "var(--font-body)" }}
                       className="px-5 py-2.5 bg-[#060920] text-white rounded-xl text-sm tracking-wide hover:shadow-lg transition-all">
-                      + Yangi topshiriq
+                      + {t("Yangi topshiriq", "Новое задание")}
                     </button>
                   )}
                 </div>
                 {(data.tasks || []).length === 0 ? (
-                  <EmptyState text={isSuper ? "Hozircha topshiriq yo'q. '+ Yangi topshiriq' tugmasini bosing." : "Sizga hozircha topshiriq berilmagan."} />
-                ) : (data.tasks || []).map((t, i) => (
-                  <motion.div key={t.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
-                    className={`p-5 bg-white/60 border rounded-2xl flex gap-4 items-start ${t.status === "done" ? "border-[#060920]/10 opacity-60" : "border-[#060920]/15"}`}>
-                    <button onClick={() => toggleTaskDone(t)}
-                      className={`mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${t.status === "done" ? "bg-[#060920] border-[#060920] text-white" : "border-[#060920]/30 hover:border-[#060920]"}`}>
-                      {t.status === "done" && <span className="text-xs">✓</span>}
+                  <EmptyState text={isSuper ? t("Hozircha topshiriq yo'q. '+ Yangi topshiriq' tugmasini bosing.", "Пока заданий нет. Нажмите кнопку «+ Новое задание».") : t("Sizga hozircha topshiriq berilmagan.", "Вам пока не назначено заданий.")} />
+                ) : (data.tasks || []).map((tk, i) => (
+                  <motion.div key={tk.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
+                    className={`p-5 bg-white/60 border rounded-2xl flex gap-4 items-start ${tk.status === "done" ? "border-[#060920]/10 opacity-60" : "border-[#060920]/15"}`}>
+                    <button onClick={() => toggleTaskDone(tk)}
+                      className={`mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors ${tk.status === "done" ? "bg-[#060920] border-[#060920] text-white" : "border-[#060920]/30 hover:border-[#060920]"}`}>
+                      {tk.status === "done" && <span className="text-xs">✓</span>}
                     </button>
                     <div className="flex-1 min-w-0">
-                      <div style={{ fontFamily: "var(--font-display)" }} className={`text-lg text-[#060920] ${t.status === "done" ? "line-through" : ""}`}>{t.title}</div>
-                      {t.desc && <p style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]/60 mt-1 whitespace-pre-line">{t.desc}</p>}
+                      <div style={{ fontFamily: "var(--font-display)" }} className={`text-lg text-[#060920] ${tk.status === "done" ? "line-through" : ""}`}>{tk.title}</div>
+                      {tk.desc && <p style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]/60 mt-1 whitespace-pre-line">{tk.desc}</p>}
                       <div style={{ fontFamily: "var(--font-body)" }} className="text-xs text-[#060920]/40 mt-2 space-x-2">
-                        {isSuper && <span>Kimga: <b>{t.assignee || "—"}</b></span>}
-                        <span>· Berilgan: {formatDate(t.createdAt)}</span>
-                        {t.doneAt && <span>· Bajarilgan: {formatDate(t.doneAt)}</span>}
+                        {isSuper && <span>{t("Kimga:", "Кому:")} <b>{tk.assignee || "—"}</b></span>}
+                        <span>· {t("Berilgan:", "Выдано:")} {formatDate(tk.createdAt)}</span>
+                        {tk.doneAt && <span>· {t("Bajarilgan:", "Выполнено:")} {formatDate(tk.doneAt)}</span>}
                       </div>
                       <div className="flex gap-2 mt-3 flex-wrap" style={{ fontFamily: "var(--font-body)" }}>
-                        <button onClick={() => toggleTaskDone(t)} className={btnGhost}>{t.status === "done" ? "Qayta ochish" : "Bajarildi"}</button>
-                        {isSuper && <button onClick={() => deleteTask(t.id)} className={btnDanger}>O'chirish</button>}
+                        <button onClick={() => toggleTaskDone(tk)} className={btnGhost}>{tk.status === "done" ? t("Qayta ochish", "Открыть заново") : t("Bajarildi", "Выполнено")}</button>
+                        {isSuper && <button onClick={() => deleteTask(tk.id)} className={btnDanger}>{t("O'chirish", "Удалить")}</button>}
                       </div>
                     </div>
                   </motion.div>
@@ -810,11 +818,11 @@ export function AdminPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-2 flex-wrap gap-3">
                   <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">
-                    Adminlar ({data.admins?.length ?? 0})
+                    {t("Adminlar", "Администраторы")} ({data.admins?.length ?? 0})
                   </h2>
                   <button onClick={() => { setEditingAdmin(null); setShowAdminModal(true); }} style={{ fontFamily: "var(--font-body)" }}
                     className="px-5 py-2.5 bg-[#060920] text-white rounded-xl text-sm tracking-wide hover:shadow-lg transition-all">
-                    + Yangi admin
+                    + {t("Yangi admin", "Новый администратор")}
                   </button>
                 </div>
                 {(data.admins || []).map((a, i) => (
@@ -824,22 +832,22 @@ export function AdminPage() {
                       <div style={{ fontFamily: "var(--font-display)" }} className="text-lg text-[#060920]">{a.name}</div>
                       <span style={{ fontFamily: "var(--font-body)" }}
                         className={`px-2.5 py-0.5 text-xs tracking-wide uppercase rounded-full ${a.role === "superadmin" ? "bg-[#060920] text-white" : "bg-[#060920]/10 text-[#060920]"}`}>
-                        {a.role === "superadmin" ? "Bosh admin" : "Admin"}
+                        {a.role === "superadmin" ? t("Bosh admin", "Главный администратор") : t("Admin", "Администратор")}
                       </span>
-                      <span style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]/50">login: <b>{a.username}</b></span>
+                      <span style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]/50">{t("login:", "логин:")} <b>{a.username}</b></span>
                     </div>
                     {a.role !== "superadmin" && (
                       <div style={{ fontFamily: "var(--font-body)" }} className="text-xs text-[#060920]/50 mt-2 flex flex-wrap gap-1.5">
                         {PERM_LABELS.map((p) => (
                           <span key={p.key} className={`px-2 py-0.5 rounded-full border ${a.perms?.[p.key] === false ? "border-[#060920]/10 text-[#060920]/30 line-through" : "border-[#060920]/20 text-[#060920]/60"}`}>
-                            {p.label}
+                            {t(p.label, p.ru)}
                           </span>
                         ))}
                       </div>
                     )}
                     <div className="flex gap-2 mt-3 flex-wrap" style={{ fontFamily: "var(--font-body)" }}>
-                      <button onClick={() => { setEditingAdmin(a); setShowAdminModal(true); }} className={btnGhost}>Tahrirlash</button>
-                      {a.username !== me?.username && <button onClick={() => deleteAdminUser(a.username)} className={btnDanger}>O'chirish</button>}
+                      <button onClick={() => { setEditingAdmin(a); setShowAdminModal(true); }} className={btnGhost}>{t("Tahrirlash", "Редактировать")}</button>
+                      {a.username !== me?.username && <button onClick={() => deleteAdminUser(a.username)} className={btnDanger}>{t("O'chirish", "Удалить")}</button>}
                     </div>
                   </motion.div>
                 ))}
@@ -850,33 +858,33 @@ export function AdminPage() {
             {activeTab === "ornaments" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-2 flex-wrap gap-3">
-                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">Naqshlar — Tarixiy aloqa ({data.ornaments?.length ?? 0})</h2>
+                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("Naqshlar — Tarixiy aloqa", "Орнаменты — Историческая связь")} ({data.ornaments?.length ?? 0})</h2>
                   <button onClick={() => { setEditingOrnament(null); setShowOrnamentModal(true); }} style={{ fontFamily: "var(--font-body)" }}
                     className="px-5 py-2.5 bg-[#060920] text-white rounded-xl text-sm tracking-wide hover:shadow-lg transition-all">
-                    + Yangi naqsh
+                    + {t("Yangi naqsh", "Новый орнамент")}
                   </button>
                 </div>
-                {(data.ornaments?.length ?? 0) === 0 ? <EmptyState text="Hozircha naqsh qo'shilmagan. '+ Yangi naqsh' tugmasini bosing." /> : data.ornaments.map((o, i) => (
+                {(data.ornaments?.length ?? 0) === 0 ? <EmptyState text={t("Hozircha naqsh qo'shilmagan. '+ Yangi naqsh' tugmasini bosing.", "Пока орнаменты не добавлены. Нажмите кнопку «+ Новый орнамент».")} /> : data.ornaments.map((o, i) => (
                   <motion.div key={o.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
                     className={`p-5 bg-white/60 border rounded-2xl flex gap-5 items-start ${o.active ? "border-[#060920]/10" : "border-[#060920]/10 opacity-60"}`}>
                     <div className="w-24 h-24 rounded-xl bg-[#060920]/5 overflow-hidden flex-shrink-0">
                       {o.hasImage ? (
                         <img src={`/api/ornament-image?id=${o.id}`} alt={o.old} className="w-full h-full object-cover" />
                       ) : (
-                        <div style={{ fontFamily: "var(--font-display)" }} className="w-full h-full flex items-center justify-center text-[#060920]/20 text-xs">naqsh</div>
+                        <div style={{ fontFamily: "var(--font-display)" }} className="w-full h-full flex items-center justify-center text-[#060920]/20 text-xs">{t("naqsh", "орнамент")}</div>
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <div style={{ fontFamily: "var(--font-display)" }} className="text-lg text-[#060920]">{o.old}</div>
-                        {!o.active && <span style={{ fontFamily: "var(--font-body)" }} className="px-2.5 py-0.5 text-xs tracking-wide uppercase bg-[#060920]/10 text-[#060920] rounded-full">Yashirin</span>}
+                        {!o.active && <span style={{ fontFamily: "var(--font-body)" }} className="px-2.5 py-0.5 text-xs tracking-wide uppercase bg-[#060920]/10 text-[#060920] rounded-full">{t("Yashirin", "Скрыт")}</span>}
                       </div>
                       {o.desc && <p style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]/60 mt-1">{o.desc}</p>}
                       {o.history && <p style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]/50 mt-1 line-clamp-2">{o.history}</p>}
                       <div className="flex gap-2 mt-3 flex-wrap" style={{ fontFamily: "var(--font-body)" }}>
-                        <button onClick={() => { setEditingOrnament(o); setShowOrnamentModal(true); }} className={btnGhost}>Tahrirlash</button>
-                        <button onClick={() => toggleOrnament(o.id)} className={btnGhost}>{o.active ? "Yashirish" : "Ko'rsatish"}</button>
-                        <button onClick={() => deleteOrnament(o.id)} className={btnDanger}>O'chirish</button>
+                        <button onClick={() => { setEditingOrnament(o); setShowOrnamentModal(true); }} className={btnGhost}>{t("Tahrirlash", "Редактировать")}</button>
+                        <button onClick={() => toggleOrnament(o.id)} className={btnGhost}>{o.active ? t("Yashirish", "Скрыть") : t("Ko'rsatish", "Показать")}</button>
+                        <button onClick={() => deleteOrnament(o.id)} className={btnDanger}>{t("O'chirish", "Удалить")}</button>
                       </div>
                     </div>
                   </motion.div>
@@ -888,27 +896,27 @@ export function AdminPage() {
             {activeTab === "standards" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-2 flex-wrap gap-3">
-                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">Standart gridlari ({data.standards?.length ?? 0})</h2>
+                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("Standart gridlari", "Сетки стандартов")} ({data.standards?.length ?? 0})</h2>
                   <button onClick={() => { setEditingStandard(null); setShowStandardModal(true); }} style={{ fontFamily: "var(--font-body)" }}
                     className="px-5 py-2.5 bg-[#060920] text-white rounded-xl text-sm tracking-wide hover:shadow-lg transition-all">
-                    + Yangi standart
+                    + {t("Yangi standart", "Новый стандарт")}
                   </button>
                 </div>
-                {(data.standards?.length ?? 0) === 0 ? <EmptyState text="Hozircha standart qo'shilmagan." /> : data.standards.map((s, i) => (
+                {(data.standards?.length ?? 0) === 0 ? <EmptyState text={t("Hozircha standart qo'shilmagan.", "Пока стандарты не добавлены.")} /> : data.standards.map((s, i) => (
                   <motion.div key={s.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
                     className={`p-6 bg-white/60 border rounded-2xl ${s.active ? "border-[#060920]/10" : "border-[#060920]/10 opacity-60"}`}>
                     <div className="flex items-start justify-between flex-wrap gap-3">
                       <div className="flex-1 min-w-[200px]">
                         <div className="flex items-center gap-2 flex-wrap">
                           <div style={{ fontFamily: "var(--font-display)" }} className="text-lg text-[#060920]">{s.title}</div>
-                          {!s.active && <span style={{ fontFamily: "var(--font-body)" }} className="px-2.5 py-0.5 text-xs tracking-wide uppercase bg-[#060920]/10 text-[#060920] rounded-full">Yashirin</span>}
+                          {!s.active && <span style={{ fontFamily: "var(--font-body)" }} className="px-2.5 py-0.5 text-xs tracking-wide uppercase bg-[#060920]/10 text-[#060920] rounded-full">{t("Yashirin", "Скрыт")}</span>}
                         </div>
                         <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/65 text-sm mt-2 leading-relaxed">{s.desc}</p>
                       </div>
                       <div className="flex gap-2 flex-wrap" style={{ fontFamily: "var(--font-body)" }}>
-                        <button onClick={() => { setEditingStandard(s); setShowStandardModal(true); }} className={btnGhost}>Tahrirlash</button>
-                        <button onClick={() => toggleStandard(s.id)} className={btnGhost}>{s.active ? "Yashirish" : "Ko'rsatish"}</button>
-                        <button onClick={() => deleteStandard(s.id)} className={btnDanger}>O'chirish</button>
+                        <button onClick={() => { setEditingStandard(s); setShowStandardModal(true); }} className={btnGhost}>{t("Tahrirlash", "Редактировать")}</button>
+                        <button onClick={() => toggleStandard(s.id)} className={btnGhost}>{s.active ? t("Yashirish", "Скрыть") : t("Ko'rsatish", "Показать")}</button>
+                        <button onClick={() => deleteStandard(s.id)} className={btnDanger}>{t("O'chirish", "Удалить")}</button>
                       </div>
                     </div>
                   </motion.div>
@@ -920,28 +928,28 @@ export function AdminPage() {
             {activeTab === "investors" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-2 flex-wrap gap-3">
-                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">Investorlar uchun konsepsiyalar ({data.investors?.length ?? 0})</h2>
+                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("Investorlar uchun konsepsiyalar", "Концепции для инвесторов")} ({data.investors?.length ?? 0})</h2>
                   <button onClick={() => { setEditingInvestor(null); setShowInvestorModal(true); }} style={{ fontFamily: "var(--font-body)" }}
                     className="px-5 py-2.5 bg-[#060920] text-white rounded-xl text-sm tracking-wide hover:shadow-lg transition-all">
-                    + Yangi bo'lim
+                    + {t("Yangi bo'lim", "Новый раздел")}
                   </button>
                 </div>
-                {(data.investors?.length ?? 0) === 0 ? <EmptyState text="Hozircha konsepsiya qo'shilmagan." /> : data.investors.map((s, i) => (
+                {(data.investors?.length ?? 0) === 0 ? <EmptyState text={t("Hozircha konsepsiya qo'shilmagan.", "Пока концепции не добавлены.")} /> : data.investors.map((s, i) => (
                   <motion.div key={s.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
                     className={`p-6 bg-white/60 border rounded-2xl ${s.active ? "border-[#060920]/10" : "border-[#060920]/10 opacity-60"}`}>
                     <div className="flex items-start justify-between flex-wrap gap-3">
                       <div className="flex-1 min-w-[200px]">
                         <div className="flex items-center gap-2 flex-wrap">
                           <div style={{ fontFamily: "var(--font-display)" }} className="text-lg text-[#060920]">{s.title}</div>
-                          {!s.active && <span style={{ fontFamily: "var(--font-body)" }} className="px-2.5 py-0.5 text-xs tracking-wide uppercase bg-[#060920]/10 text-[#060920] rounded-full">Yashirin</span>}
+                          {!s.active && <span style={{ fontFamily: "var(--font-body)" }} className="px-2.5 py-0.5 text-xs tracking-wide uppercase bg-[#060920]/10 text-[#060920] rounded-full">{t("Yashirin", "Скрыт")}</span>}
                         </div>
                         <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/65 text-sm mt-2 leading-relaxed line-clamp-2">{s.text}</p>
                         {s.key && <p style={{ fontFamily: "var(--font-display)" }} className="text-[#060920]/80 text-sm mt-2 italic">{s.key}</p>}
                       </div>
                       <div className="flex gap-2 flex-wrap" style={{ fontFamily: "var(--font-body)" }}>
-                        <button onClick={() => { setEditingInvestor(s); setShowInvestorModal(true); }} className={btnGhost}>Tahrirlash</button>
-                        <button onClick={() => toggleInvestor(s.id)} className={btnGhost}>{s.active ? "Yashirish" : "Ko'rsatish"}</button>
-                        <button onClick={() => deleteInvestor(s.id)} className={btnDanger}>O'chirish</button>
+                        <button onClick={() => { setEditingInvestor(s); setShowInvestorModal(true); }} className={btnGhost}>{t("Tahrirlash", "Редактировать")}</button>
+                        <button onClick={() => toggleInvestor(s.id)} className={btnGhost}>{s.active ? t("Yashirish", "Скрыть") : t("Ko'rsatish", "Показать")}</button>
+                        <button onClick={() => deleteInvestor(s.id)} className={btnDanger}>{t("O'chirish", "Удалить")}</button>
                       </div>
                     </div>
                   </motion.div>
@@ -954,9 +962,9 @@ export function AdminPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-2 flex-wrap gap-3">
                   <div>
-                    <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">Bilim markazi — maqolalar ({data.blog?.length ?? 0})</h2>
+                    <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("Bilim markazi — maqolalar", "Центр знаний — статьи")} ({data.blog?.length ?? 0})</h2>
                     <p style={{ fontFamily: "var(--font-body)" }} className="text-xs text-[#060920]/50 mt-1">
-                      Maqolalar avval <b>qoralama</b> sifatida saqlanadi. "Chop etish" bosilsa — saytda ko'rinadi.
+                      {t("Maqolalar avval ", "Статьи сначала сохраняются как ")}<b>{t("qoralama", "черновик")}</b>{t(" sifatida saqlanadi. \"Chop etish\" bosilsa — saytda ko'rinadi.", ". При нажатии «Опубликовать» — отображаются на сайте.")}
                     </p>
                   </div>
                   <div className="flex items-center gap-2 flex-wrap">
@@ -966,16 +974,16 @@ export function AdminPage() {
                       style={{ fontFamily: "var(--font-body)" }}
                       className="px-4 py-2.5 bg-white border border-[#060920]/15 text-[#060920]/80 rounded-xl text-sm tracking-wide hover:border-[#060920]/35 focus:outline-none focus:border-[#060920]/40 transition-colors cursor-pointer"
                     >
-                      <option value="new">Avval yangi yozilgani</option>
-                      <option value="old">Avval eski yozilgani</option>
+                      <option value="new">{t("Avval yangi yozilgani", "Сначала новые")}</option>
+                      <option value="old">{t("Avval eski yozilgani", "Сначала старые")}</option>
                     </select>
                     <button onClick={() => { setEditingBlog(null); setShowBlogModal(true); }} style={{ fontFamily: "var(--font-body)" }}
                       className="px-5 py-2.5 bg-[#060920] text-white rounded-xl text-sm tracking-wide hover:shadow-lg transition-all">
-                      + Yangi maqola
+                      + {t("Yangi maqola", "Новая статья")}
                     </button>
                   </div>
                 </div>
-                {(data.blog?.length ?? 0) === 0 ? <EmptyState text="Hozircha maqola yo'q. '+ Yangi maqola' tugmasini bosing." /> : (data.blog || [])
+                {(data.blog?.length ?? 0) === 0 ? <EmptyState text={t("Hozircha maqola yo'q. '+ Yangi maqola' tugmasini bosing.", "Пока статей нет. Нажмите кнопку «+ Новая статья».")} /> : (data.blog || [])
                   .map((a, idx) => ({ a, idx }))
                   .sort((x, y) => {
                     // Yangi maqola doim massiv boshiga qo'shiladi (idx 0 = eng yangi).
@@ -995,18 +1003,18 @@ export function AdminPage() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
                             <span style={{ fontFamily: "var(--font-body)" }} className={`px-2.5 py-0.5 text-xs tracking-wide uppercase rounded-full ${published ? "bg-[#060920] text-white" : "bg-[#060920]/10 text-[#060920]/60"}`}>
-                              {published ? "Chop etilgan" : "Qoralama"}
+                              {published ? t("Chop etilgan", "Опубликовано") : t("Qoralama", "Черновик")}
                             </span>
                             {a.rubric && <span style={{ fontFamily: "var(--font-body)" }} className="text-xs text-[#060920]/45 uppercase tracking-wide">{a.rubric}</span>}
                           </div>
                           <div style={{ fontFamily: "var(--font-display)" }} className="text-base text-[#060920] mt-1.5">{a.title}</div>
                           {a.content && <p style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]/55 mt-1 line-clamp-1">{a.content}</p>}
                           <div className="flex gap-2 mt-3 flex-wrap" style={{ fontFamily: "var(--font-body)" }}>
-                            <button onClick={() => { setEditingBlog(a); setShowBlogModal(true); }} className={btnGhost}>Tahrirlash</button>
+                            <button onClick={() => { setEditingBlog(a); setShowBlogModal(true); }} className={btnGhost}>{t("Tahrirlash", "Редактировать")}</button>
                             {published
-                              ? <button onClick={() => unpublishBlog(a.id)} className={btnGhost}>Qoralamaga qaytarish</button>
-                              : <button onClick={() => publishBlog(a.id)} className="px-3 py-1.5 rounded-lg text-xs tracking-wide bg-[#060920] text-white hover:shadow-lg transition-all">Chop etish</button>}
-                            <button onClick={() => deleteBlog(a.id)} className={btnDanger}>O'chirish</button>
+                              ? <button onClick={() => unpublishBlog(a.id)} className={btnGhost}>{t("Qoralamaga qaytarish", "Вернуть в черновик")}</button>
+                              : <button onClick={() => publishBlog(a.id)} className="px-3 py-1.5 rounded-lg text-xs tracking-wide bg-[#060920] text-white hover:shadow-lg transition-all">{t("Chop etish", "Опубликовать")}</button>}
+                            <button onClick={() => deleteBlog(a.id)} className={btnDanger}>{t("O'chirish", "Удалить")}</button>
                           </div>
                         </div>
                       </motion.div>
@@ -1019,13 +1027,13 @@ export function AdminPage() {
             {activeTab === "offers" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-2 flex-wrap gap-3">
-                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">Cheklangan takliflar ({data.offers.length})</h2>
+                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("Cheklangan takliflar", "Ограниченные предложения")} ({data.offers.length})</h2>
                   <button onClick={() => { setEditingOffer(null); setShowOfferModal(true); }} style={{ fontFamily: "var(--font-body)" }}
                     className="px-5 py-2.5 bg-[#060920] text-white rounded-xl text-sm tracking-wide hover:shadow-lg transition-all">
-                    + Yangi taklif
+                    + {t("Yangi taklif", "Новое предложение")}
                   </button>
                 </div>
-                {data.offers.length === 0 ? <EmptyState text="Hozircha taklif qo'shilmagan. '+ Yangi taklif' tugmasini bosing." /> : data.offers.map((o, i) => (
+                {data.offers.length === 0 ? <EmptyState text={t("Hozircha taklif qo'shilmagan. '+ Yangi taklif' tugmasini bosing.", "Пока предложения не добавлены. Нажмите кнопку «+ Новое предложение».")} /> : data.offers.map((o, i) => (
                   <motion.div key={o.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
                     className={`p-6 bg-white/60 border rounded-2xl space-y-3 ${o.active ? "border-[#060920]/10" : "border-[#060920]/10 opacity-60"}`}>
                     <div className="flex items-start justify-between flex-wrap gap-3">
@@ -1033,14 +1041,14 @@ export function AdminPage() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <div style={{ fontFamily: "var(--font-display)" }} className="text-lg text-[#060920]">{o.title}</div>
                           {o.tag && <span style={{ fontFamily: "var(--font-body)" }} className="px-2.5 py-0.5 text-xs tracking-wide uppercase bg-[#060920]/8 text-[#060920]/60 rounded-full">{o.tag}</span>}
-                          {!o.active && <span style={{ fontFamily: "var(--font-body)" }} className="px-2.5 py-0.5 text-xs tracking-wide uppercase bg-[#060920]/10 text-[#060920] rounded-full">Yashirin</span>}
+                          {!o.active && <span style={{ fontFamily: "var(--font-body)" }} className="px-2.5 py-0.5 text-xs tracking-wide uppercase bg-[#060920]/10 text-[#060920] rounded-full">{t("Yashirin", "Скрыт")}</span>}
                         </div>
                         <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/65 text-sm mt-2 leading-relaxed">{o.description}</p>
                       </div>
                       <div className="flex gap-2 flex-wrap" style={{ fontFamily: "var(--font-body)" }}>
-                        <button onClick={() => { setEditingOffer(o); setShowOfferModal(true); }} className={btnGhost}>Tahrirlash</button>
-                        <button onClick={() => toggleOffer(o.id)} className={btnGhost}>{o.active ? "Yashirish" : "Ko'rsatish"}</button>
-                        <button onClick={() => deleteOffer(o.id)} className={btnDanger}>O'chirish</button>
+                        <button onClick={() => { setEditingOffer(o); setShowOfferModal(true); }} className={btnGhost}>{t("Tahrirlash", "Редактировать")}</button>
+                        <button onClick={() => toggleOffer(o.id)} className={btnGhost}>{o.active ? t("Yashirish", "Скрыть") : t("Ko'rsatish", "Показать")}</button>
+                        <button onClick={() => deleteOffer(o.id)} className={btnDanger}>{t("O'chirish", "Удалить")}</button>
                       </div>
                     </div>
                   </motion.div>
@@ -1052,18 +1060,20 @@ export function AdminPage() {
             {activeTab === "sections" && (
               <div className="space-y-10">
                 <p style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]/55 leading-relaxed">
-                  Madaniyat va Xizmatlar sahifalaridagi har bir blok uchun rasm yuklang. Rasm yuklasangiz — bo'limdagi
-                  bo'sh quti o'rniga o'sha rasm chiqadi. Rasmni o'chirsangiz, avvalgi ko'rinish (gradient/raqam) qaytadi.
+                  {t(
+                    "Madaniyat va Xizmatlar sahifalaridagi har bir blok uchun rasm yuklang. Rasm yuklasangiz — bo'limdagi bo'sh quti o'rniga o'sha rasm chiqadi. Rasmni o'chirsangiz, avvalgi ko'rinish (gradient/raqam) qaytadi.",
+                    "Загрузите изображение для каждого блока на страницах «Культура» и «Услуги». При загрузке изображения вместо пустого блока появится оно. При удалении — вернётся прежний вид (градиент/номер).",
+                  )}
                 </p>
                 {SECTION_IMAGE_GROUPS.map((grp) => (
                   <div key={grp.group} className="space-y-4">
-                    <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{grp.group}</h2>
+                    <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t(grp.group, grp.groupRu)}</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {grp.items.map((it) => (
                         <SectionImageCard
                           key={it.key}
                           itemKey={it.key}
-                          label={it.label}
+                          label={t(it.label, it.ru)}
                           version={sectionImages[it.key]}
                           onUpload={uploadSectionImage}
                           onDelete={deleteSectionImage}
@@ -1079,29 +1089,31 @@ export function AdminPage() {
             {activeTab === "stats" && (
               <div className="space-y-6 max-w-3xl">
                 <p style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]/55 leading-relaxed">
-                  Bosh sahifaning yuqorisidagi 3 ta ko'rsatkichni shu yerda o'zgartiring. "Qiymat" — katta raqam
-                  (masalan: 10+, 50+, 100%), "Izoh" — uning ostidagi matn.
+                  {t(
+                    "Bosh sahifaning yuqorisidagi 3 ta ko'rsatkichni shu yerda o'zgartiring. \"Qiymat\" — katta raqam (masalan: 10+, 50+, 100%), \"Izoh\" — uning ostidagi matn.",
+                    "Измените здесь 3 показателя в верхней части главной страницы. «Значение» — крупное число (например: 10+, 50+, 100%), «Подпись» — текст под ним.",
+                  )}
                 </p>
                 {stats.map((s, i) => (
                   <div key={i} className="p-5 bg-white/60 border border-[#060920]/10 rounded-2xl grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                     <div>
-                      <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">Qiymat</label>
+                      <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Qiymat", "Значение")}</label>
                       <input value={s.value} onChange={(e) => updateStat(i, "value", e.target.value)}
-                        placeholder="masalan: 10+" style={{ fontFamily: "var(--font-display)" }} className={inputClass} />
+                        placeholder={t("masalan: 10+", "например: 10+")} style={{ fontFamily: "var(--font-display)" }} className={inputClass} />
                     </div>
                     <div className="md:col-span-2">
-                      <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">Izoh</label>
+                      <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Izoh", "Подпись")}</label>
                       <input value={s.label} onChange={(e) => updateStat(i, "label", e.target.value)}
-                        placeholder="masalan: Yillik tajriba" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                        placeholder={t("masalan: Yillik tajriba", "например: Лет опыта")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
                     </div>
                   </div>
                 ))}
                 <div className="flex items-center gap-4">
                   <button onClick={saveStats} disabled={savingStats} style={{ fontFamily: "var(--font-body)" }}
                     className="px-8 py-3.5 bg-[#060920] text-white tracking-[0.15em] uppercase text-sm font-medium rounded-2xl hover:shadow-xl transition-all disabled:opacity-70">
-                    {savingStats ? "Saqlanmoqda..." : "Saqlash"}
+                    {savingStats ? t("Saqlanmoqda...", "Сохраняется...") : t("Saqlash", "Сохранить")}
                   </button>
-                  {statsSaved && <span style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]">Saqlandi ✓</span>}
+                  {statsSaved && <span style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]">{t("Saqlandi ✓", "Сохранено ✓")}</span>}
                 </div>
               </div>
             )}
@@ -1110,27 +1122,27 @@ export function AdminPage() {
             {activeTab === "suggestions" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">Kelgan takliflar ({data.suggestions.length})</h2>
+                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("Kelgan takliflar", "Поступившие предложения")} ({data.suggestions.length})</h2>
                   <button onClick={() => exportCsv("suggestions")} className={btnGhost}>⤓ Excel / Sheets (CSV)</button>
                 </div>
-                {data.suggestions.length === 0 ? <EmptyState text="Hozircha kelgan taklif yo'q" /> : data.suggestions.map((t, i) => (
-                  <motion.div key={t.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
+                {data.suggestions.length === 0 ? <EmptyState text={t("Hozircha kelgan taklif yo'q", "Пока нет поступивших предложений")} /> : data.suggestions.map((sg, i) => (
+                  <motion.div key={sg.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
                     className="p-6 bg-white/60 border border-[#060920]/10 rounded-2xl space-y-3">
                     <div className="flex items-start justify-between flex-wrap gap-3">
                       <div>
-                        <div style={{ fontFamily: "var(--font-display)" }} className="text-lg text-[#060920]">{t.subject}</div>
-                        {t.category && <div style={{ fontFamily: "var(--font-body)" }} className="text-xs text-[#060920]/50 mt-0.5 tracking-wide uppercase">{t.category}</div>}
+                        <div style={{ fontFamily: "var(--font-display)" }} className="text-lg text-[#060920]">{sg.subject}</div>
+                        {sg.category && <div style={{ fontFamily: "var(--font-body)" }} className="text-xs text-[#060920]/50 mt-0.5 tracking-wide uppercase">{sg.category}</div>}
                       </div>
                       <div className="flex items-center gap-3" style={{ fontFamily: "var(--font-body)" }}>
-                        <span className="text-xs text-[#060920]/40">{formatDate(t.submittedAt)}</span>
-                        <button onClick={() => deleteItem("suggestion", t.id)} className={btnDanger}>O'chirish</button>
+                        <span className="text-xs text-[#060920]/40">{formatDate(sg.submittedAt)}</span>
+                        <button onClick={() => deleteItem("suggestion", sg.id)} className={btnDanger}>{t("O'chirish", "Удалить")}</button>
                       </div>
                     </div>
-                    <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/70 text-sm leading-relaxed">{t.message}</p>
-                    {(t.fullName || t.phone) && (
+                    <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/70 text-sm leading-relaxed">{sg.message}</p>
+                    {(sg.fullName || sg.phone) && (
                       <div className="flex flex-wrap gap-4 text-sm pt-2 border-t border-[#060920]/5" style={{ fontFamily: "var(--font-body)" }}>
-                        {t.fullName && <span className="text-[#060920]/50">{t.fullName}</span>}
-                        {t.phone && <span className="text-[#060920]/50">Tel: {t.phone}</span>}
+                        {sg.fullName && <span className="text-[#060920]/50">{sg.fullName}</span>}
+                        {sg.phone && <span className="text-[#060920]/50">{t("Tel:", "Тел:")} {sg.phone}</span>}
                       </div>
                     )}
                   </motion.div>
@@ -1142,10 +1154,10 @@ export function AdminPage() {
             {activeTab === "hr" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">HR Arizalari ({data.hr.length})</h2>
+                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("HR Arizalari", "HR-заявки")} ({data.hr.length})</h2>
                   <button onClick={() => exportCsv("hr")} className={btnGhost}>⤓ Excel / Sheets (CSV)</button>
                 </div>
-                {data.hr.length === 0 ? <EmptyState text="Hozircha HR arizasi yo'q" /> : [...data.hr]
+                {data.hr.length === 0 ? <EmptyState text={t("Hozircha HR arizasi yo'q", "Пока нет HR-заявок")} /> : [...data.hr]
                   .sort((a, b) => {
                     // Rad etilganlar ro'yxat oxiriga tushadi, qolganlar yangilik tartibida
                     const aRej = (a.status || "pending") === "rejected" ? 1 : 0;
@@ -1156,10 +1168,10 @@ export function AdminPage() {
                   .map((r, i) => {
                   const st = r.status || "pending";
                   const badge = st === "accepted"
-                    ? { t: "Qabul qilingan", c: "bg-[#060920]/10 text-[#060920]" }
+                    ? { t: t("Qabul qilingan", "Принят"), c: "bg-[#060920]/10 text-[#060920]" }
                     : st === "rejected"
-                    ? { t: "Rad etilgan", c: "bg-[#060920]/10 text-[#060920]" }
-                    : { t: "Kutilmoqda", c: "bg-[#060920]/8 text-[#060920]/60" };
+                    ? { t: t("Rad etilgan", "Отклонён"), c: "bg-[#060920]/10 text-[#060920]" }
+                    : { t: t("Kutilmoqda", "Ожидает"), c: "bg-[#060920]/8 text-[#060920]/60" };
                   return (
                   <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
                     className="p-6 bg-white/60 border border-[#060920]/10 rounded-2xl space-y-3">
@@ -1170,36 +1182,36 @@ export function AdminPage() {
                           <span style={{ fontFamily: "var(--font-body)" }} className={`px-2.5 py-0.5 text-xs tracking-wide uppercase rounded-full ${badge.c}`}>{badge.t}</span>
                         </div>
                         <div style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/60 text-sm mt-1">
-                          {r.field}{r.experienceYears && ` · ${r.experienceYears} yil tajriba`}
+                          {r.field}{r.experienceYears && ` · ${r.experienceYears} ${t("yil tajriba", "лет опыта")}`}
                         </div>
                       </div>
                       <button
                         onClick={() => deleteHr(r.folder, r.fullName)}
                         style={{ fontFamily: "var(--font-body)" }}
                         className="shrink-0 w-8 h-8 rounded-lg border border-[#060920]/15 text-[#060920]/50 hover:text-[#060920] hover:bg-[#060920]/10 transition-colors text-base leading-none"
-                        aria-label="Arizani o'chirish"
-                        title="Arizani butunlay o'chirish"
+                        aria-label={t("Arizani o'chirish", "Удалить заявку")}
+                        title={t("Arizani butunlay o'chirish", "Полностью удалить заявку")}
                       >
                         ×
                       </button>
                     </div>
                     <div className="flex flex-wrap gap-4 text-sm" style={{ fontFamily: "var(--font-body)" }}>
-                      <span className="text-[#060920]/70">Tel: {r.phone}</span>
+                      <span className="text-[#060920]/70">{t("Tel:", "Тел:")} {r.phone}</span>
                       {r.email && <span className="text-[#060920]/70">Email: {r.email}</span>}
-                      {r.contact && <span className="text-[#060920]/70">Aloqa: {r.contact}</span>}
+                      {r.contact && <span className="text-[#060920]/70">{t("Aloqa:", "Контакт:")} {r.contact}</span>}
                       {r.resumeFile && (
                         <a href={`/api/admin/resume?folder=${encodeURIComponent(r.folder)}&file=${encodeURIComponent(r.resumeFile)}&${authQS()}`}
                           target="_blank" rel="noopener noreferrer"
                           className="text-[#060920] underline underline-offset-2 hover:opacity-70 transition-opacity">
-                          Rezyumeni ko'rish
+                          {t("Rezyumeni ko'rish", "Посмотреть резюме")}
                         </a>
                       )}
                     </div>
                     <div className="flex gap-2 flex-wrap pt-2 border-t border-[#060920]/5" style={{ fontFamily: "var(--font-body)" }}>
-                      <button onClick={() => setHrStatus(r.folder, "accepted")} className="px-3 py-1.5 rounded-lg text-xs tracking-wide border border-[#060920]/30 text-[#060920] hover:bg-[#060920]/10 transition-colors">Qabul qilish</button>
-                      <button onClick={() => setHrStatus(r.folder, "rejected")} className={btnDanger}>Rad etish</button>
-                      {st !== "pending" && <button onClick={() => setHrStatus(r.folder, "pending")} className={btnGhost}>Kutishga qaytarish</button>}
-                      {!r.email && <span className="text-xs text-[#060920]/40 self-center">(email kiritilmagan — xabar yuborilmaydi)</span>}
+                      <button onClick={() => setHrStatus(r.folder, "accepted")} className="px-3 py-1.5 rounded-lg text-xs tracking-wide border border-[#060920]/30 text-[#060920] hover:bg-[#060920]/10 transition-colors">{t("Qabul qilish", "Принять")}</button>
+                      <button onClick={() => setHrStatus(r.folder, "rejected")} className={btnDanger}>{t("Rad etish", "Отклонить")}</button>
+                      {st !== "pending" && <button onClick={() => setHrStatus(r.folder, "pending")} className={btnGhost}>{t("Kutishga qaytarish", "Вернуть в ожидание")}</button>}
+                      {!r.email && <span className="text-xs text-[#060920]/40 self-center">{t("(email kiritilmagan — xabar yuborilmaydi)", "(email не указан — сообщение не отправляется)")}</span>}
                       <span style={{ fontFamily: "var(--font-body)" }} className="ml-auto text-xs text-[#060920]/40 self-center">{formatDate(r.submittedAt)}</span>
                     </div>
                   </motion.div>
@@ -1212,10 +1224,10 @@ export function AdminPage() {
             {activeTab === "contacts" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">Aloqa So'rovlari ({data.contacts.length})</h2>
+                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("Aloqa So'rovlari", "Запросы на связь")} ({data.contacts.length})</h2>
                   <button onClick={() => exportCsv("contacts")} className={btnGhost}>⤓ Excel / Sheets (CSV)</button>
                 </div>
-                {data.contacts.length === 0 ? <EmptyState text="Hozircha aloqa so'rovi yo'q" /> : data.contacts.map((a, i) => (
+                {data.contacts.length === 0 ? <EmptyState text={t("Hozircha aloqa so'rovi yo'q", "Пока нет запросов на связь")} /> : data.contacts.map((a, i) => (
                   <motion.div key={a.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
                     className="p-6 bg-white/60 border border-[#060920]/10 rounded-2xl space-y-3">
                     <div className="flex items-start justify-between flex-wrap gap-3">
@@ -1225,11 +1237,11 @@ export function AdminPage() {
                       </div>
                       <div className="flex items-center gap-3" style={{ fontFamily: "var(--font-body)" }}>
                         <span className="text-xs text-[#060920]/40">{formatDate(a.submittedAt)}</span>
-                        <button onClick={() => deleteItem("contact", a.id)} className={btnDanger}>O'chirish</button>
+                        <button onClick={() => deleteItem("contact", a.id)} className={btnDanger}>{t("O'chirish", "Удалить")}</button>
                       </div>
                     </div>
                     {a.message && <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/70 text-sm leading-relaxed">{a.message}</p>}
-                    <span style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/70 text-sm">Tel: {a.phone}</span>
+                    <span style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/70 text-sm">{t("Tel:", "Тел:")} {a.phone}</span>
                   </motion.div>
                 ))}
               </div>
@@ -1241,13 +1253,13 @@ export function AdminPage() {
 
                 {/* Aloqa ma'lumotlari */}
                 <div className="space-y-3">
-                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">Aloqa ma'lumotlari</h2>
+                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("Aloqa ma'lumotlari", "Контактные данные")}</h2>
                   <p style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]/55">
-                    Saytdagi (Aloqa sahifasi, bosh sahifa va footer) telefon, email va manzil shu yerdan boshqariladi.
+                    {t("Saytdagi (Aloqa sahifasi, bosh sahifa va footer) telefon, email va manzil shu yerdan boshqariladi.", "Телефон, email и адрес на сайте (страница «Контакты», главная и футер) управляются отсюда.")}
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div className="space-y-1.5">
-                      <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50">Telefon</label>
+                      <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50">{t("Telefon", "Телефон")}</label>
                       <input
                         value={settings.contactInfo?.phone || ""}
                         onChange={(e) => setSettings({ ...settings, contactInfo: { ...settings.contactInfo, phone: e.target.value } })}
@@ -1265,11 +1277,11 @@ export function AdminPage() {
                       />
                     </div>
                     <div className="space-y-1.5 md:col-span-2">
-                      <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50">Manzil</label>
+                      <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50">{t("Manzil", "Адрес")}</label>
                       <input
                         value={settings.contactInfo?.address || ""}
                         onChange={(e) => setSettings({ ...settings, contactInfo: { ...settings.contactInfo, address: e.target.value } })}
-                        placeholder="Toshkent, ..."
+                        placeholder={t("Toshkent, ...", "Ташкент, ...")}
                         style={{ fontFamily: "var(--font-body)" }} className={inputClass}
                       />
                     </div>
@@ -1278,9 +1290,9 @@ export function AdminPage() {
 
                 {/* Ijtimoiy tarmoqlar */}
                 <div className="space-y-3">
-                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">Ijtimoiy tarmoqlar</h2>
+                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("Ijtimoiy tarmoqlar", "Социальные сети")}</h2>
                   <p style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]/55">
-                    Saytdagi (footer va Aloqa sahifasidagi) ijtimoiy tarmoq tugmalari shu linklarga olib boradi. Bo'sh qoldirilgan tarmoq saytda ko'rsatilmaydi.
+                    {t("Saytdagi (footer va Aloqa sahifasidagi) ijtimoiy tarmoq tugmalari shu linklarga olib boradi. Bo'sh qoldirilgan tarmoq saytda ko'rsatilmaydi.", "Кнопки соцсетей на сайте (в футере и на странице «Контакты») ведут на эти ссылки. Оставленная пустой сеть на сайте не показывается.")}
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {([
@@ -1304,17 +1316,17 @@ export function AdminPage() {
 
                 {/* Telegram bildirishnomalar */}
                 <div className="space-y-3">
-                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">Telegram bildirishnomalar</h2>
+                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("Telegram bildirishnomalar", "Telegram-уведомления")}</h2>
                   <p style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]/55">
-                    Har bir tur uchun alohida bot va chat ID belgilash mumkin — shunda xabarlar aralashmaydi. Tur uchun maydon bo'sh qoldirilsa, <b>Umumiy bot</b> sozlamasi ishlaydi. Bot yaratish: <b>@BotFather</b> → <b>/newbot</b>. Chat ID: <b>@userinfobot</b> orqali (botga avval <b>/start</b> yozing).
+                    {t("Har bir tur uchun alohida bot va chat ID belgilash mumkin — shunda xabarlar aralashmaydi. Tur uchun maydon bo'sh qoldirilsa, ", "Для каждого типа можно задать отдельного бота и chat ID — тогда сообщения не перемешиваются. Если поле для типа оставить пустым, ")}<b>{t("Umumiy bot", "Общий бот")}</b>{t(" sozlamasi ishlaydi. Bot yaratish: ", " — используется его настройка. Создание бота: ")}<b>@BotFather</b> → <b>/newbot</b>. Chat ID: <b>@userinfobot</b> {t("orqali (botga avval ", "(боту сначала напишите ")}<b>/start</b>{t(" yozing).", ").")}
                   </p>
                 </div>
 
                 {([
-                  { key: "general" as TgKey, label: "Umumiy bot", hint: "Maxsus bot kiritilmagan turlar uchun ishlaydi" },
-                  { key: "hr" as TgKey, label: "HR arizalari boti", hint: "HR arizalari va rezyume fayllari shu botga boradi" },
-                  { key: "suggestion" as TgKey, label: "Kelgan takliflar boti", hint: "Takliflar sahifasidan kelgan murojaatlar" },
-                  { key: "contact" as TgKey, label: "Aloqa so'rovlari boti", hint: "Aloqa formasidan kelgan so'rovlar" },
+                  { key: "general" as TgKey, label: t("Umumiy bot", "Общий бот"), hint: t("Maxsus bot kiritilmagan turlar uchun ishlaydi", "Работает для типов, у которых не указан отдельный бот") },
+                  { key: "hr" as TgKey, label: t("HR arizalari boti", "Бот HR-заявок"), hint: t("HR arizalari va rezyume fayllari shu botga boradi", "HR-заявки и файлы резюме поступают этому боту") },
+                  { key: "suggestion" as TgKey, label: t("Kelgan takliflar boti", "Бот поступивших предложений"), hint: t("Takliflar sahifasidan kelgan murojaatlar", "Обращения со страницы предложений") },
+                  { key: "contact" as TgKey, label: t("Aloqa so'rovlari boti", "Бот запросов на связь"), hint: t("Aloqa formasidan kelgan so'rovlar", "Запросы из формы связи") },
                 ]).map((sec) => {
                   const cfg = getTg(sec.key);
                   return (
@@ -1324,18 +1336,18 @@ export function AdminPage() {
                           <h3 style={{ fontFamily: "var(--font-display)" }} className="text-base text-[#060920]">{sec.label}</h3>
                           <p style={{ fontFamily: "var(--font-body)" }} className="text-xs text-[#060920]/45 mt-0.5">{sec.hint}</p>
                         </div>
-                        <button onClick={() => sendTestTelegram(sec.key)} className={btnGhost}>Test yuborish</button>
+                        <button onClick={() => sendTestTelegram(sec.key)} className={btnGhost}>{t("Test yuborish", "Отправить тест")}</button>
                       </div>
                       <input
                         type="password"
                         value={cfg?.botToken || ""}
                         onChange={(e) => setTg(sec.key, { ...cfg, botToken: e.target.value })}
-                        placeholder={sec.key === "general" ? "Bot token (123456789:ABC...)" : "Bot token (bo'sh = umumiy bot ishlatiladi)"}
+                        placeholder={sec.key === "general" ? t("Bot token (123456789:ABC...)", "Токен бота (123456789:ABC...)") : t("Bot token (bo'sh = umumiy bot ishlatiladi)", "Токен бота (пусто = используется общий бот)")}
                         autoComplete="new-password"
                         style={{ fontFamily: "var(--font-body)" }} className={inputClass}
                       />
                       <div className="space-y-2">
-                        <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50">Chat ID lar</label>
+                        <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50">{t("Chat ID lar", "Chat ID")}</label>
                         {(cfg?.chatIds || []).map((id, idx) => (
                           <div key={idx} className="flex items-center gap-2">
                             <input
@@ -1345,7 +1357,7 @@ export function AdminPage() {
                                 ids[idx] = e.target.value.replace(/[^\d\-]/g, "");
                                 setTg(sec.key, { ...cfg, chatIds: ids });
                               }}
-                              placeholder="123456789 yoki -1001234567890"
+                              placeholder={t("123456789 yoki -1001234567890", "123456789 или -1001234567890")}
                               style={{ fontFamily: "var(--font-body)" }} className={inputClass}
                             />
                             <button
@@ -1353,7 +1365,7 @@ export function AdminPage() {
                               onClick={() => setTg(sec.key, { ...cfg, chatIds: (cfg?.chatIds || []).filter((_, i) => i !== idx) })}
                               style={{ fontFamily: "var(--font-body)" }}
                               className="shrink-0 w-10 h-10 rounded-lg border border-[#060920]/15 text-[#060920]/50 hover:text-[#060920] hover:bg-[#060920]/5 transition-colors"
-                              aria-label="O'chirish"
+                              aria-label={t("O'chirish", "Удалить")}
                             >
                               ×
                             </button>
@@ -1366,7 +1378,7 @@ export function AdminPage() {
                           className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-dashed border-[#060920]/25 text-sm text-[#060920]/60 hover:text-[#060920] hover:border-[#060920]/50 transition-colors"
                         >
                           <span className="w-5 h-5 rounded-full bg-[#060920] text-white flex items-center justify-center text-xs leading-none">+</span>
-                          ID qo'shish
+                          {t("ID qo'shish", "Добавить ID")}
                         </button>
                       </div>
                     </div>
@@ -1376,7 +1388,7 @@ export function AdminPage() {
                 <div className="flex items-center gap-3 flex-wrap">
                   <button onClick={saveSettings} disabled={saving} style={{ fontFamily: "var(--font-body)" }}
                     className="px-6 py-3 bg-[#060920] text-white tracking-[0.15em] uppercase text-sm rounded-2xl hover:shadow-xl transition-all disabled:opacity-70">
-                    {saving ? "Saqlanmoqda..." : "Saqlash"}
+                    {saving ? t("Saqlanmoqda...", "Сохраняется...") : t("Saqlash", "Сохранить")}
                   </button>
                   {settingsMsg && <span style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]/70">{settingsMsg}</span>}
                 </div>
@@ -1390,16 +1402,16 @@ export function AdminPage() {
         <div className="mt-16 pt-10 border-t border-[#060920]/10">
           <div className="flex items-baseline justify-between mb-6 flex-wrap gap-2">
             <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">
-              O'zgarishlar tarixi
+              {t("O'zgarishlar tarixi", "История изменений")}
             </h2>
             <span style={{ fontFamily: "var(--font-body)" }} className="text-xs tracking-[0.15em] uppercase text-[#060920]/40">
-              Oxirgi 10 ta amal
+              {t("Oxirgi 10 ta amal", "Последние 10 действий")}
             </span>
           </div>
 
           {!data || data.history.length === 0 ? (
             <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/40 tracking-wide py-6">
-              Hozircha o'zgarish qayd etilmagan.
+              {t("Hozircha o'zgarish qayd etilmagan.", "Пока изменения не зафиксированы.")}
             </p>
           ) : (
             <div className="space-y-px bg-[#060920]/10 border border-[#060920]/10 rounded-2xl overflow-hidden">
@@ -1426,11 +1438,11 @@ export function AdminPage() {
       {/* ===== OFFER MODAL ===== */}
       <AnimatePresence>
         {showOfferModal && (
-          <ModalShell title={editingOffer ? "Taklifni tahrirlash" : "Yangi taklif"} onClose={() => { setShowOfferModal(false); setEditingOffer(null); }}>
+          <ModalShell title={editingOffer ? t("Taklifni tahrirlash", "Редактировать предложение") : t("Yangi taklif", "Новое предложение")} onClose={() => { setShowOfferModal(false); setEditingOffer(null); }}>
             <form onSubmit={saveOffer} className="space-y-4">
-              <input name="title" required defaultValue={editingOffer?.title || ""} placeholder="Taklif sarlavhasi *" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
-              <input name="tag" defaultValue={editingOffer?.tag || ""} placeholder="Yorliq (masalan: Yangi, Chegirma) — ixtiyoriy" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
-              <textarea name="description" required rows={4} defaultValue={editingOffer?.description || ""} placeholder="Taklif tavsifi *" style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+              <input name="title" required defaultValue={editingOffer?.title || ""} placeholder={t("Taklif sarlavhasi *", "Заголовок предложения *")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              <input name="tag" defaultValue={editingOffer?.tag || ""} placeholder={t("Yorliq (masalan: Yangi, Chegirma) — ixtiyoriy", "Метка (например: Новое, Скидка) — необязательно")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              <textarea name="description" required rows={4} defaultValue={editingOffer?.description || ""} placeholder={t("Taklif tavsifi *", "Описание предложения *")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               <SaveBtn saving={saving} editing={!!editingOffer} />
             </form>
           </ModalShell>
@@ -1440,57 +1452,57 @@ export function AdminPage() {
       {/* ===== PROJECT MODAL ===== */}
       <AnimatePresence>
         {showProjectModal && (
-          <ModalShell wide title={editingProject ? "Loyihani tahrirlash" : "Yangi loyiha"} onClose={() => { setShowProjectModal(false); setEditingProject(null); }}>
+          <ModalShell wide title={editingProject ? t("Loyihani tahrirlash", "Редактировать проект") : t("Yangi loyiha", "Новый проект")} onClose={() => { setShowProjectModal(false); setEditingProject(null); }}>
             <form onSubmit={saveProject} className="space-y-4">
-              <input name="name" required defaultValue={editingProject?.name || ""} placeholder="Obyekt nomi *" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              <input name="name" required defaultValue={editingProject?.name || ""} placeholder={t("Obyekt nomi *", "Название объекта *")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input name="direction" defaultValue={editingProject?.direction || ""} placeholder="Yo'nalish (biznes markaz / JK / fasad...)" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
-                <input name="location" defaultValue={editingProject?.location || ""} placeholder="Hudud (masalan: Toshkent)" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input name="area" defaultValue={editingProject?.area || ""} placeholder="Maydon (masalan: 5000 m²)" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
-                <input name="year" defaultValue={editingProject?.year || ""} placeholder="Yil (masalan: 2025)" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="direction" defaultValue={editingProject?.direction || ""} placeholder={t("Yo'nalish (biznes markaz / JK / fasad...)", "Направление (бизнес-центр / ЖК / фасад...)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="location" defaultValue={editingProject?.location || ""} placeholder={t("Hudud (masalan: Toshkent)", "Регион (например: Ташкент)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input name="status" defaultValue={editingProject?.status || ""} placeholder="Holati (masalan: Yakunlangan)" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
-                <input name="workType" defaultValue={editingProject?.workType || ""} placeholder="Ish turi (masalan: pardoz + muhandislik)" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="area" defaultValue={editingProject?.area || ""} placeholder={t("Maydon (masalan: 5000 m²)", "Площадь (например: 5000 м²)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="year" defaultValue={editingProject?.year || ""} placeholder={t("Yil (masalan: 2025)", "Год (например: 2025)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input name="duration" defaultValue={editingProject?.duration || ""} placeholder="Muddat (masalan: 6 oy)" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
-                <input name="role" defaultValue={editingProject?.role || ""} placeholder="BARPO roli (masalan: bosh pudratchi)" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="status" defaultValue={editingProject?.status || ""} placeholder={t("Holati (masalan: Yakunlangan)", "Статус (например: Завершён)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="workType" defaultValue={editingProject?.workType || ""} placeholder={t("Ish turi (masalan: pardoz + muhandislik)", "Тип работ (например: отделка + инженерия)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input name="duration" defaultValue={editingProject?.duration || ""} placeholder={t("Muddat (masalan: 6 oy)", "Срок (например: 6 месяцев)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="role" defaultValue={editingProject?.role || ""} placeholder={t("BARPO roli (masalan: bosh pudratchi)", "Роль BARPO (например: генподрядчик)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
               </div>
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">Vazifa (mijoz oldida qanday vazifa turgan edi?)</label>
-                <textarea name="task" rows={2} defaultValue={editingProject?.task || ""} placeholder="Bu obyekt bo'yicha asosiy vazifa..." style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Vazifa (mijoz oldida qanday vazifa turgan edi?)", "Задача (какая задача стояла перед заказчиком?)")}</label>
+                <textarea name="task" rows={2} defaultValue={editingProject?.task || ""} placeholder={t("Bu obyekt bo'yicha asosiy vazifa...", "Основная задача по этому объекту...")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               </div>
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">Murakkablik (qaysi joyda xavf yoki muammo bor edi?)</label>
-                <textarea name="problem" rows={2} defaultValue={editingProject?.problem || ""} placeholder="Asosiy muammo yoki texnik murakkablik..." style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Murakkablik (qaysi joyda xavf yoki muammo bor edi?)", "Сложность (где был риск или проблема?)")}</label>
+                <textarea name="problem" rows={2} defaultValue={editingProject?.problem || ""} placeholder={t("Asosiy muammo yoki texnik murakkablik...", "Основная проблема или техническая сложность...")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               </div>
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5"><BarpoWord /> yechimi (qanday yondashuv qo'llandi?)</label>
-                <textarea name="solution" rows={2} defaultValue={editingProject?.solution || ""} placeholder="BARPO jarayonni qanday boshqardi..." style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5"><BarpoWord /> {t("yechimi (qanday yondashuv qo'llandi?)", "решение (какой подход применён?)")}</label>
+                <textarea name="solution" rows={2} defaultValue={editingProject?.solution || ""} placeholder={t("BARPO jarayonni qanday boshqardi...", "Как BARPO управлял процессом...")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               </div>
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">Jarayon (ishlar qanday ketdi, qaysi bosqichlar bo'ldi?)</label>
-                <textarea name="process" rows={2} defaultValue={editingProject?.process || ""} placeholder="Ishlar bosqichlari..." style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Jarayon (ishlar qanday ketdi, qaysi bosqichlar bo'ldi?)", "Процесс (как шли работы, какие были этапы?)")}</label>
+                <textarea name="process" rows={2} defaultValue={editingProject?.process || ""} placeholder={t("Ishlar bosqichlari...", "Этапы работ...")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               </div>
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">Natija (mijoz nimaga erishdi?)</label>
-                <textarea name="result" rows={2} defaultValue={editingProject?.result || ""} placeholder="Natija qanday bo'ldi..." style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Natija (mijoz nimaga erishdi?)", "Результат (чего достиг заказчик?)")}</label>
+                <textarea name="result" rows={2} defaultValue={editingProject?.result || ""} placeholder={t("Natija qanday bo'ldi...", "Каким был результат...")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               </div>
-              <textarea name="description" rows={2} defaultValue={editingProject?.description || ""} placeholder="Qisqa tavsif (kartochkada ko'rinadi)" style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+              <textarea name="description" rows={2} defaultValue={editingProject?.description || ""} placeholder={t("Qisqa tavsif (kartochkada ko'rinadi)", "Краткое описание (отображается на карточке)")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">Batafsil matn (har bir xatboshi yangi qatordan)</label>
-                <textarea name="details" rows={5} defaultValue={editingProject?.details || ""} placeholder="Loyiha haqida batafsil ma'lumot..." style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Batafsil matn (har bir xatboshi yangi qatordan)", "Подробный текст (каждый абзац с новой строки)")}</label>
+                <textarea name="details" rows={5} defaultValue={editingProject?.details || ""} placeholder={t("Loyiha haqida batafsil ma'lumot...", "Подробная информация о проекте...")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               </div>
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">Asosiy ko'rsatkichlar (har biri yangi qatordan)</label>
-                <textarea name="features" rows={3} defaultValue={editingProject?.features || ""} placeholder={"Masalan:\n8 qavat\nMuddatda topshirildi\n0 ta nuqson"} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Asosiy ko'rsatkichlar (har biri yangi qatordan)", "Ключевые показатели (каждый с новой строки)")}</label>
+                <textarea name="features" rows={3} defaultValue={editingProject?.features || ""} placeholder={t("Masalan:\n8 qavat\nMuddatda topshirildi\n0 ta nuqson", "Например:\n8 этажей\nСдан в срок\n0 дефектов")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               </div>
               <div>
                 <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">
-                  Loyiha rasmi {editingProject?.hasImage ? "(yangi rasm yuklasangiz, eskisi almashadi)" : ""}
+                  {t("Loyiha rasmi", "Изображение проекта")} {editingProject?.hasImage ? t("(yangi rasm yuklasangiz, eskisi almashadi)", "(при загрузке нового изображения старое заменится)") : ""}
                 </label>
                 <input type="file" name="image" accept="image/*" style={{ fontFamily: "var(--font-body)" }}
                   className="w-full text-sm text-[#060920]/70 file:mr-4 file:px-4 file:py-2 file:rounded-lg file:border file:border-[#060920]/15 file:bg-white file:text-[#060920]/70 file:cursor-pointer cursor-pointer" />
@@ -1504,17 +1516,17 @@ export function AdminPage() {
       {/* ===== ORNAMENT (NAQSH) MODAL ===== */}
       <AnimatePresence>
         {showOrnamentModal && (
-          <ModalShell wide title={editingOrnament ? "Naqshni tahrirlash" : "Yangi naqsh"} onClose={() => { setShowOrnamentModal(false); setEditingOrnament(null); }}>
+          <ModalShell wide title={editingOrnament ? t("Naqshni tahrirlash", "Редактировать орнамент") : t("Yangi naqsh", "Новый орнамент")} onClose={() => { setShowOrnamentModal(false); setEditingOrnament(null); }}>
             <form onSubmit={saveOrnament} className="space-y-4">
-              <input name="old" required defaultValue={editingOrnament?.old || ""} placeholder="Naqsh nomi (masalan: Girih naqshi) *" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
-              <input name="desc" defaultValue={editingOrnament?.desc || ""} placeholder="Qisqa izoh (kartochkada ko'rinadi)" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              <input name="old" required defaultValue={editingOrnament?.old || ""} placeholder={t("Naqsh nomi (masalan: Girih naqshi) *", "Название орнамента (например: Гирих) *")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              <input name="desc" defaultValue={editingOrnament?.desc || ""} placeholder={t("Qisqa izoh (kartochkada ko'rinadi)", "Краткое описание (отображается на карточке)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">Tarixiy ma'lumot (batafsil)</label>
-                <textarea name="history" rows={4} defaultValue={editingOrnament?.history || ""} placeholder="Naqsh va uning tarixi haqida batafsil..." style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Tarixiy ma'lumot (batafsil)", "Историческая справка (подробно)")}</label>
+                <textarea name="history" rows={4} defaultValue={editingOrnament?.history || ""} placeholder={t("Naqsh va uning tarixi haqida batafsil...", "Подробно об орнаменте и его истории...")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               </div>
               <div>
                 <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">
-                  Naqsh rasmi (miniatura) {editingOrnament?.hasImage ? "(yangi rasm yuklasangiz, eskisi almashadi)" : ""}
+                  {t("Naqsh rasmi (miniatura)", "Изображение орнамента (миниатюра)")} {editingOrnament?.hasImage ? t("(yangi rasm yuklasangiz, eskisi almashadi)", "(при загрузке нового изображения старое заменится)") : ""}
                 </label>
                 <input type="file" name="image" accept="image/*" style={{ fontFamily: "var(--font-body)" }}
                   className="w-full text-sm text-[#060920]/70 file:mr-4 file:px-4 file:py-2 file:rounded-lg file:border file:border-[#060920]/15 file:bg-white file:text-[#060920]/70 file:cursor-pointer cursor-pointer" />
@@ -1528,10 +1540,10 @@ export function AdminPage() {
       {/* ===== STANDART MODAL ===== */}
       <AnimatePresence>
         {showStandardModal && (
-          <ModalShell title={editingStandard ? "Standartni tahrirlash" : "Yangi standart"} onClose={() => { setShowStandardModal(false); setEditingStandard(null); }}>
+          <ModalShell title={editingStandard ? t("Standartni tahrirlash", "Редактировать стандарт") : t("Yangi standart", "Новый стандарт")} onClose={() => { setShowStandardModal(false); setEditingStandard(null); }}>
             <form onSubmit={saveStandard} className="space-y-4">
-              <input name="title" required defaultValue={editingStandard?.title || ""} placeholder="Sarlavha (masalan: Tizim) *" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
-              <textarea name="desc" required rows={4} defaultValue={editingStandard?.desc || ""} placeholder="Tavsif *" style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+              <input name="title" required defaultValue={editingStandard?.title || ""} placeholder={t("Sarlavha (masalan: Tizim) *", "Заголовок (например: Система) *")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              <textarea name="desc" required rows={4} defaultValue={editingStandard?.desc || ""} placeholder={t("Tavsif *", "Описание *")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               <SaveBtn saving={saving} editing={!!editingStandard} />
             </form>
           </ModalShell>
@@ -1541,16 +1553,16 @@ export function AdminPage() {
       {/* ===== INVESTOR MODAL ===== */}
       <AnimatePresence>
         {showInvestorModal && (
-          <ModalShell wide title={editingInvestor ? "Bo'limni tahrirlash" : "Yangi investor bo'limi"} onClose={() => { setShowInvestorModal(false); setEditingInvestor(null); }}>
+          <ModalShell wide title={editingInvestor ? t("Bo'limni tahrirlash", "Редактировать раздел") : t("Yangi investor bo'limi", "Новый раздел для инвесторов")} onClose={() => { setShowInvestorModal(false); setEditingInvestor(null); }}>
             <form onSubmit={saveInvestor} className="space-y-4">
-              <input name="title" required defaultValue={editingInvestor?.title || ""} placeholder="Sarlavha *" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              <input name="title" required defaultValue={editingInvestor?.title || ""} placeholder={t("Sarlavha *", "Заголовок *")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">Matn (har bir xatboshi yangi qatordan)</label>
-                <textarea name="text" required rows={7} defaultValue={editingInvestor?.text || ""} placeholder="Bo'lim matni..." style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Matn (har bir xatboshi yangi qatordan)", "Текст (каждый абзац с новой строки)")}</label>
+                <textarea name="text" required rows={7} defaultValue={editingInvestor?.text || ""} placeholder={t("Bo'lim matni...", "Текст раздела...")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               </div>
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">Kalit fikr</label>
-                <textarea name="key" rows={2} defaultValue={editingInvestor?.key || ""} placeholder="Asosiy g'oya..." style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Kalit fikr", "Ключевая мысль")}</label>
+                <textarea name="key" rows={2} defaultValue={editingInvestor?.key || ""} placeholder={t("Asosiy g'oya...", "Главная идея...")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               </div>
               <SaveBtn saving={saving} editing={!!editingInvestor} />
             </form>
@@ -1561,12 +1573,12 @@ export function AdminPage() {
       {/* ===== BLOG / BILIM MARKAZI MODAL ===== */}
       <AnimatePresence>
         {showBlogModal && (
-          <ModalShell wide title={editingBlog ? "Maqolani tahrirlash" : "Yangi maqola (qoralama)"} onClose={() => { setShowBlogModal(false); setEditingBlog(null); }}>
+          <ModalShell wide title={editingBlog ? t("Maqolani tahrirlash", "Редактировать статью") : t("Yangi maqola (qoralama)", "Новая статья (черновик)")} onClose={() => { setShowBlogModal(false); setEditingBlog(null); }}>
             <form onSubmit={saveBlog} className="space-y-4">
-              <input name="title" required defaultValue={editingBlog?.title || ""} placeholder="Maqola sarlavhasi *" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              <input name="title" required defaultValue={editingBlog?.title || ""} placeholder={t("Maqola sarlavhasi *", "Заголовок статьи *")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">Rubrika (bo'lim nomi)</label>
-                <input name="rubric" defaultValue={editingBlog?.rubric || ""} placeholder="Masalan: BARPO Standarti" style={{ fontFamily: "var(--font-body)" }} className={inputClass} list="blog-rubrics" />
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Rubrika (bo'lim nomi)", "Рубрика (название раздела)")}</label>
+                <input name="rubric" defaultValue={editingBlog?.rubric || ""} placeholder={t("Masalan: BARPO Standarti", "Например: Стандарт BARPO")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} list="blog-rubrics" />
                 <datalist id="blog-rubrics">
                   <option value="BARPO Standarti" />
                   <option value="Mijoz iqtisodiy foydasi" />
@@ -1575,19 +1587,19 @@ export function AdminPage() {
                 </datalist>
               </div>
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">Maqola matni (har bir xatboshi yangi qatordan)</label>
-                <textarea name="content" rows={10} defaultValue={editingBlog?.content || ""} placeholder="Maqola to'liq matni..." style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Maqola matni (har bir xatboshi yangi qatordan)", "Текст статьи (каждый абзац с новой строки)")}</label>
+                <textarea name="content" rows={10} defaultValue={editingBlog?.content || ""} placeholder={t("Maqola to'liq matni...", "Полный текст статьи...")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               </div>
               <div>
                 <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">
-                  Maqola rasmi {editingBlog?.hasImage ? "(yangi rasm yuklasangiz, eskisi almashadi)" : "(ixtiyoriy)"}
+                  {t("Maqola rasmi", "Изображение статьи")} {editingBlog?.hasImage ? t("(yangi rasm yuklasangiz, eskisi almashadi)", "(при загрузке нового изображения старое заменится)") : t("(ixtiyoriy)", "(необязательно)")}
                 </label>
                 <input type="file" name="image" accept="image/*" style={{ fontFamily: "var(--font-body)" }}
                   className="w-full text-sm text-[#060920]/70 file:mr-4 file:px-4 file:py-2 file:rounded-lg file:border file:border-[#060920]/15 file:bg-white file:text-[#060920]/70 file:cursor-pointer cursor-pointer" />
               </div>
               {editingBlog && (
                 <p style={{ fontFamily: "var(--font-body)" }} className="text-xs text-[#060920]/50">
-                  Holat: <b>{editingBlog.status === "published" ? "Chop etilgan" : "Qoralama"}</b>. Chop etish/qoralamaga qaytarishni ro'yxatdagi tugmalar orqali qiling.
+                  {t("Holat:", "Статус:")} <b>{editingBlog.status === "published" ? t("Chop etilgan", "Опубликовано") : t("Qoralama", "Черновик")}</b>. {t("Chop etish/qoralamaga qaytarishni ro'yxatdagi tugmalar orqali qiling.", "Публикацию/возврат в черновик выполняйте кнопками в списке.")}
                 </p>
               )}
               <SaveBtn saving={saving} editing={!!editingBlog} />
@@ -1599,32 +1611,32 @@ export function AdminPage() {
       {/* ===== ADMIN MODAL (faqat superadmin) ===== */}
       <AnimatePresence>
         {showAdminModal && (
-          <ModalShell wide title={editingAdmin ? `Adminni tahrirlash — ${editingAdmin.name}` : "Yangi admin"} onClose={() => { setShowAdminModal(false); setEditingAdmin(null); }}>
+          <ModalShell wide title={editingAdmin ? `${t("Adminni tahrirlash", "Редактировать администратора")} — ${editingAdmin.name}` : t("Yangi admin", "Новый администратор")} onClose={() => { setShowAdminModal(false); setEditingAdmin(null); }}>
             <form onSubmit={saveAdminUser} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input name="name" required defaultValue={editingAdmin?.name || ""} placeholder="Ism *" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
-                <input name="username" required defaultValue={editingAdmin?.username || ""} placeholder="Login *" autoComplete="off" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="name" required defaultValue={editingAdmin?.name || ""} placeholder={t("Ism *", "Имя *")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="username" required defaultValue={editingAdmin?.username || ""} placeholder={t("Login *", "Логин *")} autoComplete="off" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
               </div>
               <input name="password" type="text" required={!editingAdmin} defaultValue={editingAdmin?.password || ""} autoComplete="new-password"
-                placeholder={editingAdmin ? "Parol (o'zgartirish uchun yangisini yozing)" : "Parol *"}
+                placeholder={editingAdmin ? t("Parol (o'zgartirish uchun yangisini yozing)", "Пароль (для смены введите новый)") : t("Parol *", "Пароль *")}
                 style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
               {editingAdmin?.username !== me?.username && (
                 <div>
-                  <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">Rol</label>
+                  <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Rol", "Роль")}</label>
                   <select name="role" defaultValue={editingAdmin?.role || "admin"} style={{ fontFamily: "var(--font-body)" }} className={inputClass}>
-                    <option value="admin">Admin</option>
-                    <option value="superadmin">Bosh admin</option>
+                    <option value="admin">{t("Admin", "Администратор")}</option>
+                    <option value="superadmin">{t("Bosh admin", "Главный администратор")}</option>
                   </select>
                 </div>
               )}
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-2">Bo'lim ruxsatlari</label>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-2">{t("Bo'lim ruxsatlari", "Права доступа к разделам")}</label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                   {PERM_LABELS.map((p) => (
                     <label key={p.key} style={{ fontFamily: "var(--font-body)" }}
                       className="flex items-center gap-2 px-3 py-2 border border-[#060920]/10 rounded-lg text-sm text-[#060920]/70 cursor-pointer hover:bg-[#060920]/5 transition-colors">
                       <input type="checkbox" name={`perm_${p.key}`} defaultChecked={editingAdmin ? editingAdmin.perms?.[p.key] !== false : true} className="accent-[#060920]" />
-                      {p.label}
+                      {t(p.label, p.ru)}
                     </label>
                   ))}
                 </div>
@@ -1638,12 +1650,12 @@ export function AdminPage() {
       {/* ===== TOPSHIRIQ MODAL (faqat superadmin) ===== */}
       <AnimatePresence>
         {showTaskModal && (
-          <ModalShell title="Yangi topshiriq" onClose={() => setShowTaskModal(false)}>
+          <ModalShell title={t("Yangi topshiriq", "Новое задание")} onClose={() => setShowTaskModal(false)}>
             <form onSubmit={saveTask} className="space-y-4">
-              <input name="title" required placeholder="Topshiriq sarlavhasi *" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
-              <textarea name="desc" rows={4} placeholder="Batafsil tavsif (ixtiyoriy)" style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+              <input name="title" required placeholder={t("Topshiriq sarlavhasi *", "Заголовок задания *")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              <textarea name="desc" rows={4} placeholder={t("Batafsil tavsif (ixtiyoriy)", "Подробное описание (необязательно)")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">Kimga</label>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Kimga", "Кому")}</label>
                 <select name="assignee" required style={{ fontFamily: "var(--font-body)" }} className={inputClass}>
                   {(data?.admins || []).filter((a) => a.username !== me?.username).map((a) => (
                     <option key={a.username} value={a.username}>{a.name} ({a.username})</option>
@@ -1660,6 +1672,7 @@ export function AdminPage() {
 }
 
 function ModalShell({ title, onClose, children, wide }: { title: string; onClose: () => void; children: React.ReactNode; wide?: boolean }) {
+  const t = useT();
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-[#060920]/40 backdrop-blur-sm overflow-y-auto"
@@ -1669,7 +1682,7 @@ function ModalShell({ title, onClose, children, wide }: { title: string; onClose
         className={`w-full ${wide ? "max-w-2xl" : "max-w-lg"} bg-white rounded-2xl p-8 shadow-2xl my-auto`}>
         <div className="flex items-center justify-between mb-6">
           <h3 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{title}</h3>
-          <button onClick={onClose} style={{ fontFamily: "var(--font-body)" }} className="px-3 py-1 rounded-lg hover:bg-[#060920]/5 text-[#060920]/50 text-sm">Yopish</button>
+          <button onClick={onClose} style={{ fontFamily: "var(--font-body)" }} className="px-3 py-1 rounded-lg hover:bg-[#060920]/5 text-[#060920]/50 text-sm">{t("Yopish", "Закрыть")}</button>
         </div>
         {children}
       </motion.div>
@@ -1678,10 +1691,11 @@ function ModalShell({ title, onClose, children, wide }: { title: string; onClose
 }
 
 function SaveBtn({ saving, editing }: { saving: boolean; editing: boolean }) {
+  const t = useT();
   return (
     <button type="submit" disabled={saving} style={{ fontFamily: "var(--font-body)" }}
       className="w-full px-8 py-3.5 bg-[#060920] text-white tracking-[0.15em] uppercase text-sm font-medium rounded-2xl hover:shadow-xl transition-all disabled:opacity-70">
-      {saving ? "Saqlanmoqda..." : editing ? "Saqlash" : "Qo'shish"}
+      {saving ? t("Saqlanmoqda...", "Сохраняется...") : editing ? t("Saqlash", "Сохранить") : t("Qo'shish", "Добавить")}
     </button>
   );
 }
@@ -1695,6 +1709,7 @@ function SectionImageCard({
   onUpload: (key: string, file: File) => Promise<void>;
   onDelete: (key: string) => void;
 }) {
+  const t = useT();
   const [busy, setBusy] = useState(false);
   const hasImage = !!version;
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1709,20 +1724,20 @@ function SectionImageCard({
         {hasImage ? (
           <img src={`/api/section-image?key=${itemKey}&v=${version}`} alt={label} className="w-full h-full object-cover" />
         ) : (
-          <span style={{ fontFamily: "var(--font-display)" }} className="text-[#060920]/20 text-xs">Rasm yo'q</span>
+          <span style={{ fontFamily: "var(--font-display)" }} className="text-[#060920]/20 text-xs">{t("Rasm yo'q", "Нет изображения")}</span>
         )}
       </div>
       <div className="flex-1 min-w-0">
         <div style={{ fontFamily: "var(--font-display)" }} className="text-[#060920] text-sm leading-snug">{label}</div>
         <div className="flex gap-2 mt-3 flex-wrap items-center" style={{ fontFamily: "var(--font-body)" }}>
           <label className="px-3 py-1.5 rounded-lg text-xs tracking-wide border border-[#060920]/15 text-[#060920]/70 hover:bg-[#060920]/5 transition-colors cursor-pointer">
-            {busy ? "Yuklanmoqda..." : hasImage ? "Almashtirish" : "Rasm yuklash"}
+            {busy ? t("Yuklanmoqda...", "Загружается...") : hasImage ? t("Almashtirish", "Заменить") : t("Rasm yuklash", "Загрузить изображение")}
             <input type="file" accept="image/*" onChange={handleFile} disabled={busy} className="hidden" />
           </label>
           {hasImage && (
             <button onClick={() => onDelete(itemKey)} disabled={busy}
               className="px-3 py-1.5 rounded-lg text-xs tracking-wide border border-[#060920]/30 text-[#060920] hover:bg-[#060920]/10 transition-colors">
-              O'chirish
+              {t("O'chirish", "Удалить")}
             </button>
           )}
         </div>
