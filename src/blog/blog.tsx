@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { SoftDivider } from "../app/components/SoftDivider";
 import { BarpoWord, barpo } from "../app/components/Barpo";
+import { useT } from "../app/i18n";
 
 interface Article {
   id: string;
@@ -13,6 +14,7 @@ interface Article {
 }
 
 export function BlogPage() {
+  const t = useT();
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -45,7 +47,7 @@ export function BlogPage() {
             style={{ fontFamily: "var(--font-body)" }}
             className="text-sm tracking-[0.2em] uppercase text-[#060920]/50 mb-4"
           >
-            BILIM MARKAZI
+            {t("BILIM MARKAZI", "ЦЕНТР ЗНАНИЙ")}
           </motion.p>
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -54,7 +56,7 @@ export function BlogPage() {
             style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 5vw, 4rem)", color: "#060920" }}
             className="tracking-tight leading-[1.1]"
           >
-            Qurilish haqida gapirmaymiz. Qurilish qanday ishlashini tushuntiramiz.
+            {t("Qurilish haqida gapirmaymiz. Qurilish qanday ishlashini tushuntiramiz.", "Мы не говорим о строительстве. Мы объясняем, как оно работает.")}
           </motion.h1>
         </div>
       </section>
@@ -64,11 +66,11 @@ export function BlogPage() {
         <div className="max-w-5xl mx-auto">
           {loading ? (
             <p style={{ fontFamily: "var(--font-body)" }} className="text-center text-[#060920]/40 tracking-wide py-10 animate-pulse">
-              <BarpoWord /> etilyapti...
+              <BarpoWord /> {t("etilyapti...", "загружается...")}
             </p>
           ) : articles.length === 0 ? (
             <p style={{ fontFamily: "var(--font-body)" }} className="text-center text-[#060920]/40 tracking-wide py-10">
-              Hozircha chop etilgan maqola yo'q. Tez orada yangilanadi.
+              {t("Hozircha chop etilgan maqola yo'q. Tez orada yangilanadi.", "Пока нет опубликованных статей. Скоро обновится.")}
             </p>
           ) : (
             <div className="space-y-14">
@@ -102,7 +104,7 @@ export function BlogPage() {
                             {barpo(a.title)}
                           </h3>
                           <span style={{ fontFamily: "var(--font-body)" }} className="mt-3 inline-block text-xs tracking-[0.15em] uppercase text-[#060920]/50">
-                            O'qish →
+                            {t("O'qish", "Читать")} →
                           </span>
                         </div>
                       </a>
@@ -119,11 +121,11 @@ export function BlogPage() {
       <section className="relative py-16 px-8 md:px-16 bg-[#060920]">
         <div className="max-w-4xl mx-auto text-center space-y-6">
           <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.5rem, 4vw, 2.5rem)", color: "#FFFFFF" }} className="tracking-tight">
-            Savolingiz bormi? Mutaxassislarimiz javob beradi.
+            {t("Savolingiz bormi? Mutaxassislarimiz javob beradi.", "Есть вопрос? Наши специалисты ответят.")}
           </h2>
           <a href="#contact" style={{ fontFamily: "var(--font-body)", textDecoration: "none" }}
             className="inline-block px-8 py-3 bg-white text-[#060920] tracking-[0.15em] uppercase text-sm font-medium rounded-2xl shadow-lg hover:shadow-xl transition-all">
-            Bog'lanish
+            {t("Bog'lanish", "Связаться")}
           </a>
         </div>
       </section>
