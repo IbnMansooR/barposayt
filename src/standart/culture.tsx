@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
+import { BarpoWord, barpo } from "../app/components/Barpo";
 
 export function CulturePage() {
   // Admin panel orqali yuklangan bo'lim rasmlari (kalit -> o'zgargan vaqti)
@@ -134,7 +135,7 @@ export function CulturePage() {
               style={{ fontFamily: 'var(--font-body)' }}
               className="text-base text-[#060920]/60 max-w-2xl mx-auto"
             >
-              BARPO uchun qurilish madaniyati — bu ish joyining tozaligi, chizmadagi aniqlik, materialdagi hisob, brigadadagi intizom, nazoratdagi qat'iylik va mijozga bo'lgan hurmatdir.
+<BarpoWord /> uchun qurilish madaniyati — bu ish joyining tozaligi, chizmadagi aniqlik, materialdagi hisob, brigadadagi intizom, nazoratdagi qat'iylik va mijozga bo'lgan hurmatdir.
             </p>
           </motion.div>
         </div>
@@ -184,7 +185,7 @@ export function CulturePage() {
                       style={{ fontFamily: 'var(--font-body)' }}
                       className="text-[#060920]/70 text-lg leading-relaxed font-medium"
                     >
-                      {element.description}
+                      {barpo(element.description)}
                     </motion.p>
 
                     <motion.p
@@ -194,7 +195,7 @@ export function CulturePage() {
                       style={{ fontFamily: 'var(--font-body)' }}
                       className="text-[#060920]/60 text-base leading-relaxed"
                     >
-                      {element.details}
+                      {barpo(element.details)}
                     </motion.p>
 
                     <div className="space-y-2">
@@ -340,7 +341,7 @@ export function CulturePage() {
               style={{ fontFamily: 'var(--font-display)' }}
               className="text-3xl md:text-4xl font-light text-[#060920]"
             >
-              BARPO bilan yangi madaniyatni birgalikda yarataylik
+<BarpoWord /> bilan yangi madaniyatni birgalikda yarataylik
             </h2>
             <p
               style={{ fontFamily: 'var(--font-body)' }}

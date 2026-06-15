@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { SoftDivider } from "../app/components/SoftDivider";
+import { BarpoWord, barpo } from "../app/components/Barpo";
 
 export function AboutPage() {
   const values = [
@@ -36,7 +37,7 @@ export function AboutPage() {
             }}
             className="tracking-tight"
           >
-            BARPO — qurilishdagi tartib g'oyasidan tug'ilgan kompaniya
+            <BarpoWord /> — qurilishdagi tartib g'oyasidan tug'ilgan kompaniya
           </motion.h1>
 
           <motion.div
@@ -59,10 +60,10 @@ export function AboutPage() {
             className="space-y-4 leading-relaxed opacity-60 text-base"
           >
             <p>
-              BARPO oddiy qurilish kompaniyasi bo'lish uchun yaratilmagan. Biz bozorning og'riqli nuqtalarini ko'rdik: tartibsiz brigadalar, noaniq muddatlar, qayta-qayta tuzatishlar, mijozning charchashi, sifatga bo'lgan befarqlik.
+              <BarpoWord /> oddiy qurilish kompaniyasi bo'lish uchun yaratilmagan. Biz bozorning og'riqli nuqtalarini ko'rdik: tartibsiz brigadalar, noaniq muddatlar, qayta-qayta tuzatishlar, mijozning charchashi, sifatga bo'lgan befarqlik.
             </p>
             <p>
-              Shu sababli BARPO o'z oldiga boshqa vazifa qo'ydi — qurilish jarayoniga tizim olib kirish. Har bir ishda reja, nazorat, intizom va mijozga hurmat bo'lishi kerak.
+              Shu sababli <BarpoWord /> o'z oldiga boshqa vazifa qo'ydi — qurilish jarayoniga tizim olib kirish. Har bir ishda reja, nazorat, intizom va mijozga hurmat bo'lishi kerak.
             </p>
             <p>
               Biz uchun qurilish — bu shunchaki devor ko'tarish emas. Bu kelajakda ishlaydigan, foyda keltiradigan, odamlar foydalanadigan muhit yaratishdir.
@@ -90,7 +91,7 @@ export function AboutPage() {
               style={{ fontFamily: 'var(--font-body)', color: '#060920' }}
               className="text-lg opacity-70 leading-relaxed"
             >
-              Bizning missiyamiz — O‘zbekistonda qurilish madaniyatini yangi bosqichga olib chiqish. Qurilishda sifatsizlik, kechikish, ortiqcha xarajat, tartibsiz boshqaruv va noaniq javobgarlik odatiy holat bo‘lmasligi kerak. BARPO sifat, intizom, shaffoflik va mas’uliyatni bozordagi norma darajasiga olib chiqishni maqsad qilgan. Biz uchun har bir obyekt — bu faqat loyiha emas. Bu mijoz ishonchi, investor kapitali va shahar kelajagi oldidagi javobgarlik
+              Bizning missiyamiz — O‘zbekistonda qurilish madaniyatini yangi bosqichga olib chiqish. Qurilishda sifatsizlik, kechikish, ortiqcha xarajat, tartibsiz boshqaruv va noaniq javobgarlik odatiy holat bo‘lmasligi kerak. <BarpoWord /> sifat, intizom, shaffoflik va mas’uliyatni bozordagi norma darajasiga olib chiqishni maqsad qilgan. Biz uchun har bir obyekt — bu faqat loyiha emas. Bu mijoz ishonchi, investor kapitali va shahar kelajagi oldidagi javobgarlik
             </p>
           </motion.div>
 
@@ -118,7 +119,7 @@ Kelajak qurilishi — bu faqat baland binolar emas. Bu yaxshi boshqarilgan jaray
               style={{ fontFamily: 'var(--font-body)', color: '#060920' }}
               className="text-lg opacity-70 leading-relaxed"
             >
-              BARPO shu kelajakni bugundan barpo etadi
+              <BarpoWord /> shu kelajakni bugundan barpo etadi
             </p>
             
           </motion.div>
@@ -177,7 +178,7 @@ Kelajak qurilishi — bu faqat baland binolar emas. Bu yaxshi boshqarilgan jaray
             style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', color: '#060920' }}
             className="mb-4 tracking-tight"
           >
-            Nima uchun BARPO?
+            Nima uchun <BarpoWord />?
           </motion.h2>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -235,7 +236,7 @@ Kelajak qurilishi — bu faqat baland binolar emas. Bu yaxshi boshqarilgan jaray
                       style={{ fontFamily: 'var(--font-display)' }}
                       className="text-2xl text-[#060920] tracking-tight"
                     >
-                      {item.title}
+                      {barpo(item.title)}
                     </h3>
                     <SoftDivider className="mt-3" />
                   </div>
@@ -243,7 +244,7 @@ Kelajak qurilishi — bu faqat baland binolar emas. Bu yaxshi boshqarilgan jaray
                     style={{ fontFamily: 'var(--font-body)' }}
                     className="text-[#060920]/60 leading-relaxed"
                   >
-                    {item.desc}
+                    {barpo(item.desc)}
                   </p>
                 </div>
               </motion.div>
@@ -281,16 +282,16 @@ Kelajak qurilishi — bu faqat baland binolar emas. Bu yaxshi boshqarilgan jaray
             className="space-y-4 text-[#060920]/70 leading-relaxed text-lg"
           >
             <p>
-              BARPO asoschisi Farruxon Shohdiyorxon Umidxon o'g'li qurilishga tasodifan kelmagan. Uning arxitektura va dizayn bo'yicha ta'limi, davlat tizimidagi tajribasi, ishlab chiqarish va biznesdagi amaliyoti bir fikrga olib kelgan: O'zbekistonda sifatli qurilish faqat yaxshi ustalar bilan emas, kuchli boshqaruv madaniyati bilan rivojlanadi.
+              <BarpoWord /> asoschisi Farruxon Shohdiyorxon Umidxon o'g'li qurilishga tasodifan kelmagan. Uning arxitektura va dizayn bo'yicha ta'limi, davlat tizimidagi tajribasi, ishlab chiqarish va biznesdagi amaliyoti bir fikrga olib kelgan: O'zbekistonda sifatli qurilish faqat yaxshi ustalar bilan emas, kuchli boshqaruv madaniyati bilan rivojlanadi.
             </p>
             <p>
-              BARPO ana shu qarashning natijasi. Kompaniya har bir obyektga shunchaki pudratchi sifatida emas, mijoz kapitali, vaqti va ishonchini himoya qiladigan mas'ul tizim sifatida kiradi.
+              <BarpoWord /> ana shu qarashning natijasi. Kompaniya har bir obyektga shunchaki pudratchi sifatida emas, mijoz kapitali, vaqti va ishonchini himoya qiladigan mas'ul tizim sifatida kiradi.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Nima uchun BARPO'ga ishonish kerak? */}
+      {/* Nima uchun <BarpoWord />'ga ishonish kerak? */}
       <section className="relative py-20 px-8 md:px-16">
         <div className="max-w-6xl mx-auto">
           <motion.div
@@ -310,7 +311,7 @@ Kelajak qurilishi — bu faqat baland binolar emas. Bu yaxshi boshqarilgan jaray
               style={{ fontFamily: 'var(--font-display)' }}
               className="text-3xl font-light text-[#060920] leading-tight"
             >
-              Nima uchun BARPO'ga ishonish kerak?
+              Nima uchun <BarpoWord />'ga ishonish kerak?
             </h2>
           </motion.div>
 
@@ -445,7 +446,7 @@ Kelajak qurilishi — bu faqat baland binolar emas. Bu yaxshi boshqarilgan jaray
             style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', color: '#FFFFFF' }}
             className="tracking-tight"
           >
-            BARPO bilan qurilish — bu xotirjamlik
+            <BarpoWord light /> bilan qurilish — bu xotirjamlik
           </motion.h2>
           <motion.div
             initial={{ opacity: 0 }}

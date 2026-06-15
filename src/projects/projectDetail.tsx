@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { SoftDivider } from "../app/components/SoftDivider";
-import { BarpoWord } from "../app/components/Barpo";
+import { BarpoWord, barpo } from "../app/components/Barpo";
 
 interface Project {
   id: string;
@@ -115,11 +115,11 @@ export function ProjectDetailPage({ id }: { id: string }) {
           className="space-y-4 mb-10"
         >
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 5vw, 3.5rem)', color: '#060920' }} className="tracking-tight leading-[1.1]">
-            {project.name}
+            {barpo(project.name)}
           </h1>
           {project.description && (
             <p style={{ fontFamily: 'var(--font-body)' }} className="text-lg text-[#060920]/70 leading-relaxed max-w-2xl">
-              {project.description}
+              {barpo(project.description)}
             </p>
           )}
         </motion.div>
@@ -147,10 +147,10 @@ export function ProjectDetailPage({ id }: { id: string }) {
             {meta.map((m) => (
               <div key={m.label} className="bg-white p-5">
                 <div style={{ fontFamily: 'var(--font-body)' }} className="text-xs tracking-[0.15em] uppercase text-[#060920]/40 mb-1">
-                  {m.label}
+                  {barpo(m.label)}
                 </div>
                 <div style={{ fontFamily: 'var(--font-display)' }} className="text-[#060920]">
-                  {m.value}
+                  {barpo(m.value)}
                 </div>
               </div>
             ))}
@@ -169,12 +169,12 @@ export function ProjectDetailPage({ id }: { id: string }) {
               <div key={m.label}>
                 <div className="w-fit mb-3">
                   <h2 style={{ fontFamily: 'var(--font-display)' }} className="text-xl text-[#060920] mb-3">
-                    {m.label}
+                    {barpo(m.label)}
                   </h2>
                   <SoftDivider />
                 </div>
                 <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/75 leading-relaxed max-w-2xl">
-                  {m.value}
+                  {barpo(m.value)}
                 </p>
               </div>
             ))}
@@ -197,7 +197,7 @@ export function ProjectDetailPage({ id }: { id: string }) {
             </div>
             {detailParas.map((p, i) => (
               <p key={i} style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/75 leading-relaxed">
-                {p}
+                {barpo(p)}
               </p>
             ))}
           </motion.div>
@@ -222,7 +222,7 @@ export function ProjectDetailPage({ id }: { id: string }) {
                 <div key={i} className="flex gap-4 items-start">
                   <span className="mt-2 w-1.5 h-1.5 rounded-full bg-[#060920]/40 flex-shrink-0" />
                   <span style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/75 leading-relaxed">
-                    {f}
+                    {barpo(f)}
                   </span>
                 </div>
               ))}

@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { SoftDivider } from "../app/components/SoftDivider";
+import { BarpoWord, barpo } from "../app/components/Barpo";
 
 const blocks = [
   {
@@ -73,7 +74,7 @@ export function FoydaPage() {
             style={{ fontFamily: "var(--font-body)", color: "#060920" }}
             className="text-lg leading-relaxed opacity-70 max-w-2xl"
           >
-            BARPO mijoz mablag'ini faqat narxni tushirish orqali emas, xatolar, ortiqcha sarf, qayta ishlash va noto'g'ri qarorlarning oldini olish orqali himoya qiladi.
+<BarpoWord /> mijoz mablag'ini faqat narxni tushirish orqali emas, xatolar, ortiqcha sarf, qayta ishlash va noto'g'ri qarorlarning oldini olish orqali himoya qiladi.
           </motion.p>
         </div>
       </section>
@@ -100,12 +101,12 @@ export function FoydaPage() {
                 <div className="space-y-2">
                   <div className="w-fit">
                     <h3 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">
-                      {item.title}
+                      {barpo(item.title)}
                     </h3>
                     <SoftDivider className="mt-2.5" />
                   </div>
                   <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/60 leading-relaxed text-sm">
-                    {item.desc}
+                    {barpo(item.desc)}
                   </p>
                 </div>
               </motion.div>

@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { useState, useEffect } from "react";
 import { SoftDivider } from "../app/components/SoftDivider";
+import { BarpoWord } from "../app/components/Barpo";
 import { Instagram, Facebook, Youtube, Send } from "lucide-react";
 
 export function ContactPage() {
@@ -396,7 +397,7 @@ export function ContactPage() {
             style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', color: '#FFFFFF' }}
             className="tracking-tight"
           >
-            BARPO bilan qurilish — bu xotirjamlik
+            <BarpoWord light /> bilan qurilish — bu xotirjamlik
           </motion.h2>
           <motion.div
             initial={{ opacity: 0 }}

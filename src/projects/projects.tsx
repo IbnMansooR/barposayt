@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { SoftDivider } from "../app/components/SoftDivider";
-import { BarpoWord } from "../app/components/Barpo";
+import { BarpoWord, barpo } from "../app/components/Barpo";
 
 interface Project {
   id: string;
@@ -57,7 +57,7 @@ export function ProjectsPage() {
             style={{ fontFamily: 'var(--font-body)', color: '#060920' }}
             className="text-lg opacity-70 max-w-2xl mx-auto"
           >
-            Har bir obyekt BARPO uchun alohida mas'uliyat. Biz loyihalarni faqat suratlar orqali emas, jarayon, yechim, murakkablik va natija orqali ko'rsatamiz.
+            Har bir obyekt <BarpoWord /> uchun alohida mas'uliyat. Biz loyihalarni faqat suratlar orqali emas, jarayon, yechim, murakkablik va natija orqali ko'rsatamiz.
           </motion.p>
         </div>
       </section>
@@ -101,7 +101,7 @@ export function ProjectsPage() {
                   <div className="p-7 flex flex-col flex-1">
                     <div className="w-fit">
                       <h3 style={{ fontFamily: 'var(--font-display)' }} className="text-2xl text-[#060920]">
-                        {project.name}
+                        {barpo(project.name)}
                       </h3>
                       <SoftDivider className="mt-3" />
                     </div>
@@ -131,7 +131,7 @@ export function ProjectsPage() {
                         )}
                         {project.role && (
                           <p className="text-[#060920]/60">
-                            <span className="text-[#060920]/40 uppercase tracking-wide text-xs">BARPO roli:</span> {project.role}
+                            <span className="text-[#060920]/40 uppercase tracking-wide text-xs"><BarpoWord /> roli:</span> {barpo(project.role)}
                           </p>
                         )}
                       </div>
@@ -142,26 +142,26 @@ export function ProjectsPage() {
                       {project.task && (
                         <div style={{ fontFamily: 'var(--font-body)' }}>
                           <p className="text-[#060920]/40 uppercase tracking-wide text-xs mb-0.5">Vazifa</p>
-                          <p className="text-sm text-[#060920]/65 leading-relaxed line-clamp-2">{project.task}</p>
+                          <p className="text-sm text-[#060920]/65 leading-relaxed line-clamp-2">{barpo(project.task)}</p>
                         </div>
                       )}
                       {project.solution && (
                         <div style={{ fontFamily: 'var(--font-body)' }}>
-                          <p className="text-[#060920]/40 uppercase tracking-wide text-xs mb-0.5">BARPO yechimi</p>
-                          <p className="text-sm text-[#060920]/65 leading-relaxed line-clamp-2">{project.solution}</p>
+                          <p className="text-[#060920]/40 uppercase tracking-wide text-xs mb-0.5"><BarpoWord /> yechimi</p>
+                          <p className="text-sm text-[#060920]/65 leading-relaxed line-clamp-2">{barpo(project.solution)}</p>
                         </div>
                       )}
                       {project.result && (
                         <div style={{ fontFamily: 'var(--font-body)' }}>
                           <p className="text-[#060920]/40 uppercase tracking-wide text-xs mb-0.5">Natija</p>
-                          <p className="text-sm text-[#060920]/65 leading-relaxed line-clamp-2">{project.result}</p>
+                          <p className="text-sm text-[#060920]/65 leading-relaxed line-clamp-2">{barpo(project.result)}</p>
                         </div>
                       )}
                       {/* Yangi maydonlar bo'lmasa — eski tavsif ko'rinadi */}
                       {!project.task && !project.solution && !project.result && (
                         <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/65 leading-relaxed">
                           {project.description
-                            ? project.description
+                            ? barpo(project.description)
                             : [project.location, project.area, project.year].filter(Boolean).join(" · ")}
                         </p>
                       )}

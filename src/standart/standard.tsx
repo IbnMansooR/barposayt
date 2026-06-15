@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { SoftDivider } from "../app/components/SoftDivider";
+import { BarpoWord } from "../app/components/Barpo";
 
 export function StandardPage() {
   type Standard = { id: string; title: string; desc: string };
@@ -24,7 +25,7 @@ export function StandardPage() {
             style={{ fontFamily: 'var(--font-display)' }}
             className="text-sm tracking-[0.15em] uppercase text-[#060920]/50"
           >
-            BARPO Standarti
+            <BarpoWord /> Standarti
           </motion.p>
 
           <motion.h1
@@ -44,7 +45,7 @@ export function StandardPage() {
             style={{ fontFamily: 'var(--font-body)', color: '#060920' }}
             className="text-lg opacity-70 max-w-2xl mx-auto"
           >
-            BARPO Standarti — bu har bir bosqichni tekshirish, xatoni vaqtida ko'rish, natijani aniq mezon bilan qabul qilish tizimi.
+            <BarpoWord /> Standarti — bu har bir bosqichni tekshirish, xatoni vaqtida ko'rish, natijani aniq mezon bilan qabul qilish tizimi.
           </motion.p>
         </div>
       </section>
@@ -130,7 +131,7 @@ export function StandardPage() {
             style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', color: '#FFFFFF' }}
             className="tracking-tight"
           >
-            Obyektingiz uchun BARPO Standartini qo'llang
+            Obyektingiz uchun <BarpoWord light /> Standartini qo'llang
           </motion.h2>
           <motion.p
             initial={{ opacity: 0 }}
@@ -149,7 +150,7 @@ export function StandardPage() {
             style={{ fontFamily: 'var(--font-body)', textDecoration: 'none' }}
             className="inline-block px-8 py-3 bg-white text-[#060920] tracking-[0.15em] uppercase text-sm font-medium rounded-2xl shadow-lg hover:shadow-xl transition-all"
           >
-            BARPO Standartini qo'llash
+            <BarpoWord /> Standartini qo'llash
           </motion.a>
         </div>
       </section>

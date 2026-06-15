@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { SoftDivider } from "../app/components/SoftDivider";
-import { BarpoWord } from "../app/components/Barpo";
+import { BarpoWord, barpo } from "../app/components/Barpo";
 
 interface Article {
   id: string;
@@ -71,7 +71,7 @@ export function BlogDetailPage({ id }: { id: string }) {
             style={{ fontFamily: "var(--font-body)" }}
             className="text-xs tracking-[0.2em] uppercase text-[#060920]/50 mb-4"
           >
-            {article.rubric}
+            {barpo(article.rubric)}
           </motion.p>
         )}
 
@@ -83,7 +83,7 @@ export function BlogDetailPage({ id }: { id: string }) {
           style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.9rem, 4.5vw, 3rem)", color: "#060920" }}
           className="tracking-tight leading-[1.15] mb-6"
         >
-          {article.title}
+          {barpo(article.title)}
         </motion.h1>
 
         <SoftDivider className="mb-10" />
@@ -109,7 +109,7 @@ export function BlogDetailPage({ id }: { id: string }) {
         >
           {paras.length > 0 ? paras.map((para, i) => (
             <p key={i} style={{ fontFamily: "var(--font-body)" }} className="text-lg text-[#060920]/75 leading-relaxed">
-              {para}
+              {barpo(para)}
             </p>
           )) : (
             <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/40">Maqola matni hali to'ldirilmagan.</p>

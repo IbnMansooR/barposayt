@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { SoftDivider } from "../app/components/SoftDivider";
-import { BarpoWord } from "../app/components/Barpo";
+import { BarpoWord, barpo } from "../app/components/Barpo";
 
 type Status = "idle" | "sending" | "success" | "error";
 
@@ -107,7 +107,7 @@ export function TakliflarPage() {
               style={{ fontFamily: "var(--font-body)" }}
               className="max-w-xl mx-auto leading-relaxed tracking-wide text-[#060920]/70"
             >
-              BARPO hamkorlik, xizmat va imkoniyatlar bo'yicha cheklangan miqdordagi maxsus takliflarni taqdim etadi. Imkoniyatni boy bermang.
+<BarpoWord /> hamkorlik, xizmat va imkoniyatlar bo'yicha cheklangan miqdordagi maxsus takliflarni taqdim etadi. Imkoniyatni boy bermang.
             </p>
           </motion.div>
 
@@ -146,13 +146,13 @@ export function TakliflarPage() {
                     style={{ fontFamily: "var(--font-display)" }}
                     className="text-xl text-[#060920] mb-3"
                   >
-                    {offer.title}
+                    {barpo(offer.title)}
                   </div>
                   <p
                     style={{ fontFamily: "var(--font-body)" }}
                     className="text-[#060920]/65 text-sm leading-relaxed flex-1"
                   >
-                    {offer.description}
+                    {barpo(offer.description)}
                   </p>
                   <a
                     href="#contact"
@@ -187,7 +187,7 @@ export function TakliflarPage() {
               </h2>
               <div style={{ fontFamily: "var(--font-body)" }} className="max-w-2xl mx-auto leading-relaxed tracking-wide text-[#060920]/70 space-y-3">
                 <p>Investor uchun qurilish — bu faqat bino qurish emas. Bu kapitalni to'g'ri joylashtirish, risklarni kamaytirish va kelajakdagi daromad modelini barpo etish.</p>
-                <p>BARPO investorlar uchun turli yo'nalishdagi obyektlarni konsepsiyadan qurilishgacha tizimli yondashuv asosida ko'rib chiqadi.</p>
+                <p><BarpoWord /> investorlar uchun turli yo'nalishdagi obyektlarni konsepsiyadan qurilishgacha tizimli yondashuv asosida ko'rib chiqadi.</p>
                 <p>Biz har bir loyiha bo'yicha nafaqat "qanday quriladi?" degan savolga, balki "bu obyekt qanday ishlaydi, kimga xizmat qiladi va qanday qiymat yaratadi?" degan savolga ham javob izlaymiz.</p>
               </div>
             </motion.div>
@@ -204,19 +204,19 @@ export function TakliflarPage() {
                 >
                   <div className="w-fit">
                     <h3 style={{ fontFamily: "var(--font-display)" }} className="text-xl md:text-2xl text-[#060920] leading-tight">
-                      {it.title}
+                      {barpo(it.title)}
                     </h3>
                     <SoftDivider className="mt-3" />
                   </div>
                   <div style={{ fontFamily: "var(--font-body)" }} className="mt-4 space-y-3 text-[#060920]/75 leading-relaxed">
                     {it.text.split("\n").map((s) => s.trim()).filter(Boolean).map((p, idx) => (
-                      <p key={idx}>{p}</p>
+                      <p key={idx}>{barpo(p)}</p>
                     ))}
                   </div>
                   {it.key && (
                     <div className="mt-5 pl-5 border-l-2 border-[#060920]/30">
                       <p style={{ fontFamily: "var(--font-display)" }} className="text-base md:text-lg text-[#060920] italic leading-snug whitespace-pre-line">
-                        {it.key}
+                        {barpo(it.key)}
                       </p>
                     </div>
                   )}

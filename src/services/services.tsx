@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { SoftDivider } from "../app/components/SoftDivider";
+import { BarpoWord, barpo } from "../app/components/Barpo";
 
 // Lokal rasmlar (zaxira variant): src/assets papkasiga 1.jpg, 2.png ... nomi bilan rasm
 // qo'ysangiz ham chiqadi. Lekin asosiy usul — admin panel orqali rasm yuklash.
@@ -132,7 +133,7 @@ export function ServicesPage() {
             style={{ fontFamily: 'var(--font-body)' }}
             className="text-lg text-[#060920]/60 max-w-3xl mx-auto"
           >
-            BARPO qurilish jarayonining alohida bosqichlarini emas, butun tizimini ko'radi. Shu sababli har bir xizmatimiz yakuniy natija, foydalanish qulayligi va investor manfaatiga bog'langan.
+<BarpoWord /> qurilish jarayonining alohida bosqichlarini emas, butun tizimini ko'radi. Shu sababli har bir xizmatimiz yakuniy natija, foydalanish qulayligi va investor manfaatiga bog'langan.
           </motion.p>
         </div>
       </section>
@@ -185,7 +186,7 @@ export function ServicesPage() {
                       style={{ fontFamily: 'var(--font-body)' }}
                       className="text-[#060920]/70 text-lg leading-relaxed"
                     >
-                      {service.description}
+                      {barpo(service.description)}
                     </motion.p>
 
                     {service.highlight && (
@@ -363,7 +364,7 @@ export function ServicesPage() {
             style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', color: '#FFFFFF' }}
             className="tracking-tight"
           >
-            BARPO bilan qurilish — bu xotirjamlik
+            <BarpoWord light /> bilan qurilish — bu xotirjamlik
           </motion.h2>
           <motion.div
             initial={{ opacity: 0 }}

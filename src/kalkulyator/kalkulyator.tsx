@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { SoftDivider } from "../app/components/SoftDivider";
+import { BarpoWord, barpo } from "../app/components/Barpo";
 
 interface Answers {
   type: string;
@@ -177,7 +178,7 @@ export function KalkulyatorPage() {
                           : "bg-white text-[#060920]/65 border-[#060920]/15 hover:border-[#060920]/35"
                       }`}
                     >
-                      {o}
+                      {barpo(o)}
                     </button>
                   ))}
                 </div>
@@ -291,8 +292,8 @@ export function KalkulyatorPage() {
                         >
                           <span style={{ fontFamily: "var(--font-display)" }} className="text-[#060920]/20 text-2xl leading-none mt-0.5 shrink-0">{String(i + 1).padStart(2, "0")}</span>
                           <div>
-                            <h3 style={{ fontFamily: "var(--font-display)" }} className="text-lg text-[#060920] mb-1">{r.title}</h3>
-                            <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/65 leading-relaxed text-sm">{r.rec}</p>
+                            <h3 style={{ fontFamily: "var(--font-display)" }} className="text-lg text-[#060920] mb-1">{barpo(r.title)}</h3>
+                            <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/65 leading-relaxed text-sm">{barpo(r.rec)}</p>
                           </div>
                         </motion.div>
                       ))}
@@ -306,11 +307,11 @@ export function KalkulyatorPage() {
                     Bu xavflarni boshida tahlil qilish — eng arzon qaror
                   </h2>
                   <p style={{ fontFamily: "var(--font-body)" }} className="text-white/55 max-w-xl mx-auto mt-4 leading-relaxed">
-                    BARPO mutaxassisi obyektingizni ko'rib chiqib, har bir xavfni qanday boshqarish mumkinligini aniq aytadi.
+<BarpoWord /> mutaxassisi obyektingizni ko'rib chiqib, har bir xavfni qanday boshqarish mumkinligini aniq aytadi.
                   </p>
                   <a href="#contact" style={{ fontFamily: "var(--font-body)", textDecoration: "none" }}
                     className="inline-block mt-7 px-8 py-3.5 bg-white text-[#060920] tracking-[0.15em] uppercase text-sm font-medium rounded-2xl hover:shadow-xl transition-all">
-                    BARPO bilan xavflarni tahlil qilish
+<BarpoWord light /> bilan xavflarni tahlil qilish
                   </a>
                 </div>
               </motion.div>

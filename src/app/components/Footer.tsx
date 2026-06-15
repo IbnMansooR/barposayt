@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Facebook, Instagram, Youtube, Send } from "lucide-react";
-import logoLight from "../../assets/Logo dark night.png";
+import logoLight from "../../assets/oqlogo.png";
 
 type Socials = { telegram?: string; instagram?: string; facebook?: string; youtube?: string };
 type ContactInfo = { phone?: string; email?: string; address?: string };

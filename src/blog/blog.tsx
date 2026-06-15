@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { SoftDivider } from "../app/components/SoftDivider";
-import { BarpoWord } from "../app/components/Barpo";
+import { BarpoWord, barpo } from "../app/components/Barpo";
 
 interface Article {
   id: string;
@@ -81,7 +81,7 @@ export function BlogPage() {
                   transition={{ duration: 0.7, delay: ri * 0.05 }}
                 >
                   <div className="w-fit mb-6">
-                    <h2 style={{ fontFamily: "var(--font-display)" }} className="text-2xl md:text-3xl text-[#060920]">{rub.title}</h2>
+                    <h2 style={{ fontFamily: "var(--font-display)" }} className="text-2xl md:text-3xl text-[#060920]">{barpo(rub.title)}</h2>
                     <SoftDivider className="mt-3" />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -99,7 +99,7 @@ export function BlogPage() {
                         )}
                         <div className="p-6">
                           <h3 style={{ fontFamily: "var(--font-display)" }} className="text-lg text-[#060920] leading-snug group-hover:opacity-70 transition-opacity">
-                            {a.title}
+                            {barpo(a.title)}
                           </h3>
                           <span style={{ fontFamily: "var(--font-body)" }} className="mt-3 inline-block text-xs tracking-[0.15em] uppercase text-[#060920]/50">
                             O'qish →

@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { SoftDivider } from "../app/components/SoftDivider";
+import { BarpoWord } from "../app/components/Barpo";
 
 const TERMS = [
   { t: "Genpudrat (bosh pudratchi)", d: "Butun qurilish jarayonini yagona javobgar tomon sifatida boshqaradigan kompaniya — reja, grafik, brigadalar va sifatni bir nuqtadan boshqaradi." },
@@ -20,7 +21,7 @@ export function LugatPage() {
         <div className="max-w-4xl mx-auto">
           <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
             style={{ fontFamily: "var(--font-body)" }} className="text-sm tracking-[0.2em] uppercase text-[#060920]/50 mb-4">
-            BARPO LUG'ATI
+<BarpoWord /> LUG'ATI
           </motion.p>
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1 }}
             style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 5vw, 4rem)", color: "#060920" }} className="tracking-tight leading-[1.1]">

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { SoftDivider } from "../app/components/SoftDivider";
+import { BarpoWord } from "../app/components/Barpo";
 
 const CHAOS = [
   { p: "Material kechikishi", s: "Ta'minot grafigi oldindan tuziladi — material obyektga kerak bo'lishidan oldin yetkaziladi." },
@@ -44,7 +45,7 @@ export function NazoratPage() {
               Qurilish qayerda buziladi?
             </h1>
             <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/65 leading-relaxed mt-5 max-w-2xl">
-              Muammoli nuqtani bosing — BARPO o'sha joyda qanday yechim qo'llashini ko'ring.
+              Muammoli nuqtani bosing — <BarpoWord /> o'sha joyda qanday yechim qo'llashini ko'ring.
             </p>
           </motion.div>
 
@@ -83,7 +84,7 @@ export function NazoratPage() {
                     <h3 style={{ fontFamily: "var(--font-display)" }} className="text-2xl text-[#060920]">{CHAOS[active].p}</h3>
                     <SoftDivider className="mt-3" />
                   </div>
-                  <p style={{ fontFamily: "var(--font-body)" }} className="text-xs tracking-[0.2em] uppercase text-[#060920]/40 mb-2">BARPO YECHIMI</p>
+                  <p style={{ fontFamily: "var(--font-body)" }} className="text-xs tracking-[0.2em] uppercase text-[#060920]/40 mb-2"><BarpoWord /> YECHIMI</p>
                   <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/75 leading-relaxed text-lg">{CHAOS[active].s}</p>
                 </motion.div>
               </AnimatePresence>
@@ -96,7 +97,7 @@ export function NazoratPage() {
       <section className="px-8 md:px-16 py-16 bg-white">
         <div className="max-w-4xl mx-auto">
           <div className="mb-10">
-            <p style={{ fontFamily: "var(--font-body)" }} className="text-sm tracking-[0.2em] uppercase text-[#060920]/50 mb-4">BARPO NAZORAT NUQTALARI</p>
+            <p style={{ fontFamily: "var(--font-body)" }} className="text-sm tracking-[0.2em] uppercase text-[#060920]/50 mb-4"><BarpoWord /> NAZORAT NUQTALARI</p>
             <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.75rem, 4vw, 3rem)", color: "#060920" }} className="tracking-tight">
               Biz qayerda to'xtab, tekshiramiz?
             </h2>
@@ -156,7 +157,7 @@ export function NazoratPage() {
             </div>
           </div>
           <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/45 text-sm mt-4">
-            * Bu BARPO yondashuvini ko'rsatadigan konsepsiya. Har bir loyiha bo'yicha mijozga shu tartibda hisobot beriladi.
+            * Bu <BarpoWord /> yondashuvini ko'rsatadigan konsepsiya. Har bir loyiha bo'yicha mijozga shu tartibda hisobot beriladi.
           </p>
         </div>
       </section>

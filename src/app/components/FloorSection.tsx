@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { ReactNode } from "react";
+import { barpo } from "./Barpo";
 
 interface FloorSectionProps {
   floorNumber: number;
@@ -47,7 +48,7 @@ export function FloorSection({
                 className="opacity-60 tracking-wide text-sm"
                 style={{ fontFamily: 'var(--font-body)' }}
               >
-                {subtitle}
+                {barpo(subtitle)}
               </motion.p>
             )}
 
@@ -63,7 +64,7 @@ export function FloorSection({
                 fontSize: 'clamp(2.5rem, 5vw, 4rem)'
               }}
             >
-              {title}
+              {barpo(title)}
             </motion.h2>
 
             {/* Description */}
@@ -79,7 +80,7 @@ export function FloorSection({
                 letterSpacing: '0.02em'
               }}
             >
-              {description}
+              {barpo(description)}
             </motion.p>
 
             {/* Additional content */}

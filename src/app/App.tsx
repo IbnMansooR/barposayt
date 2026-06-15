@@ -5,6 +5,7 @@ import logoHero from '../assets/Logo dark night.png';
 import { FloorSection } from "./components/FloorSection";
 import { SoftDivider } from "./components/SoftDivider";
 import { Footer } from "./components/Footer";
+import { BarpoWord, barpo } from "./components/Barpo";
 
 export default function App() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -130,7 +131,7 @@ export default function App() {
               style={{ fontFamily: 'var(--font-display)', textShadow: 'none' }}
               className="max-w-3xl mx-auto leading-relaxed tracking-wide text-[#060920] text-xl md:text-2xl"
             >
-              BARPO — tadbirkorlar, investorlar va yirik loyihalar uchun qurilish jarayonini tizim, sifat, nazorat va mas'uliyat asosida boshqaradigan kompaniya.
+              <BarpoWord /> — tadbirkorlar, investorlar va yirik loyihalar uchun qurilish jarayonini tizim, sifat, nazorat va mas'uliyat asosida boshqaradigan kompaniya.
             </motion.p>
 
             <motion.p
@@ -174,7 +175,7 @@ export default function App() {
                 style={{ fontFamily: 'var(--font-body)', textDecoration: 'none' }}
                 className="px-8 py-3 bg-transparent text-[#060920] tracking-[0.15em] uppercase text-sm border border-[#060920]/25 hover:border-[#060920]/60 transition-all rounded-2xl inline-block"
               >
-                BARPO standartlari bilan tanishish
+                <BarpoWord /> standartlari bilan tanishish
               </motion.a>
             </motion.div>
           </motion.div>
@@ -221,7 +222,7 @@ export default function App() {
           style={{ fontFamily: 'var(--font-display)' }}
           className="mt-8 text-2xl text-[#060920] leading-snug max-w-2xl"
         >
-          BARPO uchun sifat — alohida va'da emas.
+<BarpoWord /> uchun sifat — alohida va'da emas.
         </motion.p>
         <p style={{ fontFamily: 'var(--font-body)' }} className="mt-3 text-[#060920]/65 leading-relaxed max-w-2xl">
           Bu ish boshlanishidan obyekt topshirilishigacha amal qilinadigan mezon.
@@ -245,7 +246,7 @@ export default function App() {
           </p>
           <div className="pl-5 border-l-2 border-[#060920]/30">
             <p style={{ fontFamily: 'var(--font-display)' }} className="text-lg text-[#060920] italic leading-snug">
-              BARPO — bu qurilishdagi tartib, nazorat va mas'uliyat. Biz obyektni shunchaki qurmaymiz. Uni tizim bilan barpo etamiz.
+<BarpoWord /> — bu qurilishdagi tartib, nazorat va mas'uliyat. Biz obyektni shunchaki qurmaymiz. Uni tizim bilan barpo etamiz.
             </p>
           </div>
         </div>
@@ -264,7 +265,7 @@ export default function App() {
             Qurilishda sifatsizlik, kechikish, ortiqcha xarajat, tartibsiz boshqaruv va noaniq javobgarlik odatiy holat bo'lmasligi kerak.
           </p>
           <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/70 leading-relaxed">
-            BARPO sifat, intizom, shaffoflik va mas'uliyatni bozordagi norma darajasiga olib chiqishni maqsad qilgan.
+<BarpoWord /> sifat, intizom, shaffoflik va mas'uliyatni bozordagi norma darajasiga olib chiqishni maqsad qilgan.
           </p>
           <div className="pl-5 border-l-2 border-[#060920]/30">
             <p style={{ fontFamily: 'var(--font-display)' }} className="text-lg text-[#060920] italic leading-snug">
@@ -334,8 +335,8 @@ export default function App() {
             >
               <span style={{ fontFamily: 'var(--font-display)' }} className="text-xl font-bold text-[#060920]/20 shrink-0 leading-none mt-1">{item.num}</span>
               <div>
-                <div style={{ fontFamily: 'var(--font-display)' }} className="text-lg text-[#060920] mb-1">{item.title}</div>
-                <p style={{ fontFamily: 'var(--font-body)' }} className="text-sm text-[#060920]/60 leading-relaxed">{item.desc}</p>
+                <div style={{ fontFamily: 'var(--font-display)' }} className="text-lg text-[#060920] mb-1">{barpo(item.title)}</div>
+                <p style={{ fontFamily: 'var(--font-body)' }} className="text-sm text-[#060920]/60 leading-relaxed">{barpo(item.desc)}</p>
               </div>
             </motion.div>
           ))}
