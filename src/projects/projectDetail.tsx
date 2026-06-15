@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { SoftDivider } from "../app/components/SoftDivider";
 import { BarpoWord, barpo } from "../app/components/Barpo";
+import { useT } from "../app/i18n";
 
 interface Project {
   id: string;
@@ -26,6 +27,7 @@ interface Project {
 }
 
 export function ProjectDetailPage({ id }: { id: string }) {
+  const t = useT();
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
@@ -48,7 +50,7 @@ export function ProjectDetailPage({ id }: { id: string }) {
     return (
       <div className="pt-32 min-h-screen flex items-center justify-center">
         <div style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/40 tracking-wide animate-pulse">
-          <BarpoWord /> etilyapti...
+          {t("Yuklanmoqda...", "Загрузка...")}
         </div>
       </div>
     );
@@ -58,36 +60,36 @@ export function ProjectDetailPage({ id }: { id: string }) {
     return (
       <div className="pt-32 min-h-screen flex flex-col items-center justify-center px-8 text-center gap-6">
         <div style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', color: '#060920' }}>
-          Loyiha topilmadi
+          {t("Loyiha topilmadi", "Проект не найден")}
         </div>
         <a
           href="#projects"
           style={{ fontFamily: 'var(--font-body)' }}
           className="px-6 py-3 bg-[#060920] text-white tracking-[0.15em] uppercase text-sm rounded-2xl hover:shadow-lg transition-all"
         >
-          ← Barcha loyihalar
+          ← {t("Barcha loyihalar", "Все проекты")}
         </a>
       </div>
     );
   }
 
   const meta = [
-    { label: "Yo'nalish", value: project.direction },
-    { label: "Hudud", value: project.location },
-    { label: "Ish turi", value: project.workType },
-    { label: "Maydon", value: project.area },
-    { label: "Muddat", value: project.duration },
-    { label: "BARPO roli", value: project.role },
-    { label: "Yil", value: project.year },
-    { label: "Holati", value: project.status },
+    { label: t("Yo'nalish", "Направление"), value: project.direction },
+    { label: t("Hudud", "Регион"), value: project.location },
+    { label: t("Ish turi", "Тип работ"), value: project.workType },
+    { label: t("Maydon", "Площадь"), value: project.area },
+    { label: t("Muddat", "Срок"), value: project.duration },
+    { label: t("BARPO roli", "Роль BARPO"), value: project.role },
+    { label: t("Yil", "Год"), value: project.year },
+    { label: t("Holati", "Статус"), value: project.status },
   ].filter((m) => m.value);
 
   const tsr = [
-    { label: "Vazifa", value: project.task },
-    { label: "Murakkablik", value: project.problem },
-    { label: "BARPO yechimi", value: project.solution },
-    { label: "Jarayon", value: project.process },
-    { label: "Natija", value: project.result },
+    { label: t("Vazifa", "Задача"), value: project.task },
+    { label: t("Murakkablik", "Сложность"), value: project.problem },
+    { label: t("BARPO yechimi", "Решение BARPO"), value: project.solution },
+    { label: t("Jarayon", "Процесс"), value: project.process },
+    { label: t("Natija", "Результат"), value: project.result },
   ].filter((m) => m.value);
 
   const detailParas = (project.details || "").split("\n").map((s) => s.trim()).filter(Boolean);
@@ -104,7 +106,7 @@ export function ProjectDetailPage({ id }: { id: string }) {
           style={{ fontFamily: 'var(--font-body)' }}
           className="inline-block mb-10 text-sm text-[#060920]/60 hover:text-[#060920] tracking-[0.15em] uppercase transition-colors"
         >
-          ← Barcha loyihalar
+          ← {t("Barcha loyihalar", "Все проекты")}
         </motion.a>
 
         {/* Sarlavha */}
@@ -191,7 +193,7 @@ export function ProjectDetailPage({ id }: { id: string }) {
           >
             <div className="w-fit mb-4">
               <h2 style={{ fontFamily: 'var(--font-display)' }} className="text-2xl text-[#060920] mb-3">
-                Loyiha haqida
+                {t("Loyiha haqida", "О проекте")}
               </h2>
               <SoftDivider />
             </div>
@@ -213,7 +215,7 @@ export function ProjectDetailPage({ id }: { id: string }) {
           >
             <div className="w-fit mb-5">
               <h2 style={{ fontFamily: 'var(--font-display)' }} className="text-2xl text-[#060920] mb-3">
-                Asosiy ko'rsatkichlar
+                {t("Asosiy ko'rsatkichlar", "Ключевые показатели")}
               </h2>
               <SoftDivider />
             </div>
@@ -236,20 +238,23 @@ export function ProjectDetailPage({ id }: { id: string }) {
             style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.25rem, 3vw, 2rem)', color: '#060920' }}
             className="tracking-tight"
           >
-            Investor sifatida obyekt qurmoqchimisiz?
+            {t("Investor sifatida obyekt qurmoqchimisiz?", "Хотите построить объект как инвестор?")}
           </h3>
           <p
             style={{ fontFamily: 'var(--font-body)' }}
             className="text-[#060920]/60 text-base max-w-lg mx-auto leading-relaxed"
           >
-            Biz sizga obyektni faqat qurilish nuqtayi nazaridan emas, biznes va ekspluatatsiya samaradorligi nuqtayi nazaridan ham ko'rib chiqishga yordam beramiz.
+            {t(
+              "Biz sizga obyektni faqat qurilish nuqtayi nazaridan emas, biznes va ekspluatatsiya samaradorligi nuqtayi nazaridan ham ko'rib chiqishga yordam beramiz.",
+              "Мы поможем вам рассмотреть объект не только с точки зрения строительства, но и с точки зрения бизнеса и эффективности эксплуатации.",
+            )}
           </p>
           <a
             href="#contact"
             style={{ fontFamily: 'var(--font-body)', textDecoration: 'none' }}
             className="inline-block px-8 py-3 bg-[#060920] text-white tracking-[0.15em] uppercase text-sm font-medium rounded-2xl shadow-lg hover:shadow-xl transition-all"
           >
-            Investorlar uchun maslahat olish
+            {t("Investorlar uchun maslahat olish", "Получить консультацию для инвесторов")}
           </a>
         </div>
       </div>

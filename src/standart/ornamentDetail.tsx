@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { BarpoWord } from "../app/components/Barpo";
+import { useT } from "../app/i18n";
 
 type Ornament = {
   id: string;
@@ -12,6 +12,7 @@ type Ornament = {
 };
 
 export function OrnamentDetailPage({ id }: { id: string }) {
+  const t = useT();
   const [ornament, setOrnament] = useState<Ornament | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -33,7 +34,7 @@ export function OrnamentDetailPage({ id }: { id: string }) {
     return (
       <div className="relative bg-white pt-32 min-h-screen flex items-center justify-center">
         <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/40 tracking-wide">
-          <BarpoWord /> etilyapti...
+          {t("Yuklanmoqda...", "Загрузка...")}
         </p>
       </div>
     );
@@ -44,14 +45,14 @@ export function OrnamentDetailPage({ id }: { id: string }) {
       <div className="relative bg-white pt-32 min-h-screen flex items-center justify-center px-8">
         <div className="text-center space-y-5">
           <h1 style={{ fontFamily: "var(--font-display)", color: "#060920" }} className="text-2xl tracking-tight">
-            Naqsh topilmadi
+            {t("Naqsh topilmadi", "Орнамент не найден")}
           </h1>
           <a
             href="#culture"
             style={{ fontFamily: "var(--font-body)", textDecoration: "none" }}
             className="inline-block px-8 py-3 bg-[#060920] text-white tracking-[0.15em] uppercase text-sm rounded-2xl hover:shadow-xl transition-all"
           >
-            ← Madaniyatga qaytish
+            ← {t("Madaniyatga qaytish", "Вернуться к культуре")}
           </a>
         </div>
       </div>
@@ -70,7 +71,7 @@ export function OrnamentDetailPage({ id }: { id: string }) {
           style={{ fontFamily: "var(--font-body)", textDecoration: "none" }}
           className="inline-block mb-10 text-sm tracking-[0.15em] uppercase text-[#060920]/60 hover:text-[#060920] transition-colors"
         >
-          ← Tarixiy aloqa
+          ← {t("Tarixiy aloqa", "Историческая связь")}
         </motion.a>
 
         {/* Eyebrow */}
@@ -81,7 +82,7 @@ export function OrnamentDetailPage({ id }: { id: string }) {
           style={{ fontFamily: "var(--font-display)" }}
           className="text-sm tracking-[0.15em] uppercase text-[#060920]/50 mb-4"
         >
-          Tarixiy aloqa — Naqsh
+          {t("Tarixiy aloqa — Naqsh", "Историческая связь — Орнамент")}
         </motion.p>
 
         {/* Title */}
@@ -125,7 +126,7 @@ export function OrnamentDetailPage({ id }: { id: string }) {
           >
             <div className="w-fit mb-4">
               <h2 style={{ fontFamily: "var(--font-display)", color: "#060920" }} className="text-xl tracking-tight">
-                Ma'nosi
+                {t("Ma'nosi", "Значение")}
               </h2>
               <div className="mt-3 h-[1px] w-full bg-[#060920]/20" />
             </div>
@@ -145,7 +146,7 @@ export function OrnamentDetailPage({ id }: { id: string }) {
           >
             <div className="w-fit mb-4">
               <h2 style={{ fontFamily: "var(--font-display)", color: "#060920" }} className="text-xl tracking-tight">
-                Tarixi
+                {t("Tarixi", "История")}
               </h2>
               <div className="mt-3 h-[1px] w-full bg-[#060920]/20" />
             </div>
@@ -162,7 +163,7 @@ export function OrnamentDetailPage({ id }: { id: string }) {
             style={{ fontFamily: "var(--font-body)", textDecoration: "none" }}
             className="inline-block px-8 py-3 bg-[#060920] text-white tracking-[0.15em] uppercase text-sm font-medium rounded-2xl shadow-lg hover:shadow-xl transition-all"
           >
-            ← Barcha naqshlar
+            ← {t("Barcha naqshlar", "Все орнаменты")}
           </a>
         </div>
       </div>

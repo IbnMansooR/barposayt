@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { SoftDivider } from "../app/components/SoftDivider";
-import { BarpoWord, barpo } from "../app/components/Barpo";
+import { barpo } from "../app/components/Barpo";
+import { useT } from "../app/i18n";
 
 interface Article {
   id: string;
@@ -13,6 +14,7 @@ interface Article {
 }
 
 export function BlogDetailPage({ id }: { id: string }) {
+  const t = useT();
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -29,7 +31,7 @@ export function BlogDetailPage({ id }: { id: string }) {
   if (loading) {
     return (
       <div className="relative bg-white pt-32 min-h-screen flex items-center justify-center">
-        <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/40 tracking-wide animate-pulse"><BarpoWord /> etilyapti...</p>
+        <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/40 tracking-wide animate-pulse">{t("Yuklanmoqda...", "Загрузка...")}</p>
       </div>
     );
   }
@@ -37,10 +39,10 @@ export function BlogDetailPage({ id }: { id: string }) {
   if (!article) {
     return (
       <div className="relative bg-white pt-32 min-h-screen flex flex-col items-center justify-center px-8 text-center gap-5">
-        <h1 style={{ fontFamily: "var(--font-display)", fontSize: "2rem", color: "#060920" }}>Maqola topilmadi</h1>
+        <h1 style={{ fontFamily: "var(--font-display)", fontSize: "2rem", color: "#060920" }}>{t("Maqola topilmadi", "Статья не найдена")}</h1>
         <a href="#blog" style={{ fontFamily: "var(--font-body)", textDecoration: "none" }}
           className="inline-block px-6 py-3 bg-[#060920] text-white tracking-[0.15em] uppercase text-sm rounded-2xl hover:shadow-xl transition-all">
-          ← Bilim markazi
+          ← {t("Bilim markazi", "Центр знаний")}
         </a>
       </div>
     );
@@ -59,7 +61,7 @@ export function BlogDetailPage({ id }: { id: string }) {
           style={{ fontFamily: "var(--font-body)", textDecoration: "none" }}
           className="inline-block mb-8 text-sm text-[#060920]/60 hover:text-[#060920] tracking-[0.15em] uppercase transition-colors"
         >
-          ← Bilim markazi
+          ← {t("Bilim markazi", "Центр знаний")}
         </motion.a>
 
         {/* Rubrika */}
@@ -112,7 +114,7 @@ export function BlogDetailPage({ id }: { id: string }) {
               {barpo(para)}
             </p>
           )) : (
-            <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/40">Maqola matni hali to'ldirilmagan.</p>
+            <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/40">{t("Maqola matni hali to'ldirilmagan.", "Текст статьи ещё не заполнен.")}</p>
           )}
         </motion.div>
 
@@ -120,7 +122,7 @@ export function BlogDetailPage({ id }: { id: string }) {
         <div className="mt-14 border-t border-[#060920]/10 pt-10 text-center">
           <a href="#contact" style={{ fontFamily: "var(--font-body)", textDecoration: "none" }}
             className="inline-block px-8 py-3 bg-[#060920] text-white tracking-[0.15em] uppercase text-sm font-medium rounded-2xl shadow-lg hover:shadow-xl transition-all">
-            Loyihangizni muhokama qilish
+            {t("Loyihangizni muhokama qilish", "Обсудить ваш проект")}
           </a>
         </div>
       </article>

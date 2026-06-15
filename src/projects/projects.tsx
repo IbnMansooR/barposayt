@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { SoftDivider } from "../app/components/SoftDivider";
 import { BarpoWord, barpo } from "../app/components/Barpo";
+import { useT } from "../app/i18n";
 
 interface Project {
   id: string;
@@ -23,6 +24,7 @@ interface Project {
 }
 
 export function ProjectsPage() {
+  const t = useT();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -48,7 +50,7 @@ export function ProjectsPage() {
             style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 5vw, 4rem)', color: '#060920' }}
             className="tracking-tight"
           >
-            Har obyekt — bu bajarilgan ish emas. Bu boshqarilgan jarayon.
+            {t("Har obyekt — bu bajarilgan ish emas. Bu boshqarilgan jarayon.", "Каждый объект — это не выполненная работа. Это управляемый процесс.")}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -57,7 +59,7 @@ export function ProjectsPage() {
             style={{ fontFamily: 'var(--font-body)', color: '#060920' }}
             className="text-lg opacity-70 max-w-2xl mx-auto"
           >
-            Har bir obyekt <BarpoWord /> uchun alohida mas'uliyat. Biz loyihalarni faqat suratlar orqali emas, jarayon, yechim, murakkablik va natija orqali ko'rsatamiz.
+            {t("Har bir obyekt", "Каждый объект —")} <BarpoWord /> {t("uchun alohida mas'uliyat. Biz loyihalarni faqat suratlar orqali emas, jarayon, yechim, murakkablik va natija orqali ko'rsatamiz.", "это отдельная ответственность. Мы показываем проекты не только через фотографии, но через процесс, решение, сложность и результат.")}
           </motion.p>
         </div>
       </section>
@@ -67,11 +69,11 @@ export function ProjectsPage() {
         <div className="max-w-6xl mx-auto">
           {loading ? (
             <div style={{ fontFamily: 'var(--font-body)' }} className="text-center py-16 text-[#060920]/40 tracking-wide animate-pulse">
-              <BarpoWord /> etilyapti...
+              {t("Yuklanmoqda...", "Загрузка...")}
             </div>
           ) : projects.length === 0 ? (
             <div style={{ fontFamily: 'var(--font-body)' }} className="text-center py-16 text-[#060920]/40 tracking-wide">
-              Hozircha loyihalar qo'shilmagan. Tez orada yangilanadi.
+              {t("Hozircha loyihalar qo'shilmagan. Tez orada yangilanadi.", "Пока проекты не добавлены. Скоро обновится.")}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -111,27 +113,27 @@ export function ProjectsPage() {
                       <div style={{ fontFamily: 'var(--font-body)' }} className="mt-4 space-y-1 text-sm">
                         {project.direction && (
                           <p className="text-[#060920]/60">
-                            <span className="text-[#060920]/40 uppercase tracking-wide text-xs">Yo'nalish:</span> {project.direction}
+                            <span className="text-[#060920]/40 uppercase tracking-wide text-xs">{t("Yo'nalish:", "Направление:")}</span> {project.direction}
                           </p>
                         )}
                         {project.location && (
                           <p className="text-[#060920]/60">
-                            <span className="text-[#060920]/40 uppercase tracking-wide text-xs">Hudud:</span> {project.location}
+                            <span className="text-[#060920]/40 uppercase tracking-wide text-xs">{t("Hudud:", "Регион:")}</span> {project.location}
                           </p>
                         )}
                         {project.workType && (
                           <p className="text-[#060920]/60">
-                            <span className="text-[#060920]/40 uppercase tracking-wide text-xs">Ish turi:</span> {project.workType}
+                            <span className="text-[#060920]/40 uppercase tracking-wide text-xs">{t("Ish turi:", "Тип работ:")}</span> {project.workType}
                           </p>
                         )}
                         {project.duration && (
                           <p className="text-[#060920]/60">
-                            <span className="text-[#060920]/40 uppercase tracking-wide text-xs">Muddat:</span> {project.duration}
+                            <span className="text-[#060920]/40 uppercase tracking-wide text-xs">{t("Muddat:", "Срок:")}</span> {project.duration}
                           </p>
                         )}
                         {project.role && (
                           <p className="text-[#060920]/60">
-                            <span className="text-[#060920]/40 uppercase tracking-wide text-xs"><BarpoWord /> roli:</span> {barpo(project.role)}
+                            <span className="text-[#060920]/40 uppercase tracking-wide text-xs"><BarpoWord /> {t("roli:", "роль:")}</span> {barpo(project.role)}
                           </p>
                         )}
                       </div>
@@ -141,19 +143,19 @@ export function ProjectsPage() {
                     <div className="mt-4 space-y-3 flex-1">
                       {project.task && (
                         <div style={{ fontFamily: 'var(--font-body)' }}>
-                          <p className="text-[#060920]/40 uppercase tracking-wide text-xs mb-0.5">Vazifa</p>
+                          <p className="text-[#060920]/40 uppercase tracking-wide text-xs mb-0.5">{t("Vazifa", "Задача")}</p>
                           <p className="text-sm text-[#060920]/65 leading-relaxed line-clamp-2">{barpo(project.task)}</p>
                         </div>
                       )}
                       {project.solution && (
                         <div style={{ fontFamily: 'var(--font-body)' }}>
-                          <p className="text-[#060920]/40 uppercase tracking-wide text-xs mb-0.5"><BarpoWord /> yechimi</p>
+                          <p className="text-[#060920]/40 uppercase tracking-wide text-xs mb-0.5"><BarpoWord /> {t("yechimi", "решение")}</p>
                           <p className="text-sm text-[#060920]/65 leading-relaxed line-clamp-2">{barpo(project.solution)}</p>
                         </div>
                       )}
                       {project.result && (
                         <div style={{ fontFamily: 'var(--font-body)' }}>
-                          <p className="text-[#060920]/40 uppercase tracking-wide text-xs mb-0.5">Natija</p>
+                          <p className="text-[#060920]/40 uppercase tracking-wide text-xs mb-0.5">{t("Natija", "Результат")}</p>
                           <p className="text-sm text-[#060920]/65 leading-relaxed line-clamp-2">{barpo(project.result)}</p>
                         </div>
                       )}
@@ -169,7 +171,7 @@ export function ProjectsPage() {
 
                     <SoftDivider className="mt-5 mb-4 max-w-none" />
                     <span style={{ fontFamily: 'var(--font-display)' }} className="text-lg text-[#060920] group-hover:opacity-60 transition-opacity">
-                      Batafsil ko'rish →
+                      {t("Batafsil ko'rish", "Подробнее")} →
                     </span>
                   </div>
                 </motion.a>
@@ -190,7 +192,7 @@ export function ProjectsPage() {
             style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', color: '#FFFFFF' }}
             className="tracking-tight"
           >
-            Loyihangizni tizim bilan boshlang
+            {t("Loyihangizni tizim bilan boshlang", "Начните проект с системы")}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0 }}
@@ -200,7 +202,7 @@ export function ProjectsPage() {
             style={{ fontFamily: 'var(--font-body)' }}
             className="text-white/55 text-base max-w-xl mx-auto leading-relaxed"
           >
-            Qurilishdagi eng to'g'ri qaror — ish boshlanishidan oldin aniq tizim yaratish.
+            {t("Qurilishdagi eng to'g'ri qaror — ish boshlanishidan oldin aniq tizim yaratish.", "Самое верное решение в строительстве — создать чёткую систему до начала работ.")}
           </motion.p>
           <motion.a
             href="#contact"
@@ -209,7 +211,7 @@ export function ProjectsPage() {
             style={{ fontFamily: 'var(--font-body)', textDecoration: 'none' }}
             className="inline-block px-8 py-3 bg-white text-[#060920] tracking-[0.15em] uppercase text-sm font-medium rounded-2xl shadow-lg hover:shadow-xl transition-all"
           >
-            Loyihani muhokama qilish
+            {t("Loyihani muhokama qilish", "Обсудить проект")}
           </motion.a>
         </div>
       </section>
