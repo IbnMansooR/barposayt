@@ -182,6 +182,7 @@ export function AdminPage() {
   const [showInvestorModal, setShowInvestorModal] = useState(false);
   const [editingBlog, setEditingBlog] = useState<BlogArticle | null>(null);
   const [showBlogModal, setShowBlogModal] = useState(false);
+  const [blogSort, setBlogSort] = useState<"new" | "old">("new");
   const [editingAdmin, setEditingAdmin] = useState<AdminUser | null>(null);
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [showTaskModal, setShowTaskModal] = useState(false);
@@ -957,13 +958,27 @@ export function AdminPage() {
                       Maqolalar avval <b>qoralama</b> sifatida saqlanadi. "Chop etish" bosilsa — saytda ko'rinadi.
                     </p>
                   </div>
-                  <button onClick={() => { setEditingBlog(null); setShowBlogModal(true); }} style={{ fontFamily: "var(--font-body)" }}
-                    className="px-5 py-2.5 bg-[#060920] text-white rounded-xl text-sm tracking-wide hover:shadow-lg transition-all">
-                    + Yangi maqola
-                  </button>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <select
+                      value={blogSort}
+                      onChange={(e) => setBlogSort(e.target.value as "new" | "old")}
+                      style={{ fontFamily: "var(--font-body)" }}
+                      className="px-4 py-2.5 bg-white border border-[#060920]/15 text-[#060920]/80 rounded-xl text-sm tracking-wide hover:border-[#060920]/35 focus:outline-none focus:border-[#060920]/40 transition-colors cursor-pointer"
+                    >
+                      <option value="new">Avval yangi yozilgani</option>
+                      <option value="old">Avval eski yozilgani</option>
+                    </select>
+                    <button onClick={() => { setEditingBlog(null); setShowBlogModal(true); }} style={{ fontFamily: "var(--font-body)" }}
+                      className="px-5 py-2.5 bg-[#060920] text-white rounded-xl text-sm tracking-wide hover:shadow-lg transition-all">
+                      + Yangi maqola
+                    </button>
+                  </div>
                 </div>
                 {(data.blog?.length ?? 0) === 0 ? <EmptyState text="Hozircha maqola yo'q. '+ Yangi maqola' tugmasini bosing." /> : [...(data.blog || [])]
-                  .sort((a, b) => (a.status === "published" ? 1 : 0) - (b.status === "published" ? 1 : 0) || String(b.createdAt).localeCompare(String(a.createdAt)))
+                  .sort((a, b) => {
+                    const cmp = String(a.createdAt).localeCompare(String(b.createdAt));
+                    return blogSort === "new" ? -cmp : cmp;
+                  })
                   .map((a, i) => {
                     const published = a.status === "published";
                     return (
