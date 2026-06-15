@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { useLang, useT } from "./i18n";
 
 import App from "./App";
 import { ServicesPage } from "../services/services";
@@ -31,6 +32,8 @@ import logo from '../assets/logo.png';
 export function AppRouter() {
   const [currentPage, setCurrentPage] = useState("home");
   const [isGlobalMenuOpen, setIsGlobalMenuOpen] = useState(false);
+  const { lang, setLang } = useLang();
+  const t = useT();
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -55,22 +58,22 @@ export function AppRouter() {
 
   // All pages for global menu
   const allNavItems = [
-    { label: "Bosh sahifa", href: "#home", icon: "◆" },
-    { label: "Xizmatlar", href: "#services", icon: "◈" },
-    { label: "Madaniyat", href: "#culture", icon: "◇" },
-    { label: "Loyihalar", href: "#projects", icon: "◉" },
-    { label: "Jarayon", href: "#jarayon", icon: "◎" },
-    { label: "Iqtisodiy foyda", href: "#foyda", icon: "◍" },
-    { label: "Haqimizda", href: "#about", icon: "◐" },
-    { label: "Rahbar", href: "#rahbar", icon: "◕" },
-    { label: "Jamoa", href: "#jamoa", icon: "○" },
-    { label: "Bilim markazi", href: "#blog", icon: "●" },
-    { label: "Nazorat", href: "#nazorat", icon: "◖" },
-    { label: "Lug'at", href: "#lugat", icon: "◘" },
-    { label: "Standart", href: "#standard", icon: "◑" },
-    { label: "HR", href: "#hr", icon: "◒" },
-    { label: "Takliflar", href: "#takliflar", icon: "◓" },
-    { label: "Aloqa", href: "#contact", icon: "◔" },
+    { label: t("Bosh sahifa", "Главная"), href: "#home", icon: "◆" },
+    { label: t("Xizmatlar", "Услуги"), href: "#services", icon: "◈" },
+    { label: t("Madaniyat", "Культура"), href: "#culture", icon: "◇" },
+    { label: t("Loyihalar", "Проекты"), href: "#projects", icon: "◉" },
+    { label: t("Jarayon", "Процесс"), href: "#jarayon", icon: "◎" },
+    { label: t("Iqtisodiy foyda", "Экономическая выгода"), href: "#foyda", icon: "◍" },
+    { label: t("Haqimizda", "О нас"), href: "#about", icon: "◐" },
+    { label: t("Rahbar", "Руководитель"), href: "#rahbar", icon: "◕" },
+    { label: t("Jamoa", "Команда"), href: "#jamoa", icon: "○" },
+    { label: t("Bilim markazi", "Центр знаний"), href: "#blog", icon: "●" },
+    { label: t("Nazorat", "Контроль"), href: "#nazorat", icon: "◖" },
+    { label: t("Lug'at", "Словарь"), href: "#lugat", icon: "◘" },
+    { label: t("Standart", "Стандарт"), href: "#standard", icon: "◑" },
+    { label: t("HR", "HR"), href: "#hr", icon: "◒" },
+    { label: t("Takliflar", "Предложения"), href: "#takliflar", icon: "◓" },
+    { label: t("Aloqa", "Контакты"), href: "#contact", icon: "◔" },
   ];
 
   const renderPage = () => {
@@ -159,32 +162,53 @@ export function AppRouter() {
         </motion.nav>
       )}
 
-      {/* ─── Tezkor linklar — menu tugmasi yonida ─── */}
+      {/* ─── Tezkor linklar + til almashtirgich — menu tugmasi yonida ─── */}
       {currentPage !== "boshqaruv" && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.1 }}
-          className="fixed top-6 right-[5.5rem] z-[60] h-11 hidden md:flex items-center gap-6"
+          className="fixed top-6 right-[5.5rem] z-[60] h-11 flex items-center gap-4 md:gap-6"
         >
-          {[
-            { label: "Xizmatlar", href: "#services" },
-            { label: "HR", href: "#hr" },
-            { label: "Aloqa", href: "#contact" },
-          ].map((item) => (
-            <a
-              key={item.label}
-              href={item.href}
-              style={{ fontFamily: 'var(--font-body)', textDecoration: 'none' }}
-              className={`tracking-[0.15em] uppercase text-xs transition-colors whitespace-nowrap ${
-                currentPage === item.href.slice(1)
-                  ? 'text-[#060920] font-medium'
-                  : 'text-[#060920]/60 hover:text-[#060920]'
-              }`}
+          <div className="hidden md:flex items-center gap-6">
+            {[
+              { label: t("Xizmatlar", "Услуги"), href: "#services" },
+              { label: t("HR", "HR"), href: "#hr" },
+              { label: t("Aloqa", "Контакты"), href: "#contact" },
+            ].map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                style={{ fontFamily: 'var(--font-body)', textDecoration: 'none' }}
+                className={`tracking-[0.15em] uppercase text-xs transition-colors whitespace-nowrap ${
+                  currentPage === item.href.slice(1)
+                    ? 'text-[#060920] font-medium'
+                    : 'text-[#060920]/60 hover:text-[#060920]'
+                }`}
+              >
+                {item.label}
+              </a>
+            ))}
+          </div>
+
+          {/* UZ / RU til almashtirgich */}
+          <div
+            className="flex items-center rounded-full border border-[#060920]/20 overflow-hidden bg-white/80 backdrop-blur-sm"
+            style={{ fontFamily: 'var(--font-body)' }}
+          >
+            <button
+              onClick={() => setLang("uz")}
+              className={`px-2.5 py-1 text-xs tracking-[0.1em] transition-colors ${lang === "uz" ? "bg-[#060920] text-white" : "text-[#060920]/55 hover:text-[#060920]"}`}
             >
-              {item.label}
-            </a>
-          ))}
+              UZ
+            </button>
+            <button
+              onClick={() => setLang("ru")}
+              className={`px-2.5 py-1 text-xs tracking-[0.1em] transition-colors ${lang === "ru" ? "bg-[#060920] text-white" : "text-[#060920]/55 hover:text-[#060920]"}`}
+            >
+              RU
+            </button>
+          </div>
         </motion.div>
       )}
 
@@ -261,7 +285,7 @@ export function AppRouter() {
                   style={{ fontFamily: 'var(--font-body)' }}
                   className="text-xs tracking-[0.2em] uppercase text-white/40"
                 >
-                  BARPO — Navigatsiya
+                  BARPO — {t("Navigatsiya", "Навигация")}
                 </p>
               </div>
 

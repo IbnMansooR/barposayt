@@ -6,9 +6,11 @@ import { FloorSection } from "./components/FloorSection";
 import { SoftDivider } from "./components/SoftDivider";
 import { Footer } from "./components/Footer";
 import { BarpoWord, barpo } from "./components/Barpo";
+import { useT } from "./i18n";
 
 export default function App() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const t = useT();
   const [currentFloor, setCurrentFloor] = useState(0);
   const [contactStatus, setContactStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [contactError, setContactError] = useState("");
@@ -112,15 +114,15 @@ export default function App() {
               }}
               className="tracking-tight"
             >
-              Biz qurmaymiz.<br />
+              {t("Biz qurmaymiz.", "Мы не строим.")}<br />
               <span className="inline-flex items-baseline justify-center gap-3 flex-wrap">
-                Biz
+                {t("Biz", "Мы")}
                 <img
                   src={logoHero}
                   alt="BARPO"
                   style={{ height: '1em', display: 'inline-block', transform: 'translateY(0.05em)' }}
                 />
-                etamiz.
+                {t("etamiz.", "созидаем.")}
               </span>
             </motion.h1>
 
@@ -131,7 +133,7 @@ export default function App() {
               style={{ fontFamily: 'var(--font-display)', textShadow: 'none' }}
               className="max-w-3xl mx-auto leading-relaxed tracking-wide text-[#060920] text-xl md:text-2xl"
             >
-              <BarpoWord /> — tadbirkorlar, investorlar va yirik loyihalar uchun qurilish jarayonini tizim, sifat, nazorat va mas'uliyat asosida boshqaradigan kompaniya.
+              <BarpoWord /> {t("— tadbirkorlar, investorlar va yirik loyihalar uchun qurilish jarayonini tizim, sifat, nazorat va mas'uliyat asosida boshqaradigan kompaniya.", "— компания, которая управляет строительным процессом для предпринимателей, инвесторов и крупных проектов на основе системы, качества, контроля и ответственности.")}
             </motion.p>
 
             <motion.p
@@ -141,7 +143,7 @@ export default function App() {
               style={{ fontFamily: 'var(--font-body)', textShadow: 'none' }}
               className="max-w-3xl mx-auto leading-relaxed tracking-wide text-[#060920]/75 text-lg"
             >
-              Qurilish — bu faqat beton, armatura va ishchi kuchi emas. Qurilish — bu reja, intizom, muhandislik fikri, moliyaviy nazorat va natijaga bo'lgan mas'uliyat.
+              {t("Qurilish — bu faqat beton, armatura va ishchi kuchi emas. Qurilish — bu reja, intizom, muhandislik fikri, moliyaviy nazorat va natijaga bo'lgan mas'uliyat.", "Строительство — это не только бетон, арматура и рабочая сила. Строительство — это план, дисциплина, инженерная мысль, финансовый контроль и ответственность за результат.")}
             </motion.p>
 
             <motion.div
@@ -156,7 +158,7 @@ export default function App() {
                 style={{ fontFamily: 'var(--font-body)', textDecoration: 'none' }}
                 className="px-8 py-3 bg-white text-[#060920] border border-[#060920] hover:bg-[#060920] hover:text-white tracking-[0.15em] uppercase text-sm font-medium rounded-2xl transition-colors duration-300 inline-block"
               >
-                Loyihani muhokama qilish
+                {t("Loyihani muhokama qilish", "Обсудить проект")}
               </motion.a>
               <motion.a
                 href="#takliflar"
@@ -164,7 +166,7 @@ export default function App() {
                 style={{ fontFamily: 'var(--font-body)', textDecoration: 'none' }}
                 className="px-8 py-3 bg-white text-[#060920] border border-[#060920] hover:bg-[#060920] hover:text-white tracking-[0.15em] uppercase text-sm font-medium rounded-2xl transition-colors duration-300 inline-block"
               >
-                Investorlar uchun takliflar
+                {t("Investorlar uchun takliflar", "Предложения для инвесторов")}
               </motion.a>
               <motion.a
                 href="#standard"
@@ -172,7 +174,7 @@ export default function App() {
                 style={{ fontFamily: 'var(--font-body)', textDecoration: 'none' }}
                 className="group px-8 py-3 bg-white text-[#060920] border border-[#060920] hover:bg-[#060920] hover:text-white tracking-[0.15em] uppercase text-sm font-medium rounded-2xl transition-colors duration-300 inline-flex items-center"
               >
-                <BarpoWord className="mr-2 transition-[filter] duration-300 group-hover:brightness-0 group-hover:invert" /> standartlari bilan tanishish
+                <BarpoWord className="mr-2 transition-[filter] duration-300 group-hover:brightness-0 group-hover:invert" /> {t("standartlari bilan tanishish", "ознакомиться со стандартами")}
               </motion.a>
             </motion.div>
           </motion.div>
@@ -185,17 +187,17 @@ export default function App() {
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 mt-20 pt-12 border-t border-[#060920]/10 text-left"
           >
             {[
-              { title: "Tijorat obyektlari", desc: "Klinikalar, ofislar, savdo markazlari, ishlab chiqarish binolari" },
-              { title: "Genpudrat va kompleks ishlar", desc: "Bitta tizimda boshqariladigan jarayon" },
-              { title: "Nazorat ostidagi sifat", desc: "Har bosqich tekshiriladi, har ish qabul qilinadi" },
-              { title: "Mijoz xotirjamligi", desc: "Buyurtmachi har kuni obyekt \"dispetcheri\" bo'lib qolmaydi" },
+              { title: ["Tijorat obyektlari", "Коммерческие объекты"], desc: ["Klinikalar, ofislar, savdo markazlari, ishlab chiqarish binolari", "Клиники, офисы, торговые центры, производственные здания"] },
+              { title: ["Genpudrat va kompleks ishlar", "Генподряд и комплексные работы"], desc: ["Bitta tizimda boshqariladigan jarayon", "Процесс, управляемый в единой системе"] },
+              { title: ["Nazorat ostidagi sifat", "Качество под контролем"], desc: ["Har bosqich tekshiriladi, har ish qabul qilinadi", "Каждый этап проверяется, каждая работа принимается"] },
+              { title: ["Mijoz xotirjamligi", "Спокойствие клиента"], desc: ["Buyurtmachi har kuni obyekt \"dispetcheri\" bo'lib qolmaydi", "Заказчик не становится ежедневным «диспетчером» объекта"] },
             ].map((fact) => (
-              <div key={fact.title} className="space-y-2">
+              <div key={fact.title[0]} className="space-y-2">
                 <div style={{ fontFamily: 'var(--font-display)', color: '#060920', textShadow: 'none' }} className="text-lg leading-snug">
-                  {fact.title}
+                  {t(fact.title[0], fact.title[1])}
                 </div>
                 <div style={{ fontFamily: 'var(--font-body)', textShadow: 'none' }} className="tracking-wide text-[#060920]/60 text-sm leading-relaxed">
-                  {fact.desc}
+                  {t(fact.desc[0], fact.desc[1])}
                 </div>
               </div>
             ))}
@@ -206,9 +208,9 @@ export default function App() {
       {/* Floor 1 - BRAND STATEMENT */}
       <FloorSection
         floorNumber={1}
-        subtitle="YANGI YO'NALISH"
-        title="Yangi qurilish madaniyati"
-        description="Biz qurilish bozorida yangi yondashuvni shakllantiryapmiz: tartibli jarayon, aniq grafik, shaffof xarajat, sifat nazorati va mijoz xotirjamligi."
+        subtitle={t("YANGI YO'NALISH", "НОВОЕ НАПРАВЛЕНИЕ")}
+        title={t("Yangi qurilish madaniyati", "Новая культура строительства")}
+        description={t("Biz qurilish bozorida yangi yondashuvni shakllantiryapmiz: tartibli jarayon, aniq grafik, shaffof xarajat, sifat nazorati va mijoz xotirjamligi.", "Мы формируем новый подход на строительном рынке: упорядоченный процесс, точный график, прозрачные расходы, контроль качества и спокойствие клиента.")}
         alignment="left"
       >
         <motion.p
@@ -219,31 +221,31 @@ export default function App() {
           style={{ fontFamily: 'var(--font-display)' }}
           className="mt-8 text-2xl text-[#060920] leading-snug max-w-2xl"
         >
-<BarpoWord /> uchun sifat — alohida va'da emas.
+<BarpoWord /> {t("uchun sifat — alohida va'da emas.", "— качество не просто обещание.")}
         </motion.p>
         <p style={{ fontFamily: 'var(--font-body)' }} className="mt-3 text-[#060920]/65 leading-relaxed max-w-2xl">
-          Bu ish boshlanishidan obyekt topshirilishigacha amal qilinadigan mezon.
+          {t("Bu ish boshlanishidan obyekt topshirilishigacha amal qilinadigan mezon.", "Это критерий, который действует от начала работ до сдачи объекта.")}
         </p>
       </FloorSection>
 
       {/* Floor 2 - BIZ HAQIMIZDA */}
       <FloorSection
         floorNumber={2}
-        subtitle="BIZ HAQIMIZDA"
-        title="Qurilish jarayonini tizimga, obyektni qiymatga aylantiramiz."
-        description="BARPO yirik va o'rta hajmdagi obyektlarni qurish, boshqarish va yakuniy natijagacha olib borishga ixtisoslashgan qurilish kompaniyasi."
+        subtitle={t("BIZ HAQIMIZDA", "О НАС")}
+        title={t("Qurilish jarayonini tizimga, obyektni qiymatga aylantiramiz.", "Превращаем строительный процесс в систему, а объект — в ценность.")}
+        description={t("BARPO yirik va o'rta hajmdagi obyektlarni qurish, boshqarish va yakuniy natijagacha olib borishga ixtisoslashgan qurilish kompaniyasi.", "BARPO — строительная компания, специализирующаяся на возведении, управлении и доведении до конечного результата крупных и средних объектов.")}
         alignment="right"
       >
         <div className="mt-8 space-y-5 max-w-2xl">
           <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/70 leading-relaxed">
-            Biz turar joy majmualari, biznes markazlar, savdo obyektlari, klinikalar, ofis binolari, ishlab chiqarish va boshqa tijoriy loyihalarda ishlaymiz.
+            {t("Biz turar joy majmualari, biznes markazlar, savdo obyektlari, klinikalar, ofis binolari, ishlab chiqarish va boshqa tijoriy loyihalarda ishlaymiz.", "Мы работаем над жилыми комплексами, бизнес-центрами, торговыми объектами, клиниками, офисными зданиями, производственными и другими коммерческими проектами.")}
           </p>
           <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/70 leading-relaxed">
-            Bizning asosiy farqimiz — qurilishga faqat ijro sifatida emas, boshqaruv tizimi sifatida qarashimizda. Har bir bosqich rejalashtiriladi. Har bir ish hajmi hisoblanadi. Har bir jarayon nazorat qilinadi. Har bir qaror investorning vaqtiga, xarajatiga va natijasiga ta'siri bilan baholanadi.
+            {t("Bizning asosiy farqimiz — qurilishga faqat ijro sifatida emas, boshqaruv tizimi sifatida qarashimizda. Har bir bosqich rejalashtiriladi. Har bir ish hajmi hisoblanadi. Har bir jarayon nazorat qilinadi. Har bir qaror investorning vaqtiga, xarajatiga va natijasiga ta'siri bilan baholanadi.", "Наше главное отличие — мы относимся к строительству не просто как к исполнению, а как к системе управления. Каждый этап планируется. Каждый объём работ рассчитывается. Каждый процесс контролируется. Каждое решение оценивается по его влиянию на время, расходы и результат инвестора.")}
           </p>
           <div className="pl-5 border-l-2 border-[#060920]/30">
             <p style={{ fontFamily: 'var(--font-display)' }} className="text-lg text-[#060920] italic leading-snug">
-<BarpoWord /> — bu qurilishdagi tartib, nazorat va mas'uliyat. Biz obyektni shunchaki qurmaymiz. Uni tizim bilan barpo etamiz.
+<BarpoWord /> {t("— bu qurilishdagi tartib, nazorat va mas'uliyat. Biz obyektni shunchaki qurmaymiz. Uni tizim bilan barpo etamiz.", "— это порядок, контроль и ответственность в строительстве. Мы не просто строим объект. Мы созидаем его с помощью системы.")}
             </p>
           </div>
         </div>
@@ -252,21 +254,21 @@ export default function App() {
       {/* Floor 3 - MISSIYA */}
       <FloorSection
         floorNumber={3}
-        subtitle="MISSIYA"
-        title="Bizning missiyamiz"
-        description="Bizning missiyamiz — O'zbekistonda qurilish madaniyatini yangi bosqichga olib chiqish."
+        subtitle={t("MISSIYA", "МИССИЯ")}
+        title={t("Bizning missiyamiz", "Наша миссия")}
+        description={t("Bizning missiyamiz — O'zbekistonda qurilish madaniyatini yangi bosqichga olib chiqish.", "Наша миссия — вывести культуру строительства в Узбекистане на новый уровень.")}
         alignment="left"
       >
         <div className="mt-8 space-y-5 max-w-2xl">
           <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/70 leading-relaxed">
-            Qurilishda sifatsizlik, kechikish, ortiqcha xarajat, tartibsiz boshqaruv va noaniq javobgarlik odatiy holat bo'lmasligi kerak.
+            {t("Qurilishda sifatsizlik, kechikish, ortiqcha xarajat, tartibsiz boshqaruv va noaniq javobgarlik odatiy holat bo'lmasligi kerak.", "Низкое качество, задержки, лишние расходы, беспорядочное управление и неясная ответственность не должны быть нормой в строительстве.")}
           </p>
           <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/70 leading-relaxed">
-<BarpoWord /> sifat, intizom, shaffoflik va mas'uliyatni bozordagi norma darajasiga olib chiqishni maqsad qilgan.
+<BarpoWord /> {t("sifat, intizom, shaffoflik va mas'uliyatni bozordagi norma darajasiga olib chiqishni maqsad qilgan.", "ставит цель сделать качество, дисциплину, прозрачность и ответственность нормой рынка.")}
           </p>
           <div className="pl-5 border-l-2 border-[#060920]/30">
             <p style={{ fontFamily: 'var(--font-display)' }} className="text-lg text-[#060920] italic leading-snug">
-              Biz uchun har bir obyekt — bu faqat loyiha emas. Bu mijoz ishonchi, investor kapitali va shahar kelajagi oldidagi javobgarlik.
+              {t("Biz uchun har bir obyekt — bu faqat loyiha emas. Bu mijoz ishonchi, investor kapitali va shahar kelajagi oldidagi javobgarlik.", "Для нас каждый объект — это не просто проект. Это доверие клиента, капитал инвестора и ответственность перед будущим города.")}
             </p>
           </div>
         </div>
@@ -275,18 +277,18 @@ export default function App() {
       {/* Floor 4 - BARPO nima qiladi? */}
       <FloorSection
         floorNumber={4}
-        subtitle="BARPO NIMA QILADI?"
-        title="Qurilish jarayonini boshidan oxirigacha tizimga soladigan hamkor"
-        description="Biz obyektni faqat qurilish maydonidagi ishchi kuchi bilan emas, balki reja, grafika, texnik nazorat, brigadalar koordinatsiyasi, materiallar boshqaruvi va sifat qabul qilish tizimi orqali olib boramiz."
+        subtitle={t("BARPO NIMA QILADI?", "ЧТО ДЕЛАЕТ BARPO?")}
+        title={t("Qurilish jarayonini boshidan oxirigacha tizimga soladigan hamkor", "Партнёр, который выстраивает строительный процесс в систему от начала до конца")}
+        description={t("Biz obyektni faqat qurilish maydonidagi ishchi kuchi bilan emas, balki reja, grafika, texnik nazorat, brigadalar koordinatsiyasi, materiallar boshqaruvi va sifat qabul qilish tizimi orqali olib boramiz.", "Мы ведём объект не только рабочей силой на площадке, но через план, графику, технический контроль, координацию бригад, управление материалами и систему приёмки качества.")}
         alignment="left"
       >
         <div className="space-y-6 mt-8">
           {[
-            { num: "1", title: "Bosh pudratchi xizmatlari", desc: "Obyektni bir nechta brigada va yo'nalishlar orasida tarqalib ketgan jarayon emas, yagona boshqaruv tizimi sifatida olib boramiz." },
-            { num: "2", title: "Qurilish-montaj ishlari", desc: "Konstruksiya, devor, pol, shift, fasad va boshqa asosiy qurilish bosqichlari texnik talab va grafik asosida bajariladi." },
-            { num: "3", title: "Pardozlash ishlari", desc: "Yakuniy ko'rinish faqat chiroy emas. Bu silliqlik, burchak, detal, tozalik va qabul mezonlariga javob beradigan natija." },
-            { num: "4", title: "Muhandislik tizimlari", desc: "Elektrika, ventilyatsiya, santexnika va past kuchlanish tizimlari obyektning ichki \"asab tizimi\" sifatida loyihaga muvofiq bajariladi." },
-            { num: "5", title: "Fasad va tashqi ishlar", desc: "Binoning tashqi ko'rinishi uning bozordagi birinchi taassurotidir. Biz fasadni estetika, chidamlilik va texnik talablar asosida bajaramiz." },
+            { num: "1", title: ["Bosh pudratchi xizmatlari", "Услуги генподрядчика"], desc: ["Obyektni bir nechta brigada va yo'nalishlar orasida tarqalib ketgan jarayon emas, yagona boshqaruv tizimi sifatida olib boramiz.", "Мы ведём объект не как процесс, разбросанный между бригадами и направлениями, а как единую систему управления."] },
+            { num: "2", title: ["Qurilish-montaj ishlari", "Строительно-монтажные работы"], desc: ["Konstruksiya, devor, pol, shift, fasad va boshqa asosiy qurilish bosqichlari texnik talab va grafik asosida bajariladi.", "Конструкция, стены, полы, потолки, фасад и другие основные этапы выполняются по техническим требованиям и графику."] },
+            { num: "3", title: ["Pardozlash ishlari", "Отделочные работы"], desc: ["Yakuniy ko'rinish faqat chiroy emas. Bu silliqlik, burchak, detal, tozalik va qabul mezonlariga javob beradigan natija.", "Финальный вид — это не только красота. Это ровность, углы, детали, чистота и результат, отвечающий критериям приёмки."] },
+            { num: "4", title: ["Muhandislik tizimlari", "Инженерные системы"], desc: ["Elektrika, ventilyatsiya, santexnika va past kuchlanish tizimlari obyektning ichki \"asab tizimi\" sifatida loyihaga muvofiq bajariladi.", "Электрика, вентиляция, сантехника и слаботочные системы выполняются по проекту как внутренняя «нервная система» объекта."] },
+            { num: "5", title: ["Fasad va tashqi ishlar", "Фасад и наружные работы"], desc: ["Binoning tashqi ko'rinishi uning bozordagi birinchi taassurotidir. Biz fasadni estetika, chidamlilik va texnik talablar asosida bajaramiz.", "Внешний вид здания — его первое впечатление на рынке. Мы выполняем фасад на основе эстетики, долговечности и технических требований."] },
           ].map((service, i) => (
             <motion.div
               key={service.num}
@@ -298,8 +300,8 @@ export default function App() {
             >
               <span style={{ fontFamily: 'var(--font-display)' }} className="text-xl font-bold text-[#060920]/20 shrink-0 leading-none mt-1">{service.num}</span>
               <div>
-                <div style={{ fontFamily: 'var(--font-display)' }} className="text-lg text-[#060920] mb-1">{service.title}</div>
-                <p style={{ fontFamily: 'var(--font-body)' }} className="text-sm text-[#060920]/60 leading-relaxed">{service.desc}</p>
+                <div style={{ fontFamily: 'var(--font-display)' }} className="text-lg text-[#060920] mb-1">{t(service.title[0], service.title[1])}</div>
+                <p style={{ fontFamily: 'var(--font-body)' }} className="text-sm text-[#060920]/60 leading-relaxed">{t(service.desc[0], service.desc[1])}</p>
               </div>
             </motion.div>
           ))}
@@ -310,17 +312,17 @@ export default function App() {
       <FloorSection
         floorNumber={5}
         subtitle=""
-        title="Nima uchun BARPO?"
+        title={t("Nima uchun BARPO?", "Почему BARPO?")}
         description=""
         alignment="right"
       >
         <div className="space-y-6 mt-2">
           {[
-            { num: "1", title: "Chunki biz jarayonni ko'ramiz", desc: "Ko'pchilik natijani oxirida ko'radi. Biz esa natijani boshidan rejalashtiramiz." },
-            { num: "2", title: "Chunki biz xarajatni nazorat qilamiz", desc: "Ortiqcha xarajat ko'pincha qimmat materialdan emas, noto'g'ri qarordan boshlanadi." },
-            { num: "3", title: "Chunki biz sifatni har kuni tekshiramiz", desc: "Sifat yakunda \"to'g'rilanadigan\" narsa emas. Sifat har bosqichda quriladi." },
-            { num: "4", title: "Chunki biz investor vaqtini qadrlaymiz", desc: "Investor obyekt ortidan yugurmasligi kerak. U qaror qabul qilishi kerak. Jarayon esa tizim bilan boshqarilishi kerak." },
-            { num: "5", title: "Chunki biz javobgarlikni bo'lib tashlamaymiz", desc: "Obyektda muammo bo'lsa, bahona emas, yechim kerak. BARPO mas'uliyatni jarayonning markaziga qo'yadi." },
+            { num: "1", title: ["Chunki biz jarayonni ko'ramiz", "Потому что мы видим процесс"], desc: ["Ko'pchilik natijani oxirida ko'radi. Biz esa natijani boshidan rejalashtiramiz.", "Большинство видит результат в конце. А мы планируем результат с самого начала."] },
+            { num: "2", title: ["Chunki biz xarajatni nazorat qilamiz", "Потому что мы контролируем расходы"], desc: ["Ortiqcha xarajat ko'pincha qimmat materialdan emas, noto'g'ri qarordan boshlanadi.", "Лишние расходы чаще начинаются не с дорогого материала, а с неверного решения."] },
+            { num: "3", title: ["Chunki biz sifatni har kuni tekshiramiz", "Потому что мы проверяем качество каждый день"], desc: ["Sifat yakunda \"to'g'rilanadigan\" narsa emas. Sifat har bosqichda quriladi.", "Качество — не то, что «исправляют» в конце. Качество создаётся на каждом этапе."] },
+            { num: "4", title: ["Chunki biz investor vaqtini qadrlaymiz", "Потому что мы ценим время инвестора"], desc: ["Investor obyekt ortidan yugurmasligi kerak. U qaror qabul qilishi kerak. Jarayon esa tizim bilan boshqarilishi kerak.", "Инвестор не должен бегать за объектом. Он должен принимать решения. А процессом должна управлять система."] },
+            { num: "5", title: ["Chunki biz javobgarlikni bo'lib tashlamaymiz", "Потому что мы не перекладываем ответственность"], desc: ["Obyektda muammo bo'lsa, bahona emas, yechim kerak. BARPO mas'uliyatni jarayonning markaziga qo'yadi.", "Если на объекте проблема — нужно решение, а не оправдание. BARPO ставит ответственность в центр процесса."] },
           ].map((item, i) => (
             <motion.div
               key={item.num}
@@ -332,8 +334,8 @@ export default function App() {
             >
               <span style={{ fontFamily: 'var(--font-display)' }} className="text-xl font-bold text-[#060920]/20 shrink-0 leading-none mt-1">{item.num}</span>
               <div>
-                <div style={{ fontFamily: 'var(--font-display)' }} className="text-lg text-[#060920] mb-1">{barpo(item.title)}</div>
-                <p style={{ fontFamily: 'var(--font-body)' }} className="text-sm text-[#060920]/60 leading-relaxed">{barpo(item.desc)}</p>
+                <div style={{ fontFamily: 'var(--font-display)' }} className="text-lg text-[#060920] mb-1">{barpo(t(item.title[0], item.title[1]))}</div>
+                <p style={{ fontFamily: 'var(--font-body)' }} className="text-sm text-[#060920]/60 leading-relaxed">{barpo(t(item.desc[0], item.desc[1]))}</p>
               </div>
             </motion.div>
           ))}
@@ -343,9 +345,9 @@ export default function App() {
       {/* Floor 3 - BARPO STANDARTI */}
       <FloorSection
         floorNumber={6}
-        subtitle="BARPO STANDARTI"
-        title="Sifat — qabul qilinadigan mezon"
-        description="BARPO sifatni gap bilan emas, tizim bilan boshqaradi. Har bir bosqichni tekshirish, xatoni vaqtida ko'rish, natijani aniq mezon bilan qabul qilish tizimi."
+        subtitle={t("BARPO STANDARTI", "СТАНДАРТ BARPO")}
+        title={t("Sifat — qabul qilinadigan mezon", "Качество — критерий приёмки")}
+        description={t("BARPO sifatni gap bilan emas, tizim bilan boshqaradi. Har bir bosqichni tekshirish, xatoni vaqtida ko'rish, natijani aniq mezon bilan qabul qilish tizimi.", "BARPO управляет качеством не словами, а системой. Это система проверки каждого этапа, своевременного выявления ошибки и приёмки результата по чётким критериям.")}
         alignment="left"
       >
         <motion.div
@@ -357,12 +359,12 @@ export default function App() {
         >
           <div className="w-fit">
             <h3 style={{ fontFamily: 'var(--font-display)' }} className="text-2xl text-[#060920]">
-              Nazorat nuqtalari
+              {t("Nazorat nuqtalari", "Точки контроля")}
             </h3>
             <SoftDivider className="mt-3" />
           </div>
           <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/70 leading-relaxed">
-            Devor tekisligi asbob bilan tekshiriladi. Burchak va chiziqlar aniqlik bilan tekshiriladi. Yopiladigan ishlar yopilishdan oldin tekshiriladi. Muhandislik tugunlari esa loyiha asosida tekshiriladi.
+            {t("Devor tekisligi asbob bilan tekshiriladi. Burchak va chiziqlar aniqlik bilan tekshiriladi. Yopiladigan ishlar yopilishdan oldin tekshiriladi. Muhandislik tugunlari esa loyiha asosida tekshiriladi.", "Ровность стен проверяется прибором. Углы и линии проверяются с точностью. Скрытые работы проверяются до закрытия. Инженерные узлы проверяются по проекту.")}
           </p>
         </motion.div>
       </FloorSection>
@@ -370,25 +372,25 @@ export default function App() {
       {/* Floor 4 - QANDAY ISHLAYMIZ? */}
       <FloorSection
         floorNumber={7}
-        subtitle="QANDAY ISHLAYMIZ?"
-        title="Tushunarli jarayon"
-        description="Qurilishda xotirjamlik jarayon tushunarli bo'lganda paydo bo'ladi. Biz mijozni noaniqlik ichida qoldirmaymiz. Har bosqich, har qaror va har natija tushunarli tizim asosida olib boriladi."
+        subtitle={t("QANDAY ISHLAYMIZ?", "КАК МЫ РАБОТАЕМ?")}
+        title={t("Tushunarli jarayon", "Понятный процесс")}
+        description={t("Qurilishda xotirjamlik jarayon tushunarli bo'lganda paydo bo'ladi. Biz mijozni noaniqlik ichida qoldirmaymiz. Har bosqich, har qaror va har natija tushunarli tizim asosida olib boriladi.", "Спокойствие в строительстве появляется, когда процесс понятен. Мы не оставляем клиента в неопределённости. Каждый этап, каждое решение и каждый результат ведутся по понятной системе.")}
         alignment="right"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
           <div className="space-y-3">
             {[
-              "Tanishuv va ehtiyojni aniqlash",
-              "Obyekt va loyiha tahlili",
-              "Hisob-kitob va tijoriy taklif",
-              "Grafik va resurs rejalashtirish",
-              "Ishga kirishish va tayyorlash",
-              "Texnik nazorat — har ish bajarilgandan so'ng",
-              "Kunlik hisobot mijozga",
-              "Yakuniy qabul va topshirish"
+              ["Tanishuv va ehtiyojni aniqlash", "Знакомство и выявление потребностей"],
+              ["Obyekt va loyiha tahlili", "Анализ объекта и проекта"],
+              ["Hisob-kitob va tijoriy taklif", "Расчёт и коммерческое предложение"],
+              ["Grafik va resurs rejalashtirish", "Планирование графика и ресурсов"],
+              ["Ishga kirishish va tayyorlash", "Начало работ и подготовка"],
+              ["Texnik nazorat — har ish bajarilgandan so'ng", "Технический контроль — после каждой выполненной работы"],
+              ["Kunlik hisobot mijozga", "Ежедневный отчёт клиенту"],
+              ["Yakuniy qabul va topshirish", "Финальная приёмка и сдача"]
             ].map((step, i) => (
               <motion.div
-                key={step}
+                key={step[0]}
                 initial={{ opacity: 0, x: 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: false }}
@@ -402,7 +404,7 @@ export default function App() {
                   {i + 1}
                 </div>
                 <span style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/70">
-                  {step}
+                  {t(step[0], step[1])}
                 </span>
               </motion.div>
             ))}
@@ -413,9 +415,9 @@ export default function App() {
       {/* Floor 5 - LOYIHALAR */}
       <FloorSection
         floorNumber={8}
-        subtitle="LOYIHALAR"
-        title="Bajarilgan ishlarni ko'rish"
-        description="Har bir loyiha BARPO'ning jarayonni boshqarish va sifatni nazorat qilish salohiyatini ko'rsatadi. Bu faqat bitirilgan loyihalar emas — bu tizim bilan bajarilgan loyihalar."
+        subtitle={t("LOYIHALAR", "ПРОЕКТЫ")}
+        title={t("Bajarilgan ishlarni ko'rish", "Посмотреть выполненные работы")}
+        description={t("Har bir loyiha BARPO'ning jarayonni boshqarish va sifatni nazorat qilish salohiyatini ko'rsatadi. Bu faqat bitirilgan loyihalar emas — bu tizim bilan bajarilgan loyihalar.", "Каждый проект показывает способность BARPO управлять процессом и контролировать качество. Это не просто завершённые проекты — это проекты, выполненные с помощью системы.")}
         alignment="left"
       >
         {homeProjects.length === 0 ? (
@@ -425,7 +427,7 @@ export default function App() {
               style={{ fontFamily: 'var(--font-body)' }}
               className="inline-block mt-5 text-sm tracking-[0.15em] uppercase text-[#060920] hover:opacity-60 transition-opacity"
             >
-              Barcha loyihalar →
+              {t("Barcha loyihalar", "Все проекты")} →
             </a>
           </div>
         ) : (
@@ -455,7 +457,7 @@ export default function App() {
                   </p>
                   <SoftDivider className="mt-5 mb-4 max-w-none" />
                   <span style={{ fontFamily: 'var(--font-display)' }} className="text-lg text-[#060920]">
-                    Batafsil ko'rish →
+                    {t("Batafsil ko'rish", "Подробнее")} →
                   </span>
                 </motion.a>
               ))}
@@ -465,7 +467,7 @@ export default function App() {
               style={{ fontFamily: 'var(--font-body)' }}
               className="inline-block mt-8 text-sm tracking-[0.15em] uppercase text-[#060920] hover:opacity-60 transition-opacity"
             >
-              Barcha loyihalar →
+              {t("Barcha loyihalar", "Все проекты")} →
             </a>
           </>
         )}
@@ -474,21 +476,21 @@ export default function App() {
       {/* Floor 6 - HISOBOT VA NAZORAT */}
       <FloorSection
         floorNumber={9}
-        subtitle="HISOBOT VA NAZORAT"
-        title="Investor uchun shaffof qurilish"
-        description="Qurilishda eng katta xavflardan biri — investor jarayonni real ko'rmasligi. BARPO'da obyekt bo'yicha kunlik nazorat tizimi yuritiladi."
+        subtitle={t("HISOBOT VA NAZORAT", "ОТЧЁТНОСТЬ И КОНТРОЛЬ")}
+        title={t("Investor uchun shaffof qurilish", "Прозрачное строительство для инвестора")}
+        description={t("Qurilishda eng katta xavflardan biri — investor jarayonni real ko'rmasligi. BARPO'da obyekt bo'yicha kunlik nazorat tizimi yuritiladi.", "Один из самых больших рисков в строительстве — инвестор не видит процесс реально. В BARPO по объекту ведётся система ежедневного контроля.")}
         alignment="left"
       >
         <div className="mt-8 space-y-6">
           <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/65 leading-relaxed">
-            Qaysi ish bajarildi, qaysi brigada ishladi, qancha odam obyektga chiqdi, material holati qanday, grafikdan ortda qolish bormi — bularning barchasi boshqaruv tizimida ko'rinib turadi.
+            {t("Qaysi ish bajarildi, qaysi brigada ishladi, qancha odam obyektga chiqdi, material holati qanday, grafikdan ortda qolish bormi — bularning barchasi boshqaruv tizimida ko'rinib turadi.", "Какая работа выполнена, какая бригада работала, сколько людей вышло на объект, каково состояние материалов, есть ли отставание от графика — всё это видно в системе управления.")}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 mt-6">
             {[
-              { label: "Kunlik nazorat", desc: "Har kuni maydon tekshiruvi va qaydlar" },
-              { label: "Kunlik hisobot", desc: "Mijozga strukturali progress hisoboti" },
-              { label: "Grafik monitoring", desc: "Rejadan ortda qolish darhol ko'rinadi" },
-              { label: "Material holati", desc: "Zaxira va sarflanish real vaqtda" },
+              { label: ["Kunlik nazorat", "Ежедневный контроль"], desc: ["Har kuni maydon tekshiruvi va qaydlar", "Ежедневная проверка площадки и записи"] },
+              { label: ["Kunlik hisobot", "Ежедневный отчёт"], desc: ["Mijozga strukturali progress hisoboti", "Структурированный отчёт о прогрессе клиенту"] },
+              { label: ["Grafik monitoring", "Мониторинг графика"], desc: ["Rejadan ortda qolish darhol ko'rinadi", "Отставание от плана видно сразу"] },
+              { label: ["Material holati", "Состояние материалов"], desc: ["Zaxira va sarflanish real vaqtda", "Запас и расход в реальном времени"] },
             ].map((item, i) => (
               <motion.div
                 key={item.label}
@@ -499,10 +501,10 @@ export default function App() {
                 className="space-y-3"
               >
                 <div className="w-fit">
-                  <div style={{ fontFamily: 'var(--font-display)' }} className="text-2xl text-[#060920]">{item.label}</div>
+                  <div style={{ fontFamily: 'var(--font-display)' }} className="text-2xl text-[#060920]">{t(item.label[0], item.label[1])}</div>
                   <SoftDivider className="mt-3" />
                 </div>
-                <div style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/60 leading-relaxed">{item.desc}</div>
+                <div style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/60 leading-relaxed">{t(item.desc[0], item.desc[1])}</div>
               </motion.div>
             ))}
           </div>
@@ -514,8 +516,8 @@ export default function App() {
             className="pt-4 border-t border-[#060920]/10"
           >
             <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/50 text-sm leading-relaxed">
-              Shaffoflik — bu chiroyli hisobot emas.<br />
-              Shaffoflik — bu vaqtida qaror qabul qilish imkoniyati.
+              {t("Shaffoflik — bu chiroyli hisobot emas.", "Прозрачность — это не красивый отчёт.")}<br />
+              {t("Shaffoflik — bu vaqtida qaror qabul qilish imkoniyati.", "Прозрачность — это возможность принять решение вовремя.")}
             </p>
           </motion.div>
         </div>
@@ -524,16 +526,16 @@ export default function App() {
       {/* Floor 7 - IQTISODIY FOYDA */}
       <FloorSection
         floorNumber={10}
-        subtitle="IQTISODIY FOYDA"
-        title="To'g'ri qurilish investor pulini himoya qiladi"
-        description="Qurilishda tejash har doim arzon material tanlash degani emas. Ba'zan eng katta iqtisod noto'g'ri yechimni vaqtida to'xtatish va smetani chuqur tahlil qilishdan keladi."
+        subtitle={t("IQTISODIY FOYDA", "ЭКОНОМИЧЕСКАЯ ВЫГОДА")}
+        title={t("To'g'ri qurilish investor pulini himoya qiladi", "Правильное строительство защищает деньги инвестора")}
+        description={t("Qurilishda tejash har doim arzon material tanlash degani emas. Ba'zan eng katta iqtisod noto'g'ri yechimni vaqtida to'xtatish va smetani chuqur tahlil qilishdan keladi.", "Экономия в строительстве — это не всегда выбор дешёвого материала. Иногда самая большая экономия приходит от своевременной остановки неверного решения и глубокого анализа сметы.")}
         alignment="right"
       >
         <div className="mt-8 space-y-5">
           {[
-            { num: "01", text: "Har bir xarajatga savol bilan qaraymiz: bu qaror obyekt sifati, muddati va kelajakdagi ishlashiga qanday ta'sir qiladi?" },
-            { num: "02", text: "Ortiqcha ishni oldini olish orqali byudjetni tejash — arzon pudratchi tanlashdan ko'ra samarali." },
-            { num: "03", text: "Smeta chuqur tahlil qilinadi: har bir modda asoslanadi va investor bilan muhokama qilinadi." },
+            { num: "01", text: ["Har bir xarajatga savol bilan qaraymiz: bu qaror obyekt sifati, muddati va kelajakdagi ishlashiga qanday ta'sir qiladi?", "К каждому расходу относимся с вопросом: как это решение повлияет на качество объекта, сроки и будущую эксплуатацию?"] },
+            { num: "02", text: ["Ortiqcha ishni oldini olish orqali byudjetni tejash — arzon pudratchi tanlashdan ko'ra samarali.", "Экономия бюджета через предотвращение лишних работ эффективнее, чем выбор дешёвого подрядчика."] },
+            { num: "03", text: ["Smeta chuqur tahlil qilinadi: har bir modda asoslanadi va investor bilan muhokama qilinadi.", "Смета анализируется глубоко: каждая статья обосновывается и обсуждается с инвестором."] },
           ].map((item, i) => (
             <motion.div
               key={item.num}
@@ -544,7 +546,7 @@ export default function App() {
               className="flex gap-5 items-start"
             >
               <span style={{ fontFamily: 'var(--font-display)' }} className="text-2xl font-bold text-[#060920]/15 shrink-0 leading-none mt-1">{item.num}</span>
-              <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/65 leading-relaxed">{item.text}</p>
+              <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/65 leading-relaxed">{t(item.text[0], item.text[1])}</p>
             </motion.div>
           ))}
           <motion.div
@@ -555,15 +557,15 @@ export default function App() {
             className="pt-5 border-t border-[#060920]/10"
           >
             <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/50 text-sm leading-relaxed">
-              Bizning maqsadimiz — narxni shunchaki pasaytirish emas.<br />
-              Bizning maqsadimiz — investor kapitalini oqilona ishlatish.
+              {t("Bizning maqsadimiz — narxni shunchaki pasaytirish emas.", "Наша цель — не просто снизить цену.")}<br />
+              {t("Bizning maqsadimiz — investor kapitalini oqilona ishlatish.", "Наша цель — разумно использовать капитал инвестора.")}
             </p>
             <a
               href="#foyda"
               style={{ fontFamily: 'var(--font-body)', textDecoration: 'none' }}
               className="inline-block mt-4 text-sm tracking-[0.15em] uppercase text-[#060920] hover:opacity-60 transition-opacity"
             >
-              Batafsil — iqtisodiy foyda →
+              {t("Batafsil — iqtisodiy foyda", "Подробнее — экономическая выгода")} →
             </a>
           </motion.div>
         </div>
@@ -572,16 +574,16 @@ export default function App() {
       {/* Floor 8 - MILLIY IDENTITET */}
       <FloorSection
         floorNumber={11}
-        subtitle="MILLIY IDENTITET"
-        title="Zamonaviy qurilish. Milliy ildiz."
-        description="BARPO zamonaviy qurilish kompaniyasi, lekin bizning estetikamiz va fikrlashimiz O'zbekistonning boy me'moriy merosi bilan bog'langan."
+        subtitle={t("MILLIY IDENTITET", "НАЦИОНАЛЬНАЯ ИДЕНТИЧНОСТЬ")}
+        title={t("Zamonaviy qurilish. Milliy ildiz.", "Современное строительство. Национальные корни.")}
+        description={t("BARPO zamonaviy qurilish kompaniyasi, lekin bizning estetikamiz va fikrlashimiz O'zbekistonning boy me'moriy merosi bilan bog'langan.", "BARPO — современная строительная компания, но наша эстетика и мышление связаны с богатым архитектурным наследием Узбекистана.")}
         alignment="left"
       >
         <div className="mt-8 space-y-6">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-x-12 gap-y-8">
-            {["Ornament", "Nisbat", "Ritm", "Tartib", "Chuqur ma'no", "Zamonaviy shakl"].map((word, i) => (
+            {[["Ornament", "Орнамент"], ["Nisbat", "Пропорция"], ["Ritm", "Ритм"], ["Tartib", "Порядок"], ["Chuqur ma'no", "Глубокий смысл"], ["Zamonaviy shakl", "Современная форма"]].map((word, i) => (
               <motion.div
-                key={word}
+                key={word[0]}
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false }}
@@ -589,7 +591,7 @@ export default function App() {
                 className="w-fit"
               >
                 <div style={{ fontFamily: 'var(--font-display)' }} className="text-xl text-[#060920]">
-                  {word}
+                  {t(word[0], word[1])}
                 </div>
                 <SoftDivider className="mt-3" />
               </motion.div>
@@ -603,7 +605,7 @@ export default function App() {
             style={{ fontFamily: 'var(--font-body)' }}
             className="text-[#060920]/60 leading-relaxed"
           >
-            Bular biz uchun faqat bezak emas. Bu qurilish madaniyatining bir qismi. Biz o'tmishni takrorlamaymiz — undan kuch olib, zamonaviy shaklda barpo etamiz.
+            {t("Bular biz uchun faqat bezak emas. Bu qurilish madaniyatining bir qismi. Biz o'tmishni takrorlamaymiz — undan kuch olib, zamonaviy shaklda barpo etamiz.", "Для нас это не просто украшение. Это часть культуры строительства. Мы не повторяем прошлое — мы черпаем из него силу и созидаем в современной форме.")}
           </motion.p>
         </div>
       </FloorSection>
@@ -611,9 +613,9 @@ export default function App() {
       {/* Floor 9 - ALOQA */}
       <FloorSection
         floorNumber={12}
-        subtitle="ALOQA"
-        title="Loyihangizni muhokama qilaylik"
-        description="Biz avval vazifani tushunamiz, keyin yechim taklif qilamiz. Har bir loyiha noyob, shuning uchun har biriga alohida yondashamiz."
+        subtitle={t("ALOQA", "КОНТАКТЫ")}
+        title={t("Loyihangizni muhokama qilaylik", "Обсудим ваш проект")}
+        description={t("Biz avval vazifani tushunamiz, keyin yechim taklif qilamiz. Har bir loyiha noyob, shuning uchun har biriga alohida yondashamiz.", "Сначала мы понимаем задачу, затем предлагаем решение. Каждый проект уникален, поэтому к каждому подходим индивидуально.")}
         alignment="right"
       >
         <motion.div
@@ -627,17 +629,17 @@ export default function App() {
           {contactStatus === "success" ? (
             <div className="p-8 border border-[#060920]/15 bg-white/60 backdrop-blur-sm rounded-2xl text-center space-y-3">
               <div style={{ fontFamily: 'var(--font-display)' }} className="text-xl text-[#060920]">
-                Rahmat! Murojaatingiz qabul qilindi.
+                {t("Rahmat! Murojaatingiz qabul qilindi.", "Спасибо! Ваша заявка принята.")}
               </div>
               <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/70 tracking-wide text-sm">
-                Tez orada siz bilan bog'lanamiz.
+                {t("Tez orada siz bilan bog'lanamiz.", "Мы свяжемся с вами в ближайшее время.")}
               </p>
               <button
                 onClick={() => setContactStatus("idle")}
                 style={{ fontFamily: 'var(--font-body)' }}
                 className="mt-1 px-6 py-2 text-sm tracking-[0.15em] uppercase text-[#060920]/70 hover:text-[#060920] transition-colors"
               >
-                Yana yuborish
+                {t("Yana yuborish", "Отправить ещё")}
               </button>
             </div>
           ) : (
@@ -647,7 +649,7 @@ export default function App() {
                 type="text"
                 name="fullName"
                 required
-                placeholder="Sizning ismingiz *"
+                placeholder={t("Sizning ismingiz *", "Ваше имя *")}
                 style={{ fontFamily: 'var(--font-body)' }}
                 className="px-4 py-3 bg-white/50 border border-[#060920]/15 text-[#060920] placeholder-[#060920]/40 focus:outline-none focus:border-[#060920]/40 transition-colors rounded-lg"
               />
@@ -655,7 +657,7 @@ export default function App() {
                 type="tel"
                 name="phone"
                 required
-                placeholder="Telefon raqam *"
+                placeholder={t("Telefon raqam *", "Телефон *")}
                 inputMode="tel"
                 onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/[^\d+()\-\s]/g, ""); }}
                 style={{ fontFamily: 'var(--font-body)' }}
@@ -665,13 +667,13 @@ export default function App() {
             <input
               type="text"
               name="company"
-              placeholder="Kompaniya nomi"
+              placeholder={t("Kompaniya nomi", "Название компании")}
               style={{ fontFamily: 'var(--font-body)' }}
               className="w-full px-4 py-3 bg-white/50 border border-[#060920]/15 text-[#060920] placeholder-[#060920]/40 focus:outline-none focus:border-[#060920]/40 transition-colors rounded-lg"
             />
             <textarea
               name="message"
-              placeholder="Loyihangiz haqida qisqacha"
+              placeholder={t("Loyihangiz haqida qisqacha", "Кратко о вашем проекте")}
               rows={4}
               style={{ fontFamily: 'var(--font-body)' }}
               className="w-full px-4 py-3 bg-white/50 border border-[#060920]/15 text-[#060920] placeholder-[#060920]/40 focus:outline-none focus:border-[#060920]/40 transition-colors resize-none rounded-lg"
@@ -687,7 +689,7 @@ export default function App() {
               style={{ fontFamily: 'var(--font-body)' }}
               className="w-full px-8 py-4 bg-[#060920] text-white tracking-[0.15em] uppercase font-medium border border-[#060920]/20 shadow-lg transition-all hover:shadow-xl rounded-2xl flex items-center justify-center gap-3 disabled:opacity-70"
             >
-              {contactStatus === "sending" ? "Yuborilmoqda..." : "Murojaatni yuborish"}
+              {contactStatus === "sending" ? t("Yuborilmoqda...", "Отправляется...") : t("Murojaatni yuborish", "Отправить заявку")}
             </motion.button>
           </form>
           )}
@@ -706,9 +708,9 @@ export default function App() {
               </div>
             </div>
             <div className="flex gap-3 items-baseline">
-              <span style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/40 text-xs tracking-[0.15em] uppercase w-16 flex-shrink-0">Manzil</span>
+              <span style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/40 text-xs tracking-[0.15em] uppercase w-16 flex-shrink-0">{t("Manzil", "Адрес")}</span>
               <div style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/70 tracking-wide">
-                {contactInfo.address || "Toshkent, O'zbekiston"}
+                {contactInfo.address || t("Toshkent, O'zbekiston", "Ташкент, Узбекистан")}
               </div>
             </div>
           </div>

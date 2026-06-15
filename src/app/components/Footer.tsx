@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { Facebook, Instagram, Youtube, Send } from "lucide-react";
 import logoLight from "../../assets/oqlogo.png";
+import { useT } from "../i18n";
 
 type Socials = { telegram?: string; instagram?: string; facebook?: string; youtube?: string };
 type ContactInfo = { phone?: string; email?: string; address?: string };
 
 export function Footer() {
+  const t = useT();
   const [socials, setSocials] = useState<Socials>({});
   const [contact, setContact] = useState<ContactInfo>({});
   useEffect(() => {
@@ -35,13 +37,13 @@ export function Footer() {
               />
             </a>
             <p style={{ fontFamily: 'var(--font-body)' }} className="tracking-wide text-white/50 max-w-md text-sm leading-relaxed">
-              BARPO — O'zbekistonda yangi qurilish madaniyatini shakllantirayotgan qurilish kompaniyasi.
+              {t("BARPO — O'zbekistonda yangi qurilish madaniyatini shakllantirayotgan qurilish kompaniyasi.", "BARPO — строительная компания, формирующая новую культуру строительства в Узбекистане.")}
             </p>
             <p style={{ fontFamily: 'var(--font-body)' }} className="tracking-wide text-white/50 max-w-md text-sm leading-relaxed mt-3">
-              Biz tizim, sifat, nazorat, mas'uliyat va investor xotirjamligi asosida obyektlarni barpo etamiz.
+              {t("Biz tizim, sifat, nazorat, mas'uliyat va investor xotirjamligi asosida obyektlarni barpo etamiz.", "Мы возводим объекты на основе системы, качества, контроля, ответственности и спокойствия инвестора.")}
             </p>
             <p style={{ fontFamily: 'var(--font-display)' }} className="tracking-wide text-white/80 max-w-md text-base mt-5">
-              Biz qurmaymiz. Biz barpo etamiz.
+              {t("Biz qurmaymiz. Biz barpo etamiz.", "Мы не строим. Мы созидаем.")}
             </p>
             <div className="flex items-center gap-3 mt-6">
               {socialIcons.map(({ Icon, href }, i) => (
@@ -61,33 +63,39 @@ export function Footer() {
           <div className="flex gap-12 md:gap-16 flex-wrap">
             <div>
               <div style={{ fontFamily: 'var(--font-display)' }} className="text-sm text-white/60 mb-4 tracking-wide">
-                XIZMATLAR
-              </div>
-              {["Bosh pudratchi", "Qurilish ishlari", "Pardoz", "Muhandislik", "Fasad"].map((service) => (
-                <a key={service} href="#services" style={{ fontFamily: 'var(--font-body)' }} className="block text-sm text-white/50 hover:text-white cursor-pointer mb-2 transition-colors">
-                  {service}
-                </a>
-              ))}
-            </div>
-            <div>
-              <div style={{ fontFamily: 'var(--font-display)' }} className="text-sm text-white/60 mb-4 tracking-wide">
-                BO'LIMLAR
+                {t("XIZMATLAR", "УСЛУГИ")}
               </div>
               {[
-                { label: "HR — Bizga qo'shiling", href: "#hr" },
-                { label: "Takliflar", href: "#takliflar" },
-                { label: "Loyihalar", href: "#projects" },
-                { label: "Standart", href: "#standard" },
-                { label: "Haqimizda", href: "#about" },
-              ].map((item) => (
-                <a key={item.label} href={item.href} style={{ fontFamily: 'var(--font-body)' }} className="block text-sm text-white/50 hover:text-white cursor-pointer mb-2 transition-colors">
-                  {item.label}
+                { uz: "Bosh pudratchi", ru: "Генподряд" },
+                { uz: "Qurilish ishlari", ru: "Строительные работы" },
+                { uz: "Pardoz", ru: "Отделка" },
+                { uz: "Muhandislik", ru: "Инженерия" },
+                { uz: "Fasad", ru: "Фасад" },
+              ].map((service) => (
+                <a key={service.uz} href="#services" style={{ fontFamily: 'var(--font-body)' }} className="block text-sm text-white/50 hover:text-white cursor-pointer mb-2 transition-colors">
+                  {t(service.uz, service.ru)}
                 </a>
               ))}
             </div>
             <div>
               <div style={{ fontFamily: 'var(--font-display)' }} className="text-sm text-white/60 mb-4 tracking-wide">
-                ALOQA
+                {t("BO'LIMLAR", "РАЗДЕЛЫ")}
+              </div>
+              {[
+                { uz: "HR — Bizga qo'shiling", ru: "HR — Присоединяйтесь", href: "#hr" },
+                { uz: "Takliflar", ru: "Предложения", href: "#takliflar" },
+                { uz: "Loyihalar", ru: "Проекты", href: "#projects" },
+                { uz: "Standart", ru: "Стандарт", href: "#standard" },
+                { uz: "Haqimizda", ru: "О нас", href: "#about" },
+              ].map((item) => (
+                <a key={item.href} href={item.href} style={{ fontFamily: 'var(--font-body)' }} className="block text-sm text-white/50 hover:text-white cursor-pointer mb-2 transition-colors">
+                  {t(item.uz, item.ru)}
+                </a>
+              ))}
+            </div>
+            <div>
+              <div style={{ fontFamily: 'var(--font-display)' }} className="text-sm text-white/60 mb-4 tracking-wide">
+                {t("ALOQA", "КОНТАКТЫ")}
               </div>
               <a href={`tel:${(contact.phone || "+998901234567").replace(/[^\d+]/g, "")}`} style={{ fontFamily: 'var(--font-body)' }} className="block text-sm text-white/50 hover:text-white cursor-pointer mb-2 transition-colors">
                 {contact.phone || "+998 (90) 123-45-67"}
@@ -96,7 +104,7 @@ export function Footer() {
                 {contact.email || "info@barpo.uz"}
               </a>
               <a href="#contact" style={{ fontFamily: 'var(--font-body)' }} className="inline-block mt-2 text-sm text-white/80 hover:text-white cursor-pointer transition-colors border-b border-white/30 hover:border-white pb-0.5">
-                Bog'lanish →
+                {t("Bog'lanish", "Связаться")} →
               </a>
             </div>
           </div>
@@ -104,10 +112,10 @@ export function Footer() {
 
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4">
           <p style={{ fontFamily: 'var(--font-body)' }} className="tracking-wide text-white/40 text-center text-sm">
-            © 2026 BARPO. Barcha huquqlar himoyalangan. | Biz qurmaymiz. Biz barpo etamiz.
+            {t("© 2026 BARPO. Barcha huquqlar himoyalangan. | Biz qurmaymiz. Biz barpo etamiz.", "© 2026 BARPO. Все права защищены. | Мы не строим. Мы созидаем.")}
           </p>
           <a href="#boshqaruv" style={{ fontFamily: 'var(--font-body)' }} className="text-xs tracking-wide text-white/30 hover:text-white/60 transition-colors">
-            Boshqaruv
+            {t("Boshqaruv", "Управление")}
           </a>
         </div>
       </div>
