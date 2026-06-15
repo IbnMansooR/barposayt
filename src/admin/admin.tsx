@@ -974,12 +974,15 @@ export function AdminPage() {
                     </button>
                   </div>
                 </div>
-                {(data.blog?.length ?? 0) === 0 ? <EmptyState text="Hozircha maqola yo'q. '+ Yangi maqola' tugmasini bosing." /> : [...(data.blog || [])]
-                  .sort((a, b) => {
-                    const cmp = String(a.createdAt).localeCompare(String(b.createdAt));
-                    return blogSort === "new" ? -cmp : cmp;
+                {(data.blog?.length ?? 0) === 0 ? <EmptyState text="Hozircha maqola yo'q. '+ Yangi maqola' tugmasini bosing." /> : (data.blog || [])
+                  .map((a, idx) => ({ a, idx }))
+                  .sort((x, y) => {
+                    // Yangi maqola doim massiv boshiga qo'shiladi (idx 0 = eng yangi).
+                    // Sana bir xil bo'lsa ham qo'shilish tartibi ishonchli ishlaydi.
+                    const byDate = String(y.a.createdAt).localeCompare(String(x.a.createdAt)) || (x.idx - y.idx);
+                    return blogSort === "new" ? byDate : -byDate;
                   })
-                  .map((a, i) => {
+                  .map(({ a }, i) => {
                     const published = a.status === "published";
                     return (
                       <motion.div key={a.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
