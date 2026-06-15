@@ -157,14 +157,29 @@ const INVESTOR_SEED = [
   { title: 'A klass biznes markazi — status, tizim va tijoriy qiymat', text: "A klass biznes markazi shunchaki ofis binosi emas. U kompaniyalar uchun imij, xodimlar uchun qulaylik, investor uchun esa barqaror daromad manbai bo'lishi kerak.\n\nBunday obyektlarda fasad, kirish guruhi, lift zonasi, parking, muhandislik tizimlari, umumiy foydalanish maydonlari va ekspluatatsiya xarajatlari bir butun tizim sifatida o'ylanishi kerak.\n\nBARPO biznes markazlarni faqat qurib topshiriladigan bino sifatida emas, ishlaydigan tijoriy aktiv sifatida ko'radi.", key: "A klass daraja binoning balandligida emas.\nUning boshqaruvi, qulayligi va detalida." },
   { title: 'Savdo markazi — odam oqimi ishlaydigan arxitektura', text: "Savdo markazining muvaffaqiyati faqat maydon hajmiga bog'liq emas. Odam oqimi, kirish-chiqish logikasi, navigatsiya, ijarachilar joylashuvi, parking va muhandislik tizimlari birgalikda ishlashi kerak.\n\nBARPO savdo obyektlariga tijorat natijasi nuqtayi nazaridan qaraydi. Har bir metr, har bir yo'lak, har bir zona mijoz harakati va biznes samaradorligiga xizmat qilishi kerak.", key: "Savdo markazi — bu devorlar ichidagi do'konlar emas.\nBu odam oqimi va daromad modeli." },
   { title: 'Park — shahar nafas oladigan joy', text: "Park qurilishi oddiy obodonlashtirish emas. Bu shahar muhiti, odamlar harakati, dam olish madaniyati va tabiiy muvozanatni birlashtiradigan loyiha.\n\nYaxshi parkda yo'laklar, yoritish, landshaft, suv tizimi, xavfsizlik, xizmat ko'rsatish zonalari va ekspluatatsiya qulayligi oldindan o'ylangan bo'ladi.\n\nBARPO park va rekreatsion hududlarni nafaqat chiroyli, balki uzoq muddat ishlaydigan, odamlar qayta-qayta keladigan muhit sifatida ko'radi.", key: "Park — bu yashil maydon emas.\nBu shahar hayotining madaniy ritmi." },
-  { title: 'Premium JK — uy emas, yashash madaniyati', text: "Premium turar joy majmuasi faqat qimmat materiallar yoki chiroyli fasaddan iborat emas. Bu insonning kundalik hayotini qulay, xavfsiz va estetik qiladigan tizim.\n\nKirish zonasi, hovli, parking, lift, muhandislik tizimlari, shovqin izolyatsiyasi, fasad, jamoat hududlari va ekspluatatsiya sifati birgalikda premium darajani yaratadi.\n\nBARPO premium JK qurilishida detal, muhandislik, estetika va uzoq muddatli qiymatni birlashtiradi.", key: "Premium — ko'rinish emas.\nPremium — har kuni seziladigan sifat." },
+  { title: 'Premium turar joy majmuasi — uy emas, yashash madaniyati', text: "Premium turar joy majmuasi faqat qimmat materiallar yoki chiroyli fasaddan iborat emas. Bu insonning kundalik hayotini qulay, xavfsiz va estetik qiladigan tizim.\n\nKirish zonasi, hovli, parking, lift, muhandislik tizimlari, shovqin izolyatsiyasi, fasad, jamoat hududlari va ekspluatatsiya sifati birgalikda premium darajani yaratadi.\n\nBARPO premium turar joy majmuasi qurilishida detal, muhandislik, estetika va uzoq muddatli qiymatni birlashtiradi.", key: "Premium — ko'rinish emas.\nPremium — har kuni seziladigan sifat." },
   { title: 'Klinika — aniqlik, tozalik va muhandislik talabi', text: "Tibbiyot obyektlarida xato qilish mumkin emas. Bu yerda rejalashtirish, ventilyatsiya, steril zonalar, oqimlar ajratilishi, muhandislik tizimlari va foydalanish qulayligi alohida ahamiyatga ega.\n\nBARPO klinika qurilishiga bemor, shifokor va ekspluatatsiya jamoasi nuqtayi nazaridan qaraydi.\n\nBino chiroyli bo'lishi mumkin. Lekin klinika, avvalo, to'g'ri ishlashi kerak.", key: "Klinika qurilishi — bu dizayn emas.\nBu aniqlik va mas'uliyat." },
   { title: 'Mehmonxona — tajriba sotadigan obyekt', text: "Mehmonxona qurilishida har bir detal mehmon tajribasiga ta'sir qiladi: kirish taassuroti, xona ergonomikasi, ovoz izolyatsiyasi, muhandislik tizimlari, servis zonalari, evakuatsiya, yoritish va umumiy atmosfera.\n\nBARPO mehmonxona obyektlarini nafaqat qurilish, balki servis biznesining infratuzilmasi sifatida ko'radi.", key: "Mehmonxona — bu xona soni emas.\nBu mehmon qaytib keladigan tajriba." },
   { title: 'Sanoat obyekti — jarayon uchun qurilgan bino', text: "Ishlab chiqarish obyektida asosiy narsa — jarayonning to'g'ri ishlashi. Logistika, texnika harakati, xavfsizlik, yuklama, muhandislik tizimlari va ekspluatatsiya qulayligi oldindan hisoblanishi kerak.\n\nBARPO sanoat obyektlarida biznes jarayonini tushunib, qurilish yechimini shu jarayonga moslashtiradi.", key: "Sanoat binosi devor emas.\nBu ishlab chiqarish ritmini ushlab turadigan tizim." },
 ]
 async function ensureInvestors() {
   const cur = await readJson('investors', null)
-  if (Array.isArray(cur)) return
+  if (Array.isArray(cur)) {
+    // Migratsiya: "JK" -> "turar joy majmuasi" (mavjud yozuvlarni bir marta to'g'rilaydi)
+    let changed = false
+    const fixed = cur.map((x) => {
+      const f = { ...x }
+      for (const k of ['title', 'text', 'key']) {
+        if (typeof f[k] === 'string' && /\bJK\b/.test(f[k])) {
+          f[k] = f[k].replace(/\bJK\b/g, 'turar joy majmuasi')
+          changed = true
+        }
+      }
+      return f
+    })
+    if (changed) await writeJson('investors', fixed)
+    return
+  }
   const list = INVESTOR_SEED.map((x) => ({ id: genId() + Math.random().toString(36).slice(2, 5), title: x.title, text: x.text, key: x.key, active: true, createdAt: new Date().toISOString() }))
   await writeJson('investors', list)
 }
