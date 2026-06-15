@@ -1,49 +1,75 @@
 import { motion } from "motion/react";
+import { useT } from "../app/i18n";
 
 const steps = [
   {
     num: "01",
-    title: "Tanishuv va ehtiyojni aniqlash",
-    desc: "Avval obyektning vazifasi, hajmi, texnik talabi, muddat va budjet chegarasi aniqlanadi. Biz darhol narx aytib yubormaymiz — avval vazifani tushunamiz.",
+    title: ["Tanishuv va ehtiyojni aniqlash", "Знакомство и выявление потребности"],
+    desc: [
+      "Avval obyektning vazifasi, hajmi, texnik talabi, muddat va budjet chegarasi aniqlanadi. Biz darhol narx aytib yubormaymiz — avval vazifani tushunamiz.",
+      "Сначала определяются задача объекта, объём, технические требования, сроки и рамки бюджета. Мы не называем цену сразу — сначала понимаем задачу.",
+    ],
   },
   {
     num: "02",
-    title: "Obyekt va loyiha tahlili",
-    desc: "Chizmalar, mavjud holat, texnik shartlar, muammoli joylar va potensial xavflar ko'rib chiqiladi.",
+    title: ["Obyekt va loyiha tahlili", "Анализ объекта и проекта"],
+    desc: [
+      "Chizmalar, mavjud holat, texnik shartlar, muammoli joylar va potensial xavflar ko'rib chiqiladi.",
+      "Рассматриваются чертежи, текущее состояние, технические условия, проблемные места и потенциальные риски.",
+    ],
   },
   {
     num: "03",
-    title: "Hisob-kitob va tijoriy taklif",
-    desc: "Ish hajmi, material, muddat, brigadalar va xarajatlar asosida tushunarli taklif tayyorlanadi.",
+    title: ["Hisob-kitob va tijoriy taklif", "Расчёт и коммерческое предложение"],
+    desc: [
+      "Ish hajmi, material, muddat, brigadalar va xarajatlar asosida tushunarli taklif tayyorlanadi.",
+      "На основе объёма работ, материалов, сроков, бригад и затрат готовится понятное предложение.",
+    ],
   },
   {
     num: "04",
-    title: "Grafik va resurs rejalashtirish",
-    desc: "Qaysi ish qachon boshlanishi, qaysi brigada kirishi, material qachon kelishi va qaysi bosqich qachon yopilishi rejalashtiriladi.",
+    title: ["Grafik va resurs rejalashtirish", "Планирование графика и ресурсов"],
+    desc: [
+      "Qaysi ish qachon boshlanishi, qaysi brigada kirishi, material qachon kelishi va qaysi bosqich qachon yopilishi rejalashtiriladi.",
+      "Планируется, какая работа когда начнётся, какая бригада выйдет, когда поступит материал и когда закроется каждый этап.",
+    ],
   },
   {
     num: "05",
-    title: "Ishga kirishish",
-    desc: "Obyekt ichida mas'ullar belgilanadi, ish hududi tartibga keltiriladi va jarayon bosqichma-bosqich boshlanadi.",
+    title: ["Ishga kirishish", "Начало работ"],
+    desc: [
+      "Obyekt ichida mas'ullar belgilanadi, ish hududi tartibga keltiriladi va jarayon bosqichma-bosqich boshlanadi.",
+      "На объекте назначаются ответственные, рабочая зона приводится в порядок, и процесс начинается поэтапно.",
+    ],
   },
   {
     num: "06",
-    title: "Texnik nazorat",
-    desc: "Har ish bajarilgandan so'ng tekshiriladi. Xato ko'rilsa, keyingi bosqichga o'tkazilmaydi.",
+    title: ["Texnik nazorat", "Технический контроль"],
+    desc: [
+      "Har ish bajarilgandan so'ng tekshiriladi. Xato ko'rilsa, keyingi bosqichga o'tkazilmaydi.",
+      "Каждая работа проверяется после выполнения. Если выявлена ошибка, переход к следующему этапу не допускается.",
+    ],
   },
   {
     num: "07",
-    title: "Hisobot",
-    desc: "Mijozga jarayon bo'yicha aniq hisobot beriladi: nima bajarildi, nima davom etmoqda, qaysi bosqich keyingi.",
+    title: ["Hisobot", "Отчётность"],
+    desc: [
+      "Mijozga jarayon bo'yicha aniq hisobot beriladi: nima bajarildi, nima davom etmoqda, qaysi bosqich keyingi.",
+      "Заказчику предоставляется чёткий отчёт по процессу: что выполнено, что продолжается, какой этап следующий.",
+    ],
   },
   {
     num: "08",
-    title: "Yakuniy qabul",
-    desc: "Obyekt \"tayyor\" deb faqat vizual chiroy uchun emas, qabul mezonlari bajarilgani uchun topshiriladi.",
+    title: ["Yakuniy qabul", "Финальная приёмка"],
+    desc: [
+      "Obyekt \"tayyor\" deb faqat vizual chiroy uchun emas, qabul mezonlari bajarilgani uchun topshiriladi.",
+      "Объект сдаётся как «готовый» не ради внешней красоты, а потому что выполнены критерии приёмки.",
+    ],
   },
 ];
 
 export function JarayonPage() {
+  const t = useT();
   return (
     <div className="relative bg-white pt-32">
       {/* Hero */}
@@ -56,7 +82,7 @@ export function JarayonPage() {
             style={{ fontFamily: "var(--font-body)" }}
             className="text-xs tracking-[0.25em] uppercase text-[#060920]"
           >
-            Jarayon bo'limi
+            {t("Jarayon bo'limi", "Раздел «Процесс»")}
           </motion.p>
 
           <motion.h1
@@ -70,7 +96,7 @@ export function JarayonPage() {
             }}
             className="tracking-tight"
           >
-            Qurilishda xotirjamlik jarayon tushunarli bo'lganda paydo bo'ladi
+            {t("Qurilishda xotirjamlik jarayon tushunarli bo'lganda paydo bo'ladi", "Спокойствие в строительстве рождается, когда процесс понятен")}
           </motion.h1>
 
           <motion.div
@@ -87,7 +113,10 @@ export function JarayonPage() {
             style={{ fontFamily: "var(--font-body)", color: "#060920" }}
             className="text-lg leading-relaxed opacity-70 max-w-2xl"
           >
-            Biz mijozni noaniqlik ichida qoldirmaymiz. Har bosqich, har qaror va har natija tushunarli tizim asosida olib boriladi.
+            {t(
+              "Biz mijozni noaniqlik ichida qoldirmaymiz. Har bosqich, har qaror va har natija tushunarli tizim asosida olib boriladi.",
+              "Мы не оставляем заказчика в неопределённости. Каждый этап, каждое решение и каждый результат ведутся на основе понятной системы.",
+            )}
           </motion.p>
         </div>
       </section>
@@ -127,13 +156,13 @@ export function JarayonPage() {
                       style={{ fontFamily: "var(--font-display)", color: "#060920" }}
                       className="text-2xl md:text-3xl tracking-tight mb-3"
                     >
-                      {step.title}
+                      {t(step.title[0], step.title[1])}
                     </h2>
                     <p
                       style={{ fontFamily: "var(--font-body)", color: "#060920" }}
                       className="text-base leading-relaxed opacity-65 max-w-2xl"
                     >
-                      {step.desc}
+                      {t(step.desc[0], step.desc[1])}
                     </p>
                   </div>
                 </div>
@@ -157,7 +186,10 @@ export function JarayonPage() {
               style={{ fontFamily: "var(--font-display)", color: "#060920" }}
               className="text-xl md:text-2xl tracking-tight leading-relaxed"
             >
-              Biz mijozni qurilish boshqaruvchisiga aylantirmaymiz. Bu mas'uliyatni o'zimiz olamiz.
+              {t(
+                "Biz mijozni qurilish boshqaruvchisiga aylantirmaymiz. Bu mas'uliyatni o'zimiz olamiz.",
+                "Мы не превращаем заказчика в прораба. Эту ответственность мы берём на себя.",
+              )}
             </p>
           </motion.div>
         </div>
@@ -178,7 +210,7 @@ export function JarayonPage() {
             }}
             className="tracking-tight"
           >
-            Loyihangizni tizim bilan boshlang
+            {t("Loyihangizni tizim bilan boshlang", "Начните проект с системы")}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0 }}
@@ -188,7 +220,10 @@ export function JarayonPage() {
             style={{ fontFamily: "var(--font-body)" }}
             className="text-white/55 text-base max-w-xl mx-auto leading-relaxed"
           >
-            Qurilishdagi eng to'g'ri qaror — ish boshlanishidan oldin aniq tizim yaratish.
+            {t(
+              "Qurilishdagi eng to'g'ri qaror — ish boshlanishidan oldin aniq tizim yaratish.",
+              "Самое верное решение в строительстве — создать чёткую систему до начала работ.",
+            )}
           </motion.p>
           <motion.a
             href="#contact"
@@ -197,7 +232,7 @@ export function JarayonPage() {
             style={{ fontFamily: "var(--font-body)", textDecoration: "none" }}
             className="inline-block px-8 py-3 bg-white text-[#060920] tracking-[0.15em] uppercase text-sm font-medium rounded-2xl shadow-lg hover:shadow-xl transition-all"
           >
-            Loyihani muhokama qilish
+            {t("Loyihani muhokama qilish", "Обсудить проект")}
           </motion.a>
         </div>
       </section>

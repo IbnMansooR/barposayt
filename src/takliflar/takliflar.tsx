@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { SoftDivider } from "../app/components/SoftDivider";
 import { BarpoWord, barpo } from "../app/components/Barpo";
+import { useT } from "../app/i18n";
 
 type Status = "idle" | "sending" | "success" | "error";
 
@@ -20,16 +21,17 @@ interface Investor {
   key: string;
 }
 
-const CATEGORIES = [
-  "Hamkorlik",
-  "Xizmat sifati",
-  "Ish jarayonlari",
-  "Yangi g'oya",
-  "Narx / Taklif",
-  "Boshqa",
+const CATEGORIES: [string, string][] = [
+  ["Hamkorlik", "Сотрудничество"],
+  ["Xizmat sifati", "Качество услуг"],
+  ["Ish jarayonlari", "Рабочие процессы"],
+  ["Yangi g'oya", "Новая идея"],
+  ["Narx / Taklif", "Цена / Предложение"],
+  ["Boshqa", "Другое"],
 ];
 
 export function TakliflarPage() {
+  const t = useT();
   const [offers, setOffers] = useState<Offer[]>([]);
   const [offersLoading, setOffersLoading] = useState(true);
   const [investors, setInvestors] = useState<Investor[]>([]);
@@ -67,12 +69,12 @@ export function TakliflarPage() {
         body: JSON.stringify(body),
       });
       const json = await res.json().catch(() => ({}));
-      if (!res.ok || !json.ok) throw new Error(json.error || "Yuborishda xatolik yuz berdi");
+      if (!res.ok || !json.ok) throw new Error(json.error || t("Yuborishda xatolik yuz berdi", "Произошла ошибка при отправке"));
       setStatus("success");
       formEl.reset();
     } catch (err) {
       setStatus("error");
-      setErrorMsg(err instanceof Error ? err.message : "Yuborishda xatolik yuz berdi");
+      setErrorMsg(err instanceof Error ? err.message : t("Yuborishda xatolik yuz berdi", "Произошла ошибка при отправке"));
     }
   };
 
@@ -91,7 +93,7 @@ export function TakliflarPage() {
               style={{ fontFamily: "var(--font-body)" }}
               className="opacity-60 tracking-[0.2em] uppercase text-sm text-[#060920]"
             >
-              CHEKLANGAN TAKLIFLAR
+              {t("CHEKLANGAN TAKLIFLAR", "ОГРАНИЧЕННЫЕ ПРЕДЛОЖЕНИЯ")}
             </p>
             <h2
               style={{
@@ -101,26 +103,26 @@ export function TakliflarPage() {
               }}
               className="leading-[1.15] tracking-tight"
             >
-              Cheklangan takliflar
+              {t("Cheklangan takliflar", "Ограниченные предложения")}
             </h2>
             <p
               style={{ fontFamily: "var(--font-body)" }}
               className="max-w-xl mx-auto leading-relaxed tracking-wide text-[#060920]/70"
             >
-<BarpoWord /> hamkorlik, xizmat va imkoniyatlar bo'yicha cheklangan miqdordagi maxsus takliflarni taqdim etadi. Imkoniyatni boy bermang.
+<BarpoWord /> {t("hamkorlik, xizmat va imkoniyatlar bo'yicha cheklangan miqdordagi maxsus takliflarni taqdim etadi. Imkoniyatni boy bermang.", "предоставляет ограниченное количество специальных предложений по сотрудничеству, услугам и возможностям. Не упустите шанс.")}
             </p>
           </motion.div>
 
           {offersLoading ? (
             <div style={{ fontFamily: "var(--font-body)" }} className="text-center py-12 text-[#060920]/40 tracking-wide animate-pulse">
-              <BarpoWord /> etilyapti...
+              {t("Yuklanmoqda...", "Загрузка...")}
             </div>
           ) : offers.length === 0 ? (
             <div
               style={{ fontFamily: "var(--font-body)" }}
               className="text-center py-12 text-[#060920]/40 tracking-wide"
             >
-              Hozircha e'lon qilingan taklif yo'q. Tez orada yangilanadi.
+              {t("Hozircha e'lon qilingan taklif yo'q. Tez orada yangilanadi.", "Пока нет опубликованных предложений. Скоро обновится.")}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -159,7 +161,7 @@ export function TakliflarPage() {
                     style={{ fontFamily: "var(--font-body)" }}
                     className="mt-5 inline-flex items-center gap-2 text-sm text-[#060920] hover:gap-3 transition-all tracking-wide"
                   >
-                    Bog'lanish →
+                    {t("Bog'lanish", "Связаться")} →
                   </a>
                 </motion.div>
               ))}
@@ -180,15 +182,15 @@ export function TakliflarPage() {
               className="text-center space-y-4 mb-12"
             >
               <p style={{ fontFamily: "var(--font-body)" }} className="opacity-60 tracking-[0.2em] uppercase text-sm text-[#060920]">
-                INVESTORLAR UCHUN TAKLIFLAR
+                {t("INVESTORLAR UCHUN TAKLIFLAR", "ПРЕДЛОЖЕНИЯ ДЛЯ ИНВЕСТОРОВ")}
               </p>
               <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 4vw, 3.25rem)", color: "#060920" }} className="leading-[1.15] tracking-tight">
-                Investorlar uchun obyekt konsepsiyalari
+                {t("Investorlar uchun obyekt konsepsiyalari", "Концепции объектов для инвесторов")}
               </h2>
               <div style={{ fontFamily: "var(--font-body)" }} className="max-w-2xl mx-auto leading-relaxed tracking-wide text-[#060920]/70 space-y-3">
-                <p>Investor uchun qurilish — bu faqat bino qurish emas. Bu kapitalni to'g'ri joylashtirish, risklarni kamaytirish va kelajakdagi daromad modelini barpo etish.</p>
-                <p><BarpoWord /> investorlar uchun turli yo'nalishdagi obyektlarni konsepsiyadan qurilishgacha tizimli yondashuv asosida ko'rib chiqadi.</p>
-                <p>Biz har bir loyiha bo'yicha nafaqat "qanday quriladi?" degan savolga, balki "bu obyekt qanday ishlaydi, kimga xizmat qiladi va qanday qiymat yaratadi?" degan savolga ham javob izlaymiz.</p>
+                <p>{t("Investor uchun qurilish — bu faqat bino qurish emas. Bu kapitalni to'g'ri joylashtirish, risklarni kamaytirish va kelajakdagi daromad modelini barpo etish.", "Для инвестора строительство — это не просто возведение здания. Это верное размещение капитала, снижение рисков и создание будущей модели дохода.")}</p>
+                <p><BarpoWord /> {t("investorlar uchun turli yo'nalishdagi obyektlarni konsepsiyadan qurilishgacha tizimli yondashuv asosida ko'rib chiqadi.", "рассматривает для инвесторов объекты разных направлений — от концепции до строительства — на основе системного подхода.")}</p>
+                <p>{t("Biz har bir loyiha bo'yicha nafaqat \"qanday quriladi?\" degan savolga, balki \"bu obyekt qanday ishlaydi, kimga xizmat qiladi va qanday qiymat yaratadi?\" degan savolga ham javob izlaymiz.", "По каждому проекту мы ищем ответ не только на вопрос «как это будет построено?», но и на вопрос «как этот объект работает, кому служит и какую ценность создаёт?».")}</p>
               </div>
             </motion.div>
 
@@ -241,7 +243,7 @@ export function TakliflarPage() {
               style={{ fontFamily: "var(--font-body)" }}
               className="opacity-60 tracking-[0.2em] uppercase text-sm text-[#060920]"
             >
-              SIZNING TAKLIFINGIZ
+              {t("SIZNING TAKLIFINGIZ", "ВАШЕ ПРЕДЛОЖЕНИЕ")}
             </p>
             <h2
               style={{
@@ -251,14 +253,16 @@ export function TakliflarPage() {
               }}
               className="leading-[1.15] tracking-tight"
             >
-              Bizga taklif bildiring
+              {t("Bizga taklif bildiring", "Поделитесь предложением")}
             </h2>
             <p
               style={{ fontFamily: "var(--font-body)" }}
               className="max-w-xl mx-auto leading-relaxed tracking-wide text-[#060920]/70"
             >
-              Sizning g'oya va takliflaringizni ham e'tibor bilan ko'rib chiqamiz. Fikringizni
-              bizga yuboring — har bir taklif muhim.
+              {t(
+                "Sizning g'oya va takliflaringizni ham e'tibor bilan ko'rib chiqamiz. Fikringizni bizga yuboring — har bir taklif muhim.",
+                "Ваши идеи и предложения мы тоже внимательно рассмотрим. Отправьте нам своё мнение — каждое предложение важно.",
+              )}
             </p>
           </motion.div>
 
@@ -270,17 +274,17 @@ export function TakliflarPage() {
               className="p-10 border border-[#060920]/15 bg-white/60 backdrop-blur-sm rounded-2xl text-center space-y-4"
             >
               <div style={{ fontFamily: "var(--font-display)" }} className="text-2xl text-[#060920]">
-                Rahmat! Taklifingiz qabul qilindi.
+                {t("Rahmat! Taklifingiz qabul qilindi.", "Спасибо! Ваше предложение принято.")}
               </div>
               <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/70 tracking-wide">
-                Taklifingiz ko'rib chiqiladi va zarur hollarda siz bilan bog'lanamiz.
+                {t("Taklifingiz ko'rib chiqiladi va zarur hollarda siz bilan bog'lanamiz.", "Ваше предложение будет рассмотрено, и при необходимости мы с вами свяжемся.")}
               </p>
               <button
                 onClick={() => setStatus("idle")}
                 style={{ fontFamily: "var(--font-body)" }}
                 className="mt-2 px-6 py-2 text-sm tracking-[0.15em] uppercase text-[#060920]/70 hover:text-[#060920] transition-colors"
               >
-                Yana yuborish
+                {t("Yana yuborish", "Отправить ещё")}
               </button>
             </motion.div>
           ) : (
@@ -293,23 +297,23 @@ export function TakliflarPage() {
               className="space-y-4"
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input type="text" name="fullName" placeholder="Ism-sharif (ixtiyoriy)"
+                <input type="text" name="fullName" placeholder={t("Ism-sharif (ixtiyoriy)", "Ф.И.О. (необязательно)")}
                   style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
-                <input type="tel" name="phone" placeholder="Telefon raqam (ixtiyoriy)" inputMode="tel"
+                <input type="tel" name="phone" placeholder={t("Telefon raqam (ixtiyoriy)", "Телефон (необязательно)")} inputMode="tel"
                   onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/[^\d+()\-\s]/g, ""); }}
                   style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
               </div>
 
               <select name="category" required defaultValue=""
                 style={{ fontFamily: "var(--font-body)" }} className={inputClass}>
-                <option value="" disabled>Taklif yo'nalishi *</option>
-                {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                <option value="" disabled>{t("Taklif yo'nalishi *", "Направление предложения *")}</option>
+                {CATEGORIES.map((c) => <option key={c[0]} value={c[0]}>{t(c[0], c[1])}</option>)}
               </select>
 
-              <input type="text" name="subject" required placeholder="Taklif mavzusi *"
+              <input type="text" name="subject" required placeholder={t("Taklif mavzusi *", "Тема предложения *")}
                 style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
 
-              <textarea name="message" required rows={5} placeholder="Taklifingizni batafsil yozing *"
+              <textarea name="message" required rows={5} placeholder={t("Taklifingizni batafsil yozing *", "Опишите ваше предложение подробно *")}
                 style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
 
               {status === "error" && (
@@ -319,11 +323,11 @@ export function TakliflarPage() {
               <button type="submit" disabled={status === "sending"}
                 style={{ fontFamily: "var(--font-body)" }}
                 className="w-full px-8 py-4 bg-[#060920] text-white tracking-[0.15em] uppercase font-medium border border-[#060920]/20 shadow-lg transition-all hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] rounded-2xl flex items-center justify-center gap-3 disabled:opacity-70 disabled:hover:scale-100">
-                {status === "sending" ? "Yuborilmoqda..." : "Taklifni yuborish"}
+                {status === "sending" ? t("Yuborilmoqda...", "Отправляется...") : t("Taklifni yuborish", "Отправить предложение")}
               </button>
 
               <p style={{ fontFamily: "var(--font-body)" }} className="text-xs text-[#060920]/40 text-center tracking-wide">
-                * bilan belgilangan maydonlar majburiy. Ism va telefon ixtiyoriy — anonim yuborishingiz mumkin.
+                {t("* bilan belgilangan maydonlar majburiy. Ism va telefon ixtiyoriy — anonim yuborishingiz mumkin.", "Поля, отмеченные *, обязательны. Имя и телефон необязательны — можно отправить анонимно.")}
               </p>
             </motion.form>
           )}
