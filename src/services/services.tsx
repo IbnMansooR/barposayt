@@ -29,96 +29,66 @@ export function ServicesPage() {
   const services = [
     {
       number: "1",
-      title: "Bosh pudratchi — obyektning boshqaruv markazi",
-      subtitle: "Bosh pudratchi xizmatlari",
-      description: "Qurilishda eng katta xavf — har bir yo'nalish alohida yashashi. Bitta brigada kutadi, ikkinchisi kechikadi, material vaqtida kelmaydi, muhandislik va pardoz bir-biriga mos kelmaydi. Natijada mijozning vaqti, mablag'i va asabi sarflanadi. BARPO bosh pudratchi sifatida jarayonni yagona tizimga yig'adi: grafik, brigadalar, material, texnik nazorat va qabul bosqichlari bir markazdan boshqariladi.",
-      detailsLabel: "Nimani boshqaramiz",
+      title: "Bosh pudratchi xizmatlari",
+      subtitle: "",
+      description: "BARPO bosh pudratchi sifatida obyektning umumiy qurilish jarayonini boshqaradi: rejalashtirish, ishchi kuchi, materiallar, muhandislik tizimlari, pudratchilar, grafik va sifat nazorati.",
+      detailsLabel: "Nimalarni o'z ichiga oladi",
       details: [
-        "Ish grafigi",
-        "Brigadalar koordinatsiyasi",
-        "Materiallar kelishi",
-        "Sifat nazorati",
-        "Bosqichma-bosqich qabul",
-        "Mijozga hisobot",
-        "Muammolarni joyida hal qilish"
+        "Ish jarayonini rejalashtirish",
+        "GPR va bosqichma-bosqich grafik",
+        "Pudratchilarni muvofiqlashtirish",
+        "Kunlik nazorat",
+        "Sifat tekshiruvi",
+        "Muddat va xarajat intizomi",
+        "Obyektni topshirishga tayyorlash"
       ],
-      highlight: "Mijoz uchun foyda: siz har kuni obyektga kelib, kim nima qilishi kerakligini tushuntirib yurmaysiz. Jarayon boshqaruvda bo'ladi.",
-      cta: "Bosh pudratchilik bo'yicha maslahat olish"
+      cta: "",
+      highlight: "Biz uchun bosh pudratchi — bu shunchaki ijrochi emas. Bu obyekt natijasi uchun javobgar markaz."
     },
     {
       number: "2",
-      title: "Asosiy konstruktiv ishlar — keyingi barcha bosqichlarning poydevori",
-      subtitle: "Qurilish-montaj ishlari",
-      description: "Qurilish-montaj ishlarida xato bo'lsa, keyingi bosqichlar uni yashirmaydi — aksincha, yanada qimmatlashtiradi. Shuning uchun BARPO bu bosqichda aniqlik, texnik talab va nazoratga alohida e'tibor beradi.",
-      detailsLabel: "Nimalar kiradi",
-      details: [
-        "Devor ishlari",
-        "Beton ishlari",
-        "G'isht va blok terish",
-        "Metall konstruksiyalar",
-        "Pol va shift tayyorlash",
-        "Montaj ishlari",
-        "Loyiha asosidagi umumiy qurilish ishlari"
-      ],
+      title: "Qurilish-montaj ishlari",
+      subtitle: "",
+      description: "Qurilish-montaj ishlari har qanday obyektning asosiy poydevoridir. Bu bosqichda xato qilish keyingi barcha jarayonlarga ta'sir qiladi. BARPO konstruktiv yechimlar, montaj sifati, texnologik ketma-ketlik va xavfsizlik talablariga qat'iy amal qiladi.",
+      detailsLabel: "",
+      details: [],
       cta: "",
-      highlight: "Bu bosqichda \"keyin to'g'rilab yuboramiz\" degan fikr bo'lmasligi kerak. Chunki haqiqiy sifat boshidan boshlanadi."
+      highlight: "Biz tezlikni shoshilish deb tushunmaymiz. Tezlik — bu oldindan tuzilgan reja va intizom natijasi."
     },
     {
       number: "3",
-      title: "Pardoz — obyektning yuzidir. Lekin uning sifati ko'rinmaydigan tayyorgarlikdan boshlanadi",
-      subtitle: "Pardozlash ishlari",
-      description: "Pardozlash ishlarida mijoz ko'radigan natija — bo'yoq, devor, pol, shift, burchak va detal. Lekin bu natijaning sifati oldingi tayyorgarlik, tekshiruv va qabul mezonlariga bog'liq.",
-      detailsLabel: "Nimalarni nazorat qilamiz",
-      details: [
-        "Devor tekisligi",
-        "Burchaklar",
-        "Bo'yoq sifati",
-        "Plitka chiziqlari",
-        "Pol sathi",
-        "Shift silliqligi",
-        "Material sarfi",
-        "Yakuniy tozalik"
-      ],
+      title: "Fasad va tashqi ishlar",
+      subtitle: "",
+      description: "Fasad — obyektning birinchi taassuroti. Lekin u faqat ko'rinish emas. Fasad binoning himoyasi, energetik samaradorligi, arxitekturaviy xarakteri va uzoq muddatli qiymatiga ta'sir qiladi. BARPO fasad ishlarida estetika, texnik yechim va ekspluatatsion mustahkamlikni birlashtiradi.",
+      detailsLabel: "",
+      details: [],
       cta: "",
-      highlight: "Premium pardoz qimmat materialdan emas, to'g'ri tayyorgarlik va aniq qo'ldan boshlanadi."
+      highlight: "Biz uchun chiroyli fasad — bu bugun ko'rinadigan, ertaga esa o'z sifatini saqlaydigan yechim."
     },
     {
       number: "4",
-      title: "Fasad — binoning bozor bilan birinchi suhbati",
-      subtitle: "Fasad va tashqi ishlar",
-      description: "Fasad faqat tashqi ko'rinish emas. U binoning imiji, chidamliligi, energiya samaradorligi va investor uchun qiymatiga ta'sir qiladi.",
-      detailsLabel: "Nimalar kiradi",
-      details: [
-        "Fasad montaji",
-        "Ventilyatsiyali fasadlar",
-        "Klinker / keramogranit / HPL / alyukobond",
-        "Tashqi pardoz ishlari",
-        "Kirish guruhi",
-        "Tashqi dekorativ elementlar",
-        "Yoritish va vizual aksentlar"
-      ],
+      title: "Pardozlash ishlari",
+      subtitle: "",
+      description: "Pardoz — obyektning yakuniy hissiyoti. Aynan shu bosqichda mijoz, ijarachi yoki foydalanuvchi sifatni ko'radi, his qiladi va baholaydi. BARPO pardozlash ishlarida detal, aniqlik, material tanlovi va ijro madaniyatiga e'tibor beradi.",
+      detailsLabel: "",
+      details: [],
       cta: "",
-      highlight: "Yaxshi fasad binoni bezamaydi. U binoning qiymatini oshiradi."
+      highlight: "Chiroyli ko'rinish yetarli emas. To'g'ri bajarilgan pardoz uzoq xizmat qilishi kerak."
     },
     {
       number: "5",
-      title: "Muhandislik tizimlari — binoning ichki hayoti",
-      subtitle: "Muhandislik tizimlari",
-      description: "Ko'rinmaydigan ishlar eng katta mas'uliyatni talab qiladi. Chunki elektrika, ventilyatsiya, santexnika va past kuchlanish tizimlari keyinchalik obyektning qulayligi, xavfsizligi va ishlash barqarorligini belgilaydi.",
-      detailsLabel: "Yo'nalishlar",
-      details: [
-        "Elektrika ishlari — elektr tarmoqlari, kabel kanallari, yoritish nuqtalari, taqsimlash shchitlari va jihozlar loyiha asosida montaj qilinadi",
-        "Ventilyatsiya tizimi — havo almashinuvi, chiqarish va kiritish tizimlari obyekt vazifasiga mos holda bajariladi",
-        "Santexnika ishlari — suv ta'minoti, kanalizatsiya, isitish va sanitariya tizimlari xavfsiz, tartibli va xizmat ko'rsatishga qulay tarzda o'rnatiladi",
-        "Past kuchlanish tizimlari — internet, videokuzatuv, domofon, signalizatsiya va boshqa kommunikatsiya tizimlari yagona infratuzilma sifatida tashkil qilinadi"
-      ],
+      title: "Muhandislik tizimlari",
+      subtitle: "",
+      description: "Muhandislik tizimlari — obyektning ko'rinmaydigan, lekin eng muhim qismi. Elektr, ventilyatsiya, isitish, sovutish, suv, kanalizatsiya, yong'in xavfsizligi va zaif tok tizimlari binoning ishlash sifatini belgilaydi. BARPO muhandislik tizimlariga alohida e'tibor beradi, chunki obyektning haqiqiy qulayligi aynan shu yerda boshlanadi.",
+      detailsLabel: "",
+      details: [],
       cta: "",
-      highlight: "Yaxshi muhandislik tizimi ko'zga tashlanmaydi. Lekin har kuni seziladi."
+      highlight: "Yaxshi bino faqat chiroyli bo'lmaydi. U to'g'ri ishlaydi."
     },
     {
       number: "6",
       title: "Premium pardoz va interyer ijrosi",
-      subtitle: "Seziladigan sifat",
+      subtitle: "",
       description: "Premium segmentda sifat ko'zga tashlanishi shart emas — u sezilishi kerak. Materiallar, chiziqlar, yoritish, tutashuvlar, faktura va umumiy atmosfera bir butun bo'lishi kerak. BARPO premium pardozda nozik detal, yuqori ijro intizomi va muvozanatli estetika bilan ishlaydi.",
       detailsLabel: "",
       details: [],
@@ -152,7 +122,7 @@ export function ServicesPage() {
             }}
             className="text-[#060920] tracking-tight font-light leading-tight"
           >
-            Qurilish xizmat emas. Bu kapitalni himoya qiladigan jarayon.
+            Xizmatlarimiz
           </motion.h1>
 
           <motion.p
@@ -162,7 +132,7 @@ export function ServicesPage() {
             style={{ fontFamily: 'var(--font-body)' }}
             className="text-lg text-[#060920]/60 max-w-3xl mx-auto"
           >
-            BARPO har bir ish yo'nalishini alohida brigada sifatida emas, umumiy natijaga xizmat qiladigan tizim sifatida boshqaradi.
+            BARPO qurilish jarayonining alohida bosqichlarini emas, butun tizimini ko'radi. Shu sababli har bir xizmatimiz yakuniy natija, foydalanish qulayligi va investor manfaatiga bog'langan.
           </motion.p>
         </div>
       </section>
@@ -186,6 +156,7 @@ export function ServicesPage() {
                 <div className={index % 2 === 1 ? "md:order-2" : ""}>
                   <div className="space-y-6">
                     <div>
+                      {service.subtitle && (
                       <motion.div
                         initial={{ opacity: 0 }}
                         whileInView={{ opacity: 1 }}
@@ -195,6 +166,7 @@ export function ServicesPage() {
                       >
                         {service.subtitle}
                       </motion.div>
+                      )}
                       <motion.h2
                         initial={{ opacity: 0 }}
                         whileInView={{ opacity: 1 }}
