@@ -17,7 +17,6 @@ interface FloorSectionProps {
 export function FloorSection({
   floorNumber,
   title,
-  subtitle,
   description,
   children,
   alignment = "center",
@@ -37,19 +36,6 @@ export function FloorSection({
       transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
       className={`space-y-6 w-full ${isCenter ? "max-w-3xl mx-auto text-center" : isLeft ? "max-w-xl" : "max-w-xl ml-auto text-right"}`}
     >
-      {subtitle && (
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
-          transition={{ duration: 0.9, delay: 0.3 }}
-          className="opacity-60 tracking-wide text-[0.79rem]"
-          style={{ fontFamily: 'var(--font-body)' }}
-        >
-          {barpo(subtitle)}
-        </motion.p>
-      )}
-
       <motion.h2
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
