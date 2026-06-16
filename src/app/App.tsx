@@ -226,21 +226,7 @@ export default function App() {
         title={t("Yangi qurilish madaniyati", "Новая культура строительства")}
         description={t("Biz qurilish bozorida yangi yondashuvni shakllantiryapmiz: tartibli jarayon, aniq grafik, shaffof xarajat, sifat nazorati va mijoz xotirjamligi.", "Мы формируем новый подход на строительном рынке: упорядоченный процесс, точный график, прозрачные расходы, контроль качества и спокойствие клиента.")}
         alignment="left"
-      >
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          style={{ fontFamily: 'var(--font-display)' }}
-          className="mt-8 text-2xl text-[#060920] leading-snug max-w-2xl"
-        >
-<BarpoWord /> {t("uchun sifat — alohida va'da emas.", "Качество — не просто обещание.")}
-        </motion.p>
-        <p style={{ fontFamily: 'var(--font-body)' }} className="mt-3 text-[#060920]/65 leading-relaxed max-w-2xl">
-          {t("Bu ish boshlanishidan obyekt topshirilishigacha amal qilinadigan mezon.", "Это критерий, который действует от начала работ до сдачи объекта.")}
-        </p>
-      </FloorSection>
+      />
 
       {/* Floor 2 - BIZ HAQIMIZDA */}
       <FloorSection

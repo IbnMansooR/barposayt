@@ -45,6 +45,46 @@ export function ProjectsPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  // Loyiha yo'q (yoki hali yuklanmoqda) — Barpo loading screen: favicon markazda, halqa aylanadi
+  if (projects.length === 0) {
+    return (
+      <div className="relative w-full h-screen flex flex-col items-center justify-center bg-white">
+        <a
+          href="#home"
+          aria-label="Yopish"
+          className="absolute top-6 right-6 z-50 w-12 h-12 rounded-full bg-[#060920] text-white flex items-center justify-center hover:scale-110 transition-transform"
+          style={{ fontFamily: "var(--font-display)", textDecoration: "none", fontSize: "1.4rem", lineHeight: 1 }}
+        >
+          ×
+        </a>
+
+        <div className="relative flex items-center justify-center" style={{ width: 170, height: 170 }}>
+          {/* aylanuvchi halqa */}
+          <div className="absolute inset-0 animate-spin" style={{ animationDuration: "1.15s" }}>
+            <svg viewBox="0 0 170 170" className="w-full h-full">
+              <defs>
+                <linearGradient id="barpo-proj-ring" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stopColor="#060920" />
+                  <stop offset="1" stopColor="#060920" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <circle cx="85" cy="85" r="81" fill="none" stroke="url(#barpo-proj-ring)" strokeWidth="3" strokeLinecap="round" />
+            </svg>
+          </div>
+          {/* markazda favicon (qimirlamaydi) */}
+          <img src="/favicon.png" alt="BARPO" className="relative select-none" style={{ width: 96, height: "auto" }} />
+        </div>
+
+        <div style={{ fontFamily: "var(--font-display)" }} className="mt-9 text-2xl md:text-3xl text-[#060920] tracking-wide">
+          {t("Barpo etyapmiz", "Созидаем")}
+        </div>
+        <div style={{ fontFamily: "var(--font-body)" }} className="mt-3 text-[#060920]/45 text-xs tracking-[0.25em] uppercase">
+          {t("Loyihalar tez orada", "Проекты скоро")}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <HorizontalGallery count={projects.length + 1}>
       {/* Intro slayd */}
