@@ -48,8 +48,9 @@ function barpoApi() {
 }
 
 export default defineConfig(({ mode }) => {
-  // .env / .env.local dan Supabase kalitlarini Node process.env ga yuklaymiz
-  const env = loadEnv(mode, process.cwd(), '')
+  // .env / .env.local dan Supabase kalitlarini Node process.env ga yuklaymiz.
+  // __dirname (config papkasi) dan o'qiymiz — preview/launch cwd boshqa bo'lsa ham topiladi.
+  const env = loadEnv(mode, __dirname, '')
   if (env.SUPABASE_URL) process.env.SUPABASE_URL = env.SUPABASE_URL
   if (env.SUPABASE_SERVICE_KEY) process.env.SUPABASE_SERVICE_KEY = env.SUPABASE_SERVICE_KEY
 

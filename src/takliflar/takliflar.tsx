@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import { motion } from "motion/react";
-import { SoftDivider } from "../app/components/SoftDivider";
 import { BarpoWord, barpo } from "../app/components/Barpo";
 import { useT } from "../app/i18n";
+import { HorizontalGallery } from "../app/components/HorizontalGallery";
 
 type Status = "idle" | "sending" | "success" | "error";
 
@@ -30,28 +29,41 @@ const CATEGORIES: [string, string][] = [
   ["Boshqa", "Другое"],
 ];
 
+// #060920 (navy) qoladi, qolgani oq (foydalanuvchi: navy joyida, boshqa fonlar oq)
+const PANELS = [
+  { bg: "#060920", fg: "#FFFFFF" }, // navy
+  { bg: "#FFFFFF", fg: "#060920" }, // oq
+];
+
 export function TakliflarPage() {
   const t = useT();
   const [offers, setOffers] = useState<Offer[]>([]);
-  const [offersLoading, setOffersLoading] = useState(true);
   const [investors, setInvestors] = useState<Investor[]>([]);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
   const inputClass =
-    "w-full px-4 py-3 bg-white/50 border border-[#060920]/15 text-[#060920] placeholder-[#060920]/40 focus:outline-none focus:border-[#060920]/40 transition-colors rounded-lg";
+    "w-full px-4 py-3 bg-white/70 border border-[#060920]/15 text-[#060920] placeholder-[#060920]/40 focus:outline-none focus:border-[#060920]/40 transition-colors rounded-lg";
 
   useEffect(() => {
     fetch("/api/offers")
       .then((r) => r.json())
-      .then((json) => {
-        if (json.ok) setOffers(json.offers || []);
-      })
-      .catch(() => {})
-      .finally(() => setOffersLoading(false));
+      .then((json) => { if (json.ok) setOffers(json.offers || []); })
+      .catch(() => {});
     fetch("/api/investors")
       .then((r) => r.json())
-      .then((json) => { if (json.ok) setInvestors(json.investors || []); })
+      .then((json) => {
+        const real = json.ok ? (json.investors || []) : [];
+        // DEMO — FAQAT dev rejimida (ko'rish uchun). Production'da chiqmaydi.
+        const demo: Investor[] = import.meta.env.DEV
+          ? [
+              { id: "d1", title: "Klinika konsepsiyasi", text: "Salomatlik yo'nalishidagi obyekt — joylashuv, oqim va xizmat modeli investor daromadiga moslab loyihalanadi.\nQurilish jarayoni tizim bilan boshqariladi.", key: "Kapital — natijaga yo'naltirilgan." },
+              { id: "d2", title: "Biznes markaz", text: "Ijara modeli, qavatlar samaradorligi va texnik yechimlar konsepsiya bosqichida hisoblanadi.\nHar qaror investor vaqti va xarajatiga ta'siri bilan baholanadi.", key: "Obyekt — ishlaydigan aktiv." },
+              { id: "d3", title: "Turar-joy majmuasi", text: "Sifat, muddat va shaffof smeta — uchta asos. Investor obyekt ortidan yugurmaydi, qaror qabul qiladi.\nJarayonni tizim olib boradi.", key: "Shaffoflik — vaqtida qaror." },
+            ]
+          : [];
+        setInvestors(real.length ? real : demo);
+      })
       .catch(() => {});
   }, []);
 
@@ -78,261 +90,132 @@ export function TakliflarPage() {
     }
   };
 
+  const count = 1 + offers.length + investors.length + 1;
+
   return (
-    <div className="pt-24 min-h-screen">
-      {/* ====== BARPO TAKLIFLARI (biz e'lon qiladigan) ====== */}
-      <section className="relative px-8 md:px-16 pt-20 pb-12">
-        <div className="max-w-5xl w-full mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-            className="text-center space-y-4 mb-14"
-          >
-            <p
-              style={{ fontFamily: "var(--font-body)" }}
-              className="opacity-60 tracking-[0.2em] uppercase text-sm text-[#060920]"
-            >
-              {t("CHEKLANGAN TAKLIFLAR", "ОГРАНИЧЕННЫЕ ПРЕДЛОЖЕНИЯ")}
-            </p>
-            <h2
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "clamp(2.5rem, 5vw, 4rem)",
-                color: "#060920",
-              }}
-              className="leading-[1.15] tracking-tight"
-            >
-              {t("Cheklangan takliflar", "Ограниченные предложения")}
-            </h2>
-            <p
-              style={{ fontFamily: "var(--font-body)" }}
-              className="max-w-xl mx-auto leading-relaxed tracking-wide text-[#060920]/70"
-            >
-<BarpoWord /> {t("hamkorlik, xizmat va imkoniyatlar bo'yicha cheklangan miqdordagi maxsus takliflarni taqdim etadi. Imkoniyatni boy bermang.", "Мы предоставляем ограниченное количество специальных предложений по сотрудничеству, услугам и возможностям. Не упустите шанс.")}
-            </p>
-          </motion.div>
-
-          {offersLoading ? (
-            <div style={{ fontFamily: "var(--font-body)" }} className="text-center py-12 text-[#060920]/40 tracking-wide animate-pulse">
-              {t("Yuklanmoqda...", "Загрузка...")}
-            </div>
-          ) : offers.length === 0 ? (
-            <div
-              style={{ fontFamily: "var(--font-body)" }}
-              className="text-center py-12 text-[#060920]/40 tracking-wide"
-            >
-              {t("Hozircha e'lon qilingan taklif yo'q. Tez orada yangilanadi.", "Пока нет опубликованных предложений. Скоро обновится.")}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {offers.map((offer, i) => (
-                <motion.div
-                  key={offer.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: false }}
-                  transition={{ duration: 0.7, delay: 0.1 + i * 0.08 }}
-                  whileHover={{ scale: 1.02 }}
-                  className="p-7 border border-[#060920]/15 bg-white/55 backdrop-blur-sm hover:bg-white/75 transition-colors rounded-2xl flex flex-col"
-                >
-                  {offer.tag && (
-                    <span
-                      style={{ fontFamily: "var(--font-body)" }}
-                      className="self-start px-3 py-1 mb-4 text-xs tracking-[0.15em] uppercase bg-[#060920]/8 text-[#060920]/70 rounded-full"
-                    >
-                      {offer.tag}
-                    </span>
-                  )}
-                  <div
-                    style={{ fontFamily: "var(--font-display)" }}
-                    className="text-xl text-[#060920] mb-3"
-                  >
-                    {barpo(offer.title)}
-                  </div>
-                  <p
-                    style={{ fontFamily: "var(--font-body)" }}
-                    className="text-[#060920]/65 text-sm leading-relaxed flex-1"
-                  >
-                    {barpo(offer.description)}
-                  </p>
-                  <a
-                    href="#contact"
-                    style={{ fontFamily: "var(--font-body)" }}
-                    className="mt-5 inline-flex items-center gap-2 text-sm text-[#060920] hover:gap-3 transition-all tracking-wide"
-                  >
-                    {t("Bog'lanish", "Связаться")} →
-                  </a>
-                </motion.div>
-              ))}
-            </div>
-          )}
+    <HorizontalGallery count={count} reverse>
+      {/* Intro slayd */}
+      <div className="h-full flex items-center shrink-0" style={{ width: "min(88vw, 780px)" }}>
+        <div className="px-10 md:px-20">
+          <div style={{ fontFamily: "var(--font-body)" }} className="text-xs tracking-[0.3em] uppercase text-[#060920]/50">
+            {t("INVESTORLAR UCHUN TAKLIFLAR", "ПРЕДЛОЖЕНИЯ ДЛЯ ИНВЕСТОРОВ")}
+          </div>
+          <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 4vw, 3.5rem)", color: "#060920" }} className="mt-5 leading-tight">
+            {t("Kapitalni qiymatga aylantiramiz", "Превращаем капитал в ценность")}
+          </h1>
+          <p style={{ fontFamily: "var(--font-body)" }} className="mt-6 text-[#060920]/65 leading-relaxed max-w-md">
+            <BarpoWord /> {t("investorlar uchun obyektlarni konsepsiyadan qurilishgacha tizimli yondashuv asosida ko'rib chiqadi.", "рассматривает объекты для инвесторов — от концепции до строительства — на основе системного подхода.")}
+          </p>
         </div>
-      </section>
+      </div>
 
-      {/* ====== INVESTORLAR UCHUN TAKLIFLAR (admin'dan boshqariladi) ====== */}
-      {investors.length > 0 && (
-        <section className="relative px-8 md:px-16 py-16 bg-white">
-          <div className="max-w-4xl w-full mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, margin: "-100px" }}
-              transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-              className="text-center space-y-4 mb-12"
-            >
-              <p style={{ fontFamily: "var(--font-body)" }} className="opacity-60 tracking-[0.2em] uppercase text-sm text-[#060920]">
-                {t("INVESTORLAR UCHUN TAKLIFLAR", "ПРЕДЛОЖЕНИЯ ДЛЯ ИНВЕСТОРОВ")}
-              </p>
-              <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 4vw, 3.25rem)", color: "#060920" }} className="leading-[1.15] tracking-tight">
-                {t("Investorlar uchun obyekt konsepsiyalari", "Концепции объектов для инвесторов")}
-              </h2>
-              <div style={{ fontFamily: "var(--font-body)" }} className="max-w-2xl mx-auto leading-relaxed tracking-wide text-[#060920]/70 space-y-3">
-                <p>{t("Investor uchun qurilish — bu faqat bino qurish emas. Bu kapitalni to'g'ri joylashtirish, risklarni kamaytirish va kelajakdagi daromad modelini barpo etish.", "Для инвестора строительство — это не просто возведение здания. Это верное размещение капитала, снижение рисков и создание будущей модели дохода.")}</p>
-                <p><BarpoWord /> {t("investorlar uchun turli yo'nalishdagi obyektlarni konsepsiyadan qurilishgacha tizimli yondashuv asosida ko'rib chiqadi.", "Мы рассматриваем для инвесторов объекты разных направлений — от концепции до строительства — на основе системного подхода.")}</p>
-                <p>{t("Biz har bir loyiha bo'yicha nafaqat \"qanday quriladi?\" degan savolga, balki \"bu obyekt qanday ishlaydi, kimga xizmat qiladi va qanday qiymat yaratadi?\" degan savolga ham javob izlaymiz.", "По каждому проекту мы ищем ответ не только на вопрос «как это будет построено?», но и на вопрос «как этот объект работает, кому служит и какую ценность создаёт?».")}</p>
+      {/* Cheklangan takliflar (offerlar) — matn panellari */}
+      {offers.map((offer) => (
+        <div key={offer.id} className="h-full flex items-center shrink-0" style={{ width: "min(78vw, 680px)" }}>
+          <div className="px-10 md:px-16">
+            {offer.tag && (
+              <span style={{ fontFamily: "var(--font-body)" }} className="inline-block px-3 py-1 mb-4 text-xs tracking-[0.15em] uppercase bg-[#060920]/8 text-[#060920]/70 rounded-full">
+                {offer.tag}
+              </span>
+            )}
+            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.8rem, 3vw, 3rem)", color: "#060920" }} className="leading-tight">
+              {barpo(offer.title)}
+            </h2>
+            <div className="mt-4 h-px w-16 bg-[#060920]/30" />
+            <p style={{ fontFamily: "var(--font-body)" }} className="mt-5 text-[#060920]/70 leading-relaxed max-w-lg">
+              {barpo(offer.description)}
+            </p>
+            <a href="#contact" style={{ fontFamily: "var(--font-body)", textDecoration: "none" }} className="mt-6 inline-flex items-center gap-2 text-sm tracking-[0.15em] uppercase text-[#060920] hover:gap-3 transition-all">
+              {t("Bog'lanish", "Связаться")} →
+            </a>
+          </div>
+        </div>
+      ))}
+
+      {/* Investor konsepsiyalari — 4:5 portret rasm (1080×1350) + rangli panel */}
+      {investors.map((inv, i) => {
+        const panel = PANELS[i % PANELS.length];
+        return (
+          <div key={inv.id} className="h-full flex items-center shrink-0">
+            {/* 4:5 portret rasm joyi (1080×1350 px shu yerga sig'adi) */}
+            <div className="relative self-center h-[78vh] overflow-hidden shrink-0" style={{ aspectRatio: "4 / 5" }}>
+              <div
+                data-parallax
+                className="absolute inset-0 flex items-center justify-center bg-[#060920]/[0.04] border border-[#060920]/10"
+                style={{ transform: "scale(1.16)" }}
+              >
+                <span style={{ fontFamily: "var(--font-display)" }} className="text-[#060920]/12 text-6xl tracking-wider">BARPO</span>
               </div>
-            </motion.div>
+            </div>
 
-            <div className="space-y-8">
-              {investors.map((it, i) => (
-                <motion.div
-                  key={it.id}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: false, margin: "-60px" }}
-                  transition={{ duration: 0.7, delay: i * 0.04 }}
-                  className="bg-white rounded-3xl card-shadow p-8 md:p-9"
-                >
-                  <div className="w-fit">
-                    <h3 style={{ fontFamily: "var(--font-display)" }} className="text-xl md:text-2xl text-[#060920] leading-tight">
-                      {barpo(it.title)}
-                    </h3>
-                    <SoftDivider className="mt-3" />
-                  </div>
-                  <div style={{ fontFamily: "var(--font-body)" }} className="mt-4 space-y-3 text-[#060920]/75 leading-relaxed">
-                    {it.text.split("\n").map((s) => s.trim()).filter(Boolean).map((p, idx) => (
-                      <p key={idx}>{barpo(p)}</p>
-                    ))}
-                  </div>
-                  {it.key && (
-                    <div className="mt-5 pl-5 border-l-2 border-[#060920]/30">
-                      <p style={{ fontFamily: "var(--font-display)" }} className="text-base md:text-lg text-[#060920] italic leading-snug whitespace-pre-line">
-                        {barpo(it.key)}
-                      </p>
-                    </div>
-                  )}
-                </motion.div>
-              ))}
+            {/* Panel */}
+            <div className="h-full flex flex-col justify-center px-10 md:px-14 shrink-0" style={{ width: "38vw", background: panel.bg, color: panel.fg }}>
+              <div style={{ fontFamily: "var(--font-body)" }} className="text-xs tracking-[0.25em] uppercase opacity-60">
+                {t("INVESTOR KONSEPSIYASI", "КОНЦЕПЦИЯ ДЛЯ ИНВЕСТОРА")}
+              </div>
+              <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.6rem, 2.4vw, 2.6rem)" }} className="mt-3 leading-tight">
+                {barpo(inv.title)}
+              </h2>
+              <div className="mt-4 h-px w-14" style={{ background: panel.fg, opacity: 0.35 }} />
+              <div style={{ fontFamily: "var(--font-body)", opacity: 0.85 }} className="mt-5 space-y-3 leading-relaxed max-w-md">
+                {inv.text.split("\n").map((s) => s.trim()).filter(Boolean).slice(0, 3).map((p, idx) => (
+                  <p key={idx}>{barpo(p)}</p>
+                ))}
+              </div>
+              {inv.key && (
+                <div className="mt-5 pl-4 border-l-2" style={{ borderColor: panel.fg + "55" }}>
+                  <p style={{ fontFamily: "var(--font-display)", opacity: 0.95 }} className="italic leading-snug whitespace-pre-line">
+                    {barpo(inv.key)}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
-        </section>
-      )}
+        );
+      })}
 
-      {/* ====== BIZGA TAKLIF YUBORING (tashrifchidan) ====== */}
-      <section className="relative px-8 md:px-16 py-24">
-        <div className="max-w-3xl w-full mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, margin: "-100px" }}
-            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-            className="text-center space-y-4 mb-12"
-          >
-            <p
-              style={{ fontFamily: "var(--font-body)" }}
-              className="opacity-60 tracking-[0.2em] uppercase text-sm text-[#060920]"
-            >
-              {t("SIZNING TAKLIFINGIZ", "ВАШЕ ПРЕДЛОЖЕНИЕ")}
-            </p>
-            <h2
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "clamp(2rem, 4vw, 3rem)",
-                color: "#060920",
-              }}
-              className="leading-[1.15] tracking-tight"
-            >
-              {t("Bizga taklif bildiring", "Поделитесь предложением")}
-            </h2>
-            <p
-              style={{ fontFamily: "var(--font-body)" }}
-              className="max-w-xl mx-auto leading-relaxed tracking-wide text-[#060920]/70"
-            >
-              {t(
-                "Sizning g'oya va takliflaringizni ham e'tibor bilan ko'rib chiqamiz. Fikringizni bizga yuboring — har bir taklif muhim.",
-                "Ваши идеи и предложения мы тоже внимательно рассмотрим. Отправьте нам своё мнение — каждое предложение важно.",
-              )}
-            </p>
-          </motion.div>
+      {/* Forma slaydi — taklif yuborish */}
+      <div className="h-full flex items-center shrink-0" style={{ width: "min(94vw, 720px)" }}>
+        <div className="w-full px-8 md:px-16">
+          <div style={{ fontFamily: "var(--font-body)" }} className="text-xs tracking-[0.3em] uppercase text-[#060920]/50">
+            {t("SIZNING TAKLIFINGIZ", "ВАШЕ ПРЕДЛОЖЕНИЕ")}
+          </div>
+          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.8rem, 3vw, 2.75rem)", color: "#060920" }} className="mt-3 leading-tight">
+            {t("Bizga taklif bildiring", "Поделитесь предложением")}
+          </h2>
 
           {status === "success" ? (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.97 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="p-10 border border-[#060920]/15 bg-white/60 backdrop-blur-sm rounded-2xl text-center space-y-4"
-            >
-              <div style={{ fontFamily: "var(--font-display)" }} className="text-2xl text-[#060920]">
+            <div className="mt-6 p-8 border border-[#060920]/15 bg-white/60 rounded-2xl text-center space-y-3">
+              <div style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">
                 {t("Rahmat! Taklifingiz qabul qilindi.", "Спасибо! Ваше предложение принято.")}
               </div>
-              <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/70 tracking-wide">
-                {t("Taklifingiz ko'rib chiqiladi va zarur hollarda siz bilan bog'lanamiz.", "Ваше предложение будет рассмотрено, и при необходимости мы с вами свяжемся.")}
-              </p>
-              <button
-                onClick={() => setStatus("idle")}
-                style={{ fontFamily: "var(--font-body)" }}
-                className="mt-2 px-6 py-2 text-sm tracking-[0.15em] uppercase text-[#060920]/70 hover:text-[#060920] transition-colors"
-              >
+              <button onClick={() => setStatus("idle")} style={{ fontFamily: "var(--font-body)" }} className="px-6 py-2 text-sm tracking-[0.15em] uppercase text-[#060920]/70 hover:text-[#060920] transition-colors">
                 {t("Yana yuborish", "Отправить ещё")}
               </button>
-            </motion.div>
+            </div>
           ) : (
-            <motion.form
-              onSubmit={handleSubmit}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, margin: "-100px" }}
-              transition={{ duration: 1, delay: 0.2 }}
-              className="space-y-4"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input type="text" name="fullName" placeholder={t("Ism-sharif (ixtiyoriy)", "Ф.И.О. (необязательно)")}
-                  style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
-                <input type="tel" name="phone" placeholder={t("Telefon raqam (ixtiyoriy)", "Телефон (необязательно)")} inputMode="tel"
+            <form onSubmit={handleSubmit} className="mt-6 space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <input type="text" name="fullName" placeholder={t("Ism-sharif (ixtiyoriy)", "Ф.И.О. (необязательно)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input type="tel" name="phone" placeholder={t("Telefon (ixtiyoriy)", "Телефон (необязательно)")} inputMode="tel"
                   onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/[^\d+()\-\s]/g, ""); }}
                   style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
               </div>
-
-              <select name="category" required defaultValue=""
-                style={{ fontFamily: "var(--font-body)" }} className={inputClass}>
-                <option value="" disabled>{t("Taklif yo'nalishi *", "Направление предложения *")}</option>
+              <select name="category" required defaultValue="" style={{ fontFamily: "var(--font-body)" }} className={inputClass}>
+                <option value="" disabled>{t("Taklif yo'nalishi *", "Направление *")}</option>
                 {CATEGORIES.map((c) => <option key={c[0]} value={c[0]}>{t(c[0], c[1])}</option>)}
               </select>
-
-              <input type="text" name="subject" required placeholder={t("Taklif mavzusi *", "Тема предложения *")}
-                style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
-
-              <textarea name="message" required rows={5} placeholder={t("Taklifingizni batafsil yozing *", "Опишите ваше предложение подробно *")}
-                style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
-
-              {status === "error" && (
-                <p style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]">{errorMsg}</p>
-              )}
-
-              <button type="submit" disabled={status === "sending"}
-                style={{ fontFamily: "var(--font-body)" }}
-                className="w-full px-8 py-4 bg-[#060920] text-white tracking-[0.15em] uppercase font-medium border border-[#060920]/20 shadow-lg transition-all hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] rounded-2xl flex items-center justify-center gap-3 disabled:opacity-70 disabled:hover:scale-100">
+              <input type="text" name="subject" required placeholder={t("Taklif mavzusi *", "Тема предложения *")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              <textarea name="message" required rows={4} placeholder={t("Taklifingizni batafsil yozing *", "Опишите предложение *")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+              {status === "error" && <p style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]">{errorMsg}</p>}
+              <button type="submit" disabled={status === "sending"} style={{ fontFamily: "var(--font-body)" }}
+                className="w-full px-8 py-3.5 bg-[#060920] text-white tracking-[0.15em] uppercase font-medium rounded-2xl transition-all hover:shadow-xl disabled:opacity-70">
                 {status === "sending" ? t("Yuborilmoqda...", "Отправляется...") : t("Taklifni yuborish", "Отправить предложение")}
               </button>
-
-              <p style={{ fontFamily: "var(--font-body)" }} className="text-xs text-[#060920]/40 text-center tracking-wide">
-                {t("* bilan belgilangan maydonlar majburiy. Ism va telefon ixtiyoriy — anonim yuborishingiz mumkin.", "Поля, отмеченные *, обязательны. Имя и телефон необязательны — можно отправить анонимно.")}
-              </p>
-            </motion.form>
+            </form>
           )}
         </div>
-      </section>
-    </div>
+      </div>
+    </HorizontalGallery>
   );
 }

@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useLang, useT } from "./i18n";
+import Lenis from "lenis";
+import Snap from "lenis/snap";
 
 import App from "./App";
 import { ServicesPage } from "../services/services";
@@ -26,6 +28,7 @@ import { NazoratPage } from "../nazorat/nazorat";
 // import { KalkulyatorPage } from "../kalkulyator/kalkulyator";
 import { LugatPage } from "../lugat/lugat";
 import { Footer } from "./components/Footer";
+import { PageReveal } from "./components/PageReveal";
 
 import logo from '../assets/logo.png';
 
@@ -46,6 +49,47 @@ export function AppRouter() {
     window.addEventListener("hashchange", handleHashChange);
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
+
+  // Global smooth scroll — Sheron uslubidagi momentum/eased (Lenis "speedramp")
+  const lenisRef = useRef<Lenis | null>(null);
+  useEffect(() => {
+    const lenis = new Lenis({ lerp: 0.09, smoothWheel: true, wheelMultiplier: 1 });
+    lenisRef.current = lenis;
+    (window as any).__barpoLenis = lenis; // gorizontal galereya uni to'xtatishi uchun
+    let raf = 0;
+    const loop = (time: number) => { lenis.raf(time); raf = requestAnimationFrame(loop); };
+    raf = requestAnimationFrame(loop);
+    return () => { cancelAnimationFrame(raf); lenis.destroy(); lenisRef.current = null; (window as any).__barpoLenis = null; };
+  }, []);
+
+  // Bosh sahifa floor'lari uchun yumshoq snap + speedramp.
+  // type "proximity": faqat floor chegarasiga yaqin kelganda snap qiladi — bir ekrandan
+  // baland floor'lar to'liq o'qiladi (matn kesilmaydi). Har floor ~1 ekran bo'lgani uchun
+  // settle bo'lganda eng yaqin floor topiga olib boradi ("1 scroll = 1 floor" hissi).
+  // easeInOutCubic = speedramp (tezlanib-sekinlashish).
+  useEffect(() => {
+    if (currentPage !== "home") return;
+    let snap: Snap | null = null;
+    let cancelled = false;
+    let raf = 0;
+    const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+    const setup = () => {
+      if (cancelled) return;
+      const lenis = lenisRef.current;
+      const sections = Array.from(document.querySelectorAll("section")) as HTMLElement[];
+      // App mount bo'lib floor'lar paydo bo'lguncha kutamiz
+      if (!lenis || sections.length < 5) { raf = requestAnimationFrame(setup); return; }
+      snap = new Snap(lenis, {
+        type: "proximity",
+        duration: 1.1,
+        easing: easeInOutCubic,
+        debounce: 350,
+      });
+      snap.addElements(sections, { align: ["start"] });
+    };
+    raf = requestAnimationFrame(setup);
+    return () => { cancelled = true; cancelAnimationFrame(raf); if (snap) snap.destroy(); };
+  }, [currentPage]);
 
   // Close global menu on Escape
   useEffect(() => {
@@ -103,7 +147,7 @@ export function AppRouter() {
       case "standard":
         return <StandardPage />;
       case "projects":
-        return <ProjectsPage />;
+        return <PageReveal dir="left"><ProjectsPage /></PageReveal>;
       case "about":
         return <AboutPage />;
       case "contact":
@@ -111,7 +155,7 @@ export function AppRouter() {
       case "hr":
         return <HRPage />;
       case "takliflar":
-        return <TakliflarPage />;
+        return <PageReveal dir="right"><TakliflarPage /></PageReveal>;
       case "jarayon":
         return <JarayonPage />;
       case "foyda":
@@ -136,7 +180,7 @@ export function AppRouter() {
 
   // Admin sahifasida va bosh sahifada asosiy navigatsiya ko'rsatilmaydi
   // (bosh sahifa o'zining navigatsiyasiga ega)
-  const showNav = currentPage !== "home" && currentPage !== "boshqaruv";
+  const showNav = currentPage !== "home" && currentPage !== "boshqaruv" && currentPage !== "projects" && currentPage !== "takliflar";
 
   return (
     <>
@@ -163,7 +207,7 @@ export function AppRouter() {
       )}
 
       {/* ─── Tezkor linklar + til almashtirgich — menu tugmasi yonida ─── */}
-      {currentPage !== "boshqaruv" && (
+      {currentPage !== "boshqaruv" && currentPage !== "projects" && currentPage !== "takliflar" && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -213,7 +257,7 @@ export function AppRouter() {
       )}
 
       {/* ─── Global fixed menu button — always visible, top-right ─── */}
-      {currentPage !== "boshqaruv" && (
+      {currentPage !== "boshqaruv" && currentPage !== "projects" && currentPage !== "takliflar" && (
         <motion.button
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -337,7 +381,7 @@ export function AppRouter() {
       {renderPage()}
 
       {/* Footer — bosh sahifa (o'zi ko'rsatadi) va admin'dan tashqari barcha sahifalarda */}
-      {currentPage !== "home" && currentPage !== "boshqaruv" && <Footer />}
+      {currentPage !== "home" && currentPage !== "boshqaruv" && currentPage !== "projects" && currentPage !== "takliflar" && <Footer />}
     </>
   );
 }

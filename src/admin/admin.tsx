@@ -82,6 +82,24 @@ const DEFAULT_STATS: StatItem[] = [
 // Madaniyat va Xizmatlar sahifalaridagi rasm boxlari
 const SECTION_IMAGE_GROUPS: { group: string; groupRu: string; items: { key: string; label: string; ru: string }[] }[] = [
   {
+    group: "Bosh sahifa qavatlari",
+    groupRu: "Этажи главной страницы",
+    items: [
+      { key: "floor-1", label: "1 · Yangi qurilish madaniyati", ru: "1 · Новая культура" },
+      { key: "floor-2", label: "2 · Biz haqimizda", ru: "2 · О нас" },
+      { key: "floor-3", label: "3 · Missiya", ru: "3 · Миссия" },
+      { key: "floor-4", label: "4 · BARPO nima qiladi", ru: "4 · Что делает BARPO" },
+      { key: "floor-5", label: "5 · Nima uchun BARPO", ru: "5 · Почему BARPO" },
+      { key: "floor-6", label: "6 · BARPO standarti", ru: "6 · Стандарт BARPO" },
+      { key: "floor-7", label: "7 · Qanday ishlaymiz", ru: "7 · Как мы работаем" },
+      { key: "floor-8", label: "8 · Loyihalar", ru: "8 · Проекты" },
+      { key: "floor-9", label: "9 · Hisobot va nazorat", ru: "9 · Отчётность и контроль" },
+      { key: "floor-10", label: "10 · Iqtisodiy foyda", ru: "10 · Экономическая выгода" },
+      { key: "floor-11", label: "11 · Milliy identitet", ru: "11 · Национальная идентичность" },
+      { key: "floor-12", label: "12 · Aloqa", ru: "12 · Контакты" },
+    ],
+  },
+  {
     group: "Madaniyat sahifasi",
     groupRu: "Страница «Культура»",
     items: [
@@ -633,7 +651,7 @@ export function AdminPage() {
   // ---- LOGIN EKRANI ----
   if (!isLoggedIn) {
     return (
-      <div className="pt-24 min-h-screen flex items-center justify-center px-8">
+      <div data-lenis-prevent className="pt-24 min-h-screen flex items-center justify-center px-8">
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="w-full max-w-md">
           <div className="text-center mb-10 space-y-3">
             <p style={{ fontFamily: "var(--font-body)" }} className="opacity-60 tracking-[0.2em] uppercase text-sm text-[#060920]">{t("BOSHQARUV PANELI", "ПАНЕЛЬ УПРАВЛЕНИЯ")}</p>
@@ -691,7 +709,7 @@ export function AdminPage() {
   const btnDanger = "px-3 py-1.5 rounded-lg text-xs tracking-wide border border-[#060920]/30 text-[#060920] hover:bg-[#060920]/10 transition-colors";
 
   return (
-    <div className="pt-24 min-h-screen px-6 md:px-16 py-12">
+    <div data-lenis-prevent className="pt-24 min-h-screen px-6 md:px-16 py-12">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-10 flex-wrap gap-4">
@@ -1675,6 +1693,7 @@ function ModalShell({ title, onClose, children, wide }: { title: string; onClose
   const t = useT();
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      data-lenis-prevent
       className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-[#060920]/40 backdrop-blur-sm overflow-y-auto"
       onClick={onClose}>
       <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}

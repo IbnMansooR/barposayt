@@ -7,6 +7,9 @@ import { SoftDivider } from "./components/SoftDivider";
 import { Footer } from "./components/Footer";
 import { BarpoWord, barpo } from "./components/Barpo";
 import { useT, useLang } from "./i18n";
+import { Preloader } from "./components/Preloader";
+import { Intro } from "./components/Intro";
+import { SectionImagesContext } from "./sectionImages";
 
 export default function App() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -19,6 +22,7 @@ export default function App() {
     { id: string; name: string; location: string; area: string; description?: string; hasImage?: boolean }[]
   >([]);
   const [contactInfo, setContactInfo] = useState<{ phone?: string; email?: string; address?: string }>({});
+  const [sectionImages, setSectionImages] = useState<Record<string, number>>({});
 
   useEffect(() => {
     fetch("/api/projects")
@@ -28,6 +32,10 @@ export default function App() {
     fetch("/api/socials")
       .then((r) => r.json())
       .then((j) => { if (j.ok) setContactInfo(j.contact || {}); })
+      .catch(() => {});
+    fetch("/api/section-images")
+      .then((r) => r.json())
+      .then((j) => { if (j.ok) setSectionImages(j.images || {}); })
       .catch(() => {});
   }, []);
 
@@ -71,7 +79,10 @@ export default function App() {
   }, [scrollYProgress]);
 
   return (
+    <SectionImagesContext.Provider value={sectionImages}>
     <div ref={containerRef} className="relative">
+      <Preloader />
+      <Intro />
       {/* Fixed background — butun sahifa fonida toza och rang */}
       <div className="fixed inset-0 -z-10 bg-white" />
 
@@ -285,27 +296,25 @@ export default function App() {
         description={t("Biz obyektni faqat qurilish maydonidagi ishchi kuchi bilan emas, balki reja, grafika, texnik nazorat, brigadalar koordinatsiyasi, materiallar boshqaruvi va sifat qabul qilish tizimi orqali olib boramiz.", "Мы ведём объект не только рабочей силой на площадке, но через план, графику, технический контроль, координацию бригад, управление материалами и систему приёмки качества.")}
         alignment="left"
       >
-        <div className="space-y-6 mt-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-7 mt-8">
           {[
-            { num: "1", title: ["Bosh pudratchi xizmatlari", "Услуги генподрядчика"], desc: ["Obyektni bir nechta brigada va yo'nalishlar orasida tarqalib ketgan jarayon emas, yagona boshqaruv tizimi sifatida olib boramiz.", "Мы ведём объект не как процесс, разбросанный между бригадами и направлениями, а как единую систему управления."] },
-            { num: "2", title: ["Qurilish-montaj ishlari", "Строительно-монтажные работы"], desc: ["Konstruksiya, devor, pol, shift, fasad va boshqa asosiy qurilish bosqichlari texnik talab va grafik asosida bajariladi.", "Конструкция, стены, полы, потолки, фасад и другие основные этапы выполняются по техническим требованиям и графику."] },
-            { num: "3", title: ["Pardozlash ishlari", "Отделочные работы"], desc: ["Yakuniy ko'rinish faqat chiroy emas. Bu silliqlik, burchak, detal, tozalik va qabul mezonlariga javob beradigan natija.", "Финальный вид — это не только красота. Это ровность, углы, детали, чистота и результат, отвечающий критериям приёмки."] },
-            { num: "4", title: ["Muhandislik tizimlari", "Инженерные системы"], desc: ["Elektrika, ventilyatsiya, santexnika va past kuchlanish tizimlari obyektning ichki \"asab tizimi\" sifatida loyihaga muvofiq bajariladi.", "Электрика, вентиляция, сантехника и слаботочные системы выполняются по проекту как внутренняя «нервная система» объекта."] },
-            { num: "5", title: ["Fasad va tashqi ishlar", "Фасад и наружные работы"], desc: ["Binoning tashqi ko'rinishi uning bozordagi birinchi taassurotidir. Biz fasadni estetika, chidamlilik va texnik talablar asosida bajaramiz.", "Внешний вид здания — его первое впечатление на рынке. Мы выполняем фасад на основе эстетики, долговечности и технических требований."] },
+            { title: ["Bosh pudratchi xizmatlari", "Услуги генподрядчика"], desc: ["Obyektni bir nechta brigada va yo'nalishlar orasida tarqalib ketgan jarayon emas, yagona boshqaruv tizimi sifatida olib boramiz.", "Мы ведём объект не как процесс, разбросанный между бригадами и направлениями, а как единую систему управления."] },
+            { title: ["Qurilish-montaj ishlari", "Строительно-монтажные работы"], desc: ["Konstruksiya, devor, pol, shift, fasad va boshqa asosiy qurilish bosqichlari texnik talab va grafik asosida bajariladi.", "Конструкция, стены, полы, потолки, фасад и другие основные этапы выполняются по техническим требованиям и графику."] },
+            { title: ["Pardozlash ishlari", "Отделочные работы"], desc: ["Yakuniy ko'rinish faqat chiroy emas. Bu silliqlik, burchak, detal, tozalik va qabul mezonlariga javob beradigan natija.", "Финальный вид — это не только красота. Это ровность, углы, детали, чистота и результат, отвечающий критериям приёмки."] },
+            { title: ["Muhandislik tizimlari", "Инженерные системы"], desc: ["Elektrika, ventilyatsiya, santexnika va past kuchlanish tizimlari obyektning ichki \"asab tizimi\" sifatida loyihaga muvofiq bajariladi.", "Электрика, вентиляция, сантехника и слаботочные системы выполняются по проекту как внутренняя «нервная система» объекта."] },
+            { title: ["Fasad va tashqi ishlar", "Фасад и наружные работы"], desc: ["Binoning tashqi ko'rinishi uning bozordagi birinchi taassurotidir. Biz fasadni estetika, chidamlilik va texnik talablar asosida bajaramiz.", "Внешний вид здания — его первое впечатление на рынке. Мы выполняем фасад на основе эстетики, долговечности и технических требований."] },
           ].map((service, i) => (
             <motion.div
-              key={service.num}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              key={service.title[0]}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: false }}
-              transition={{ duration: 0.8, delay: 0.4 + i * 0.08 }}
-              className="flex gap-4 items-start"
+              transition={{ duration: 0.7, delay: 0.3 + i * 0.08 }}
+              className="space-y-3"
             >
-              <span style={{ fontFamily: 'var(--font-display)' }} className="text-xl font-bold text-[#060920]/20 shrink-0 leading-none mt-1">{service.num}</span>
-              <div>
-                <div style={{ fontFamily: 'var(--font-display)' }} className="text-lg text-[#060920] mb-1">{t(service.title[0], service.title[1])}</div>
-                <p style={{ fontFamily: 'var(--font-body)' }} className="text-sm text-[#060920]/60 leading-relaxed">{t(service.desc[0], service.desc[1])}</p>
-              </div>
+              <div style={{ fontFamily: 'var(--font-display)' }} className="text-lg text-[#060920] leading-snug">{t(service.title[0], service.title[1])}</div>
+              <SoftDivider />
+              <p style={{ fontFamily: 'var(--font-body)' }} className="text-sm text-[#060920]/60 leading-relaxed">{t(service.desc[0], service.desc[1])}</p>
             </motion.div>
           ))}
         </div>
@@ -421,7 +430,7 @@ export default function App() {
         subtitle={t("LOYIHALAR", "ПРОЕКТЫ")}
         title={t("Bajarilgan ishlarni ko'rish", "Посмотреть выполненные работы")}
         description={t("Har bir loyiha BARPO'ning jarayonni boshqarish va sifatni nazorat qilish salohiyatini ko'rsatadi. Bu faqat bitirilgan loyihalar emas — bu tizim bilan bajarilgan loyihalar.", "Каждый проект показывает нашу способность управлять процессом и контролировать качество. Это не просто завершённые проекты — это проекты, выполненные с помощью системы.")}
-        alignment="left"
+        alignment="right"
       >
         {homeProjects.length === 0 ? (
           <div className="mt-8">
@@ -522,6 +531,13 @@ export default function App() {
               {t("Shaffoflik — bu chiroyli hisobot emas.", "Прозрачность — это не красивый отчёт.")}<br />
               {t("Shaffoflik — bu vaqtida qaror qabul qilish imkoniyati.", "Прозрачность — это возможность принять решение вовремя.")}
             </p>
+            <a
+              href="#takliflar"
+              style={{ fontFamily: 'var(--font-body)', textDecoration: 'none' }}
+              className="inline-block mt-4 text-sm tracking-[0.15em] uppercase text-[#060920] hover:opacity-60 transition-opacity"
+            >
+              {t("Investorlar uchun takliflar", "Предложения для инвесторов")} →
+            </a>
           </motion.div>
         </div>
       </FloorSection>
@@ -723,5 +739,6 @@ export default function App() {
       {/* Footer */}
       <Footer />
     </div>
+    </SectionImagesContext.Provider>
   );
 }
