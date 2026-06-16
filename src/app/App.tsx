@@ -329,11 +329,11 @@ export default function App() {
       >
         <div className="space-y-6 mt-2">
           {[
-            { num: "1", title: ["Chunki biz jarayonni ko'ramiz", "Потому что мы видим процесс"], desc: ["Ko'pchilik natijani oxirida ko'radi. Biz esa natijani boshidan rejalashtiramiz.", "Большинство видит результат в конце. А мы планируем результат с самого начала."] },
-            { num: "2", title: ["Chunki biz xarajatni nazorat qilamiz", "Потому что мы контролируем расходы"], desc: ["Ortiqcha xarajat ko'pincha qimmat materialdan emas, noto'g'ri qarordan boshlanadi.", "Лишние расходы чаще начинаются не с дорогого материала, а с неверного решения."] },
-            { num: "3", title: ["Chunki biz sifatni har kuni tekshiramiz", "Потому что мы проверяем качество каждый день"], desc: ["Sifat yakunda \"to'g'rilanadigan\" narsa emas. Sifat har bosqichda quriladi.", "Качество — не то, что «исправляют» в конце. Качество создаётся на каждом этапе."] },
-            { num: "4", title: ["Chunki biz investor vaqtini qadrlaymiz", "Потому что мы ценим время инвестора"], desc: ["Investor obyekt ortidan yugurmasligi kerak. U qaror qabul qilishi kerak. Jarayon esa tizim bilan boshqarilishi kerak.", "Инвестор не должен бегать за объектом. Он должен принимать решения. А процессом должна управлять система."] },
-            { num: "5", title: ["Chunki biz javobgarlikni bo'lib tashlamaymiz", "Потому что мы не перекладываем ответственность"], desc: ["Obyektda muammo bo'lsa, bahona emas, yechim kerak. BARPO mas'uliyatni jarayonning markaziga qo'yadi.", "Если на объекте проблема — нужно решение, а не оправдание. Мы ставим ответственность в центр процесса."] },
+            { num: "1", title: ["Jarayonni ko'ramiz", "Видим процесс"], desc: ["Ko'pchilik natijani oxirida ko'radi. Biz esa natijani boshidan rejalashtiramiz.", "Большинство видит результат в конце. А мы планируем результат с самого начала."] },
+            { num: "2", title: ["Xarajatni nazorat qilamiz", "Контролируем расходы"], desc: ["Ortiqcha xarajat ko'pincha qimmat materialdan emas, noto'g'ri qarordan boshlanadi.", "Лишние расходы чаще начинаются не с дорогого материала, а с неверного решения."] },
+            { num: "3", title: ["Sifatni har kuni tekshiramiz", "Проверяем качество каждый день"], desc: ["Sifat yakunda \"to'g'rilanadigan\" narsa emas. Sifat har bosqichda quriladi.", "Качество — не то, что «исправляют» в конце. Качество создаётся на каждом этапе."] },
+            { num: "4", title: ["Investor vaqtini qadrlaymiz", "Ценим время инвестора"], desc: ["Investor obyekt ortidan yugurmasligi kerak. U qaror qabul qilishi kerak. Jarayon esa tizim bilan boshqarilishi kerak.", "Инвестор не должен бегать за объектом. Он должен принимать решения. А процессом должна управлять система."] },
+            { num: "5", title: ["Javobgarlikni bo'lib tashlamaymiz", "Не перекладываем ответственность"], desc: ["Obyektda muammo bo'lsa, bahona emas, yechim kerak. BARPO mas'uliyatni jarayonning markaziga qo'yadi.", "Если на объекте проблема — нужно решение, а не оправдание. Мы ставим ответственность в центр процесса."] },
           ].map((item, i) => (
             <motion.div
               key={item.num}
