@@ -251,26 +251,39 @@ export default function App() {
         </div>
       </FloorSection>
 
-      {/* Floor 3 - MISSIYA */}
+      {/* Floor 3 - BARPO qanday tug'ildi */}
       <FloorSection
         floorNumber={3}
-        subtitle={t("MISSIYA", "МИССИЯ")}
-        title={t("Bizning missiyamiz", "Наша миссия")}
-        description={t("Bizning missiyamiz — O'zbekistonda qurilish madaniyatini yangi bosqichga olib chiqish.", "Наша миссия — вывести культуру строительства в Узбекистане на новый уровень.")}
+        subtitle=""
+        title={t("Bu kompaniya shunchaki qurish uchun tashkil etilmagan", "Эта компания создана не просто для стройки")}
+        description=""
         alignment="left"
       >
         <div className="mt-8 space-y-5 max-w-2xl">
           <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/70 leading-relaxed">
-            {t("Qurilishda sifatsizlik, kechikish, ortiqcha xarajat, tartibsiz boshqaruv va noaniq javobgarlik odatiy holat bo'lmasligi kerak.", "Низкое качество, задержки, лишние расходы, беспорядочное управление и неясная ответственность не должны быть нормой в строительстве.")}
+            {barpo(t("BARPO bir insonning qurilishga bo'lgan shaxsiy qarashidan boshlandi. Asoschi qurilish maydonlarida kuchli ustalarni, katta imkoniyatlarni, shu bilan birga tartibsizlik, mas'uliyat yetishmasligi va jarayonning ko'p hollarda tizimga emas, odatga bo'ysunib qolganini ko'rdi.", "Всё началось с личного взгляда одного человека на строительство. Основатель видел на стройплощадках сильных мастеров и большие возможности, но вместе с тем — беспорядок, нехватку ответственности и процессы, которые во многих случаях подчинялись привычке, а не системе."))}
           </p>
           <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/70 leading-relaxed">
-<BarpoWord /> {t("sifat, intizom, shaffoflik va mas'uliyatni bozordagi norma darajasiga olib chiqishni maqsad qilgan.", "Мы ставим целью сделать качество, дисциплину, прозрачность и ответственность нормой рынка.")}
+            {t("Shu kuzatuvlar vaqt o'tib bir fikrga aylandi: O'zbekistonda qurilish faqat bino ko'tarish sohasi bo'lib qolmasligi kerak. Qurilish — iqtisodiyot tayanchi, shaharlar qiyofasi, bizneslar kelajagi va odamlar hayotiga ta'sir qiladigan kuchdir.", "Со временем эти наблюдения превратились в идею: в Узбекистане строительство не должно оставаться лишь сферой возведения зданий. Строительство — это опора экономики, облик городов, будущее бизнесов и сила, влияющая на жизнь людей.")}
           </p>
-          <div className="pl-5 border-l-2 border-[#060920]/30">
-            <p style={{ fontFamily: 'var(--font-display)' }} className="text-lg text-[#060920] italic leading-snug">
-              {t("Biz uchun har bir obyekt — bu faqat loyiha emas. Bu mijoz ishonchi, investor kapitali va shahar kelajagi oldidagi javobgarlik.", "Для нас каждый объект — это не просто проект. Это доверие клиента, капитал инвестора и ответственность перед будущим города.")}
-            </p>
-          </div>
+          <p style={{ fontFamily: 'var(--font-display)' }} className="text-lg text-[#060920] leading-snug">
+            {barpo(t("BARPO ana shu fikrdan tug'ildi.", "Именно из этой идеи и родилась компания."))}
+          </p>
+          <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/70 leading-relaxed">
+            {t("Kompaniya uchun qurilish — faqat beton, g'isht, metall yoki pardoz emas. Bu mamlakat rivojiga qo'shiladigan real hissa. Har bir obyekt ortida yangi ish o'rinlari, yangi bizneslar, yangi imkoniyatlar va yangi iqtisodiy harakat turadi.", "Для компании строительство — это не только бетон, кирпич, металл или отделка. Это реальный вклад в развитие страны. За каждым объектом стоят новые рабочие места, новые бизнесы, новые возможности и новое экономическое движение.")}
+          </p>
+          <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/70 leading-relaxed">
+            {barpo(t("Shu sababli BARPO har bir obyektni kelajak iqtisodiyotining kichik, ammo muhim bo'lagi deb biladi.", "Поэтому каждый объект мы считаем небольшой, но важной частью будущей экономики."))}
+          </p>
+          <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/70 leading-relaxed">
+            {t("Asoschining qarashida qurilishdagi eng katta muammo faqat texnik xatolarda emas. Asosiy muammo — muddatga, sifatga, mijoz mablag'iga, qurilish madaniyatiga va berilgan va'daga bo'lgan munosabatda.", "По мнению основателя, самая большая проблема в строительстве — не только технические ошибки. Главная проблема — в отношении к срокам, качеству, средствам клиента, культуре строительства и данному обещанию.")}
+          </p>
+          <p style={{ fontFamily: 'var(--font-display)' }} className="text-lg text-[#060920] leading-snug">
+            {barpo(t("BARPO aynan shu munosabatni o'zgartirish uchun tashkil etildi.", "Компания была создана именно для того, чтобы изменить это отношение."))}
+          </p>
+          <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/70 leading-relaxed">
+            {t("Kompaniyaning maqsadi faqat daromad emas. Maqsad — O'zbekistonda qurilish madaniyatini yangi bosqichga olib chiqish va mahalliy qurilish kompaniyasi ham tizimli, zamonaviy, estetik hamda mas'uliyatli ishlay olishini amalda ko'rsatish.", "Цель компании — не только доход. Цель — вывести культуру строительства в Узбекистане на новый уровень и на практике показать, что местная строительная компания тоже может работать системно, современно, эстетично и ответственно.")}
+          </p>
         </div>
       </FloorSection>
 
