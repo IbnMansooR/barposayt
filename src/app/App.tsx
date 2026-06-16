@@ -427,7 +427,7 @@ export default function App() {
       <FloorSection
         floorNumber={8}
         subtitle={t("LOYIHALAR", "ПРОЕКТЫ")}
-        title={t("Bajarilgan ishlarni ko'rish", "Посмотреть выполненные работы")}
+        title={t("BARPO etgan loyihalarimiz", "Созданные нами проекты")}
         description={t("Har bir loyiha BARPO'ning jarayonni boshqarish va sifatni nazorat qilish salohiyatini ko'rsatadi. Bu faqat bitirilgan loyihalar emas — bu tizim bilan bajarilgan loyihalar.", "Каждый проект показывает нашу способность управлять процессом и контролировать качество. Это не просто завершённые проекты — это проекты, выполненные с помощью системы.")}
         alignment="right"
       >
