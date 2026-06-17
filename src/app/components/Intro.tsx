@@ -54,6 +54,32 @@ export function Intro() {
     return () => { document.body.style.overflow = ""; };
   }, [gone]);
 
+  // Parda ko'rinib turganda homepage smooth-scroll (Lenis) ni qulflab turamiz.
+  // Lenis body.overflow:hidden ni inobatga olmaydi — shu sabab introdagi scroll
+  // bosh sahifani bir necha floor pastga surib yuborardi. Parda ketganda sahifani
+  // tepaga qaytarib Lenis'ni qayta yoqamiz (sayt har doim Floor 1 dan boshlanadi).
+  useEffect(() => {
+    if (!gone) {
+      let raf = 0;
+      const lock = () => {
+        const lenis = (window as any).__barpoLenis;
+        if (lenis) { lenis.scrollTo(0, { immediate: true }); lenis.stop(); return; }
+        raf = requestAnimationFrame(lock); // Lenis hali tayyor bo'lmasa, kutamiz
+      };
+      lock();
+      return () => {
+        cancelAnimationFrame(raf);
+        // Parda gone bo'lmasdan unmount bo'lsa (masalan to'g'ridan-to'g'ri URL bilan
+        // boshqa sahifaga o'tish) — Lenis qotib qolmasligi uchun qayta yoqamiz.
+        const lenis = (window as any).__barpoLenis;
+        if (lenis) lenis.start();
+      };
+    }
+    const lenis = (window as any).__barpoLenis;
+    if (lenis) { lenis.start(); lenis.scrollTo(0, { immediate: true }); }
+    else { window.scrollTo(0, 0); }
+  }, [gone]);
+
   // Kirish bosqichida (2) pardani olib tashlash (fallback)
   useEffect(() => {
     if (phase !== 2) return;
