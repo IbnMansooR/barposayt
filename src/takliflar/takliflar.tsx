@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { BarpoWord, barpo } from "../app/components/Barpo";
+import { barpo } from "../app/components/Barpo";
 import { useT } from "../app/i18n";
 import { HorizontalGallery } from "../app/components/HorizontalGallery";
 
@@ -41,11 +41,16 @@ export function TakliflarPage() {
   const [investors, setInvestors] = useState<Investor[]>([]);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [sectionImages, setSectionImages] = useState<Record<string, number>>({});
 
   const inputClass =
     "w-full px-4 py-3 bg-white/70 border border-[#060920]/15 text-[#060920] placeholder-[#060920]/40 focus:outline-none focus:border-[#060920]/40 transition-colors rounded-lg";
 
   useEffect(() => {
+    fetch("/api/section-images")
+      .then((r) => r.json())
+      .then((json) => setSectionImages(json || {}))
+      .catch(() => {});
     fetch("/api/offers")
       .then((r) => r.json())
       .then((json) => { if (json.ok) setOffers(json.offers || []); })
@@ -100,12 +105,6 @@ export function TakliflarPage() {
           <div style={{ fontFamily: "var(--font-body)" }} className="text-xs tracking-[0.3em] uppercase text-[#060920]/50">
             {t("INVESTORLAR UCHUN TAKLIFLAR", "ПРЕДЛОЖЕНИЯ ДЛЯ ИНВЕСТОРОВ")}
           </div>
-          <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 4vw, 3.5rem)", color: "#060920" }} className="mt-5 leading-tight">
-            {t("Kapitalni qiymatga aylantiramiz", "Превращаем капитал в ценность")}
-          </h1>
-          <p style={{ fontFamily: "var(--font-body)" }} className="mt-6 text-[#060920]/65 leading-relaxed max-w-md">
-            <BarpoWord /> {t("investorlar uchun obyektlarni konsepsiyadan qurilishgacha tizimli yondashuv asosida ko'rib chiqadi.", "рассматривает объекты для инвесторов — от концепции до строительства — на основе системного подхода.")}
-          </p>
         </div>
       </div>
 
@@ -139,13 +138,22 @@ export function TakliflarPage() {
           <div key={inv.id} className="h-full flex items-center shrink-0">
             {/* 4:5 portret rasm joyi (1080×1350 px shu yerga sig'adi) */}
             <div className="relative self-center h-[78vh] overflow-hidden shrink-0" style={{ aspectRatio: "4 / 5" }}>
-              <div
-                data-parallax
-                className="absolute inset-0 flex items-center justify-center bg-[#060920]/[0.04] border border-[#060920]/10"
-                style={{ transform: "scale(1.16)" }}
-              >
-                <span style={{ fontFamily: "var(--font-display)" }} className="text-[#060920]/12 text-6xl tracking-wider">BARPO</span>
-              </div>
+              {sectionImages[`investor-${i}`] ? (
+                <img
+                  src={`/api/section-image?key=investor-${i}&v=${sectionImages[`investor-${i}`]}`}
+                  alt={inv.title}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  style={{ transform: "scale(1.16)" }}
+                />
+              ) : (
+                <div
+                  data-parallax
+                  className="absolute inset-0 flex items-center justify-center bg-[#060920]/[0.04] border border-[#060920]/10"
+                  style={{ transform: "scale(1.16)" }}
+                >
+                  <span style={{ fontFamily: "var(--font-display)" }} className="text-[#060920]/12 text-6xl tracking-wider">BARPO</span>
+                </div>
+              )}
             </div>
 
             {/* Panel */}

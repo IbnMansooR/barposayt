@@ -123,6 +123,17 @@ const SECTION_IMAGE_GROUPS: { group: string; groupRu: string; items: { key: stri
       { key: "service-5", label: "5 · Muhandislik tizimlari", ru: "5 · Инженерные системы" },
     ],
   },
+  {
+    group: "Investorlar sahifasi",
+    groupRu: "Страница «Инвесторам»",
+    items: [
+      { key: "investor-0", label: "1 · Investor konsepsiyasi", ru: "1 · Концепция инвестора" },
+      { key: "investor-1", label: "2 · Investor konsepsiyasi", ru: "2 · Концепция инвестора" },
+      { key: "investor-2", label: "3 · Investor konsepsiyasi", ru: "3 · Концепция инвестора" },
+      { key: "investor-3", label: "4 · Investor konsepsiyasi", ru: "4 · Концепция инвестора" },
+      { key: "investor-4", label: "5 · Investor konsepsiyasi", ru: "5 · Концепция инвестора" },
+    ],
+  },
 ];
 
 interface Project {
