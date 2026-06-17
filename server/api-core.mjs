@@ -20,7 +20,7 @@ const ADMINS = [
   { username: 'admin5', password: 'admin5_2026', name: 'Admin 5' },
 ]
 const SUPERADMIN_USERNAME = 'jamshid'
-const PERM_KEYS = ['projects', 'ornaments', 'offers', 'standards', 'investors', 'blog', 'sections', 'stats', 'suggestions', 'hr', 'contacts', 'settings']
+const PERM_KEYS = ['projects', 'ornaments', 'offers', 'standards', 'investors', 'blog', 'sections', 'stats', 'suggestions', 'hr', 'contacts', 'settings', 'services', 'culture']
 
 function defaultPerms(value = true) {
   const o = {}
@@ -201,6 +201,34 @@ async function ensureBlog() {
   await writeJson('blog', list)
 }
 
+// ---------- Xizmatlar (kv: 'services') ----------
+async function ensureServices() {
+  const cur = await readJson('services', null)
+  if (Array.isArray(cur)) return
+  const defaults = [
+    { titleUz: 'Bosh pudratchi xizmatlari', titleRu: 'Услуги генподрядчика', descUz: "BARPO bosh pudratchi sifatida obyektning umumiy qurilish jarayonini boshqaradi: rejalashtirish, ishchi kuchi, materiallar, muhandislik tizimlari, pudratchilar, grafik va sifat nazorati.", descRu: "Как генподрядчик мы управляем общим строительным процессом объекта: планирование, рабочая сила, материалы, инженерные системы, подрядчики, график и контроль качества.", highlightUz: "Biz uchun bosh pudratchi — bu shunchaki ijrochi emas. Bu obyekt natijasi uchun javobgar markaz.", highlightRu: "Для нас генподрядчик — это не просто исполнитель. Это центр, ответственный за результат объекта." },
+    { titleUz: 'Qurilish-montaj ishlari', titleRu: 'Строительно-монтажные работы', descUz: "Qurilish-montaj ishlari har qanday obyektning asosiy poydevoridir. Bu bosqichda xato qilish keyingi barcha jarayonlarga ta'sir qiladi. BARPO konstruktiv yechimlar, montaj sifati, texnologik ketma-ketlik va xavfsizlik talablariga qat'iy amal qiladi.", descRu: "Строительно-монтажные работы — основа любого объекта. Ошибка на этом этапе влияет на все последующие процессы. Мы строго соблюдаем конструктивные решения, качество монтажа, технологическую последовательность и требования безопасности.", highlightUz: "Biz tezlikni shoshilish deb tushunmaymiz. Tezlik — bu oldindan tuzilgan reja va intizom natijasi.", highlightRu: "Мы не понимаем скорость как спешку. Скорость — результат заранее составленного плана и дисциплины." },
+    { titleUz: 'Fasad va tashqi ishlar', titleRu: 'Фасад и наружные работы', descUz: "Fasad — obyektning birinchi taassuroti. Lekin u faqat ko'rinish emas. Fasad binoning himoyasi, energetik samaradorligi, arxitekturaviy xarakteri va uzoq muddatli qiymatiga ta'sir qiladi. BARPO fasad ishlarida estetika, texnik yechim va ekspluatatsion mustahkamlikni birlashtiradi.", descRu: "Фасад — первое впечатление об объекте. Но это не только внешний вид. Фасад влияет на защиту здания, энергоэффективность, архитектурный характер и долгосрочную ценность. В фасадных работах мы объединяем эстетику, техническое решение и эксплуатационную прочность.", highlightUz: "Biz uchun chiroyli fasad — bu bugun ko'rinadigan, ertaga esa o'z sifatini saqlaydigan yechim.", highlightRu: "Для нас красивый фасад — это решение, которое выглядит хорошо сегодня и сохраняет качество завтра." },
+    { titleUz: 'Pardozlash ishlari', titleRu: 'Отделочные работы', descUz: "Pardoz — obyektning yakuniy hissiyoti. Aynan shu bosqichda mijoz, ijarachi yoki foydalanuvchi sifatni ko'radi, his qiladi va baholaydi. BARPO pardozlash ishlarida detal, aniqlik, material tanlovi va ijro madaniyatiga e'tibor beradi.", descRu: "Отделка — финальное ощущение от объекта. Именно на этом этапе клиент, арендатор или пользователь видит, чувствует и оценивает качество. В отделочных работах мы уделяем внимание деталям, точности, выбору материалов и культуре исполнения.", highlightUz: "Chiroyli ko'rinish yetarli emas. To'g'ri bajarilgan pardoz uzoq xizmat qilishi kerak.", highlightRu: "Красивого вида недостаточно. Правильно выполненная отделка должна служить долго." },
+    { titleUz: 'Muhandislik tizimlari', titleRu: 'Инженерные системы', descUz: "Muhandislik tizimlari — obyektning ko'rinmaydigan, lekin eng muhim qismi. Elektr, ventilyatsiya, isitish, sovutish, suv, kanalizatsiya, yong'in xavfsizligi va zaif tok tizimlari binoning ishlash sifatini belgilaydi. BARPO muhandislik tizimlariga alohida e'tibor beradi.", descRu: "Инженерные системы — невидимая, но самая важная часть объекта. Электрика, вентиляция, отопление, охлаждение, водоснабжение, канализация, пожарная безопасность и слаботочные системы определяют качество работы здания.", highlightUz: "Yaxshi bino faqat chiroyli bo'lmaydi. U to'g'ri ishlaydi.", highlightRu: "Хорошее здание не просто красиво. Оно правильно работает." },
+  ].map((s) => ({ id: genId(), ...s, active: true, createdAt: new Date().toISOString() }))
+  await writeJson('services', defaults)
+}
+
+// ---------- Madaniyat elementlari (kv: 'culture-elements') ----------
+async function ensureCultureElements() {
+  const cur = await readJson('culture-elements', null)
+  if (Array.isArray(cur)) return
+  const defaults = [
+    { titleUz: 'Tartib', titleRu: 'Порядок', descUz: "Qurilish maydonida tartib bo'lmasa, sifat ham, tezlik ham, iqtisodiy foyda ham xavf ostida qoladi.", descRu: "Если на стройплощадке нет порядка, под угрозой и качество, и скорость, и экономическая выгода.", detailsUz: "Har qanday katta loyihada tartib — tartibsizlik ichidagi tizim demakdir. Tartib yaratishda biz qoidalarga qat'iy amal qilamiz: maydon tozaligi, reja asosidagi to'g'ri harakatlar, har bir brigada va ishchining aniq o'rni.", detailsRu: "В любом крупном проекте порядок — это система внутри хаоса. Создавая порядок, мы строго следуем правилам: чистота площадки, верные действия по плану, чёткое место каждой бригады и рабочего.", principlesUz: ["Ish joyining tozaligi va tartibliligi", "Materiallarni to'g'ri saqlash va taqsimlash", "Brigada va xizmatlarning maydondagi aniq joylashuvi", "Xavfsizlik qoidalarining qat'iy bajarilishi", "Har kuni ish yakunida tozalash va ertangi kunga tayyorgarlik"], principlesRu: ["Чистота и порядок на рабочем месте", "Правильное хранение и распределение материалов", "Чёткое расположение бригад и служб на площадке", "Строгое соблюдение правил безопасности", "Ежедневная уборка в конце работ и подготовка к следующему дню"] },
+    { titleUz: 'Hisob', titleRu: 'Расчёт', descUz: "Har bir material, har bir ish hajmi, har bir kun va har bir qaror hisobda bo'lishi kerak.", descRu: "Каждый материал, каждый объём работ, каждый день и каждое решение должны быть учтены.", detailsUz: "Xarajat, muddat, resurs — hammasi hisobga olingan sonlar. Taxmin va chamalab ish qilish katta loyihalarda o'rinsiz. Biz har bir so'm, har bir kub metr, har bir soat uchun javob beramiz.", detailsRu: "Расходы, сроки, ресурсы — всё это просчитанные цифры. Догадки и работа «на глаз» неуместны в крупных проектах. Мы отвечаем за каждый сум, каждый кубометр, каждый час.", principlesUz: ["Barcha xarajatlarning aniq o'lchovi va hisobi", "Materiallarning kelishi va sarflanishi hisobda", "Ishchilarga ish hajmiga qarab hisob va to'lov", "Vaqtning aniq grafik asosida o'lchanishi", "Foyda va tejamkorlikning birgalikda ta'minlanishi"], principlesRu: ["Точный учёт и расчёт всех расходов", "Поступление и расход материалов под учётом", "Расчёт и оплата рабочим по объёму работ", "Измерение времени по чёткому графику", "Совместное обеспечение прибыли и экономии"] },
+    { titleUz: 'Intizom', titleRu: 'Дисциплина', descUz: "Belgilangan grafik, texnik talab va qabul mezonlari ish jarayonining asosiy qoidasi bo'ladi.", descRu: "Установленный график, технические требования и критерии приёмки — основное правило рабочего процесса.", detailsUz: "Intizom — jarayonning uzviyligi va har bir xodim o'z zimmasidagi vazifani aniq bilishi demakdir. Intizom bor joyda bosqichlar o'z vaqtida almashinadi va jarayon to'xtab qolmaydi.", detailsRu: "Дисциплина — это непрерывность процесса и чёткое понимание каждым сотрудником своей задачи. Там, где есть дисциплина, этапы сменяются вовремя и процесс не останавливается.", principlesUz: ["Qat'iy ish grafigi va muddat belgilash", "Texnik talablarning barcha xodimlarga ma'lum bo'lishi", "Jarayon tartibiga to'liq rioya qilish", "Har bir ish bosqichining aniq hisobi", "Qabul mezonlarining maydonda qo'llanilishi"], principlesRu: ["Строгий рабочий график и установка сроков", "Знание технических требований всеми сотрудниками", "Полное соблюдение порядка процесса", "Чёткий учёт каждого этапа работ", "Применение критериев приёмки на площадке"] },
+    { titleUz: 'Hurmat', titleRu: 'Уважение', descUz: "Buyurtmachining vaqti, mablag'i va ishonchi hurmat qilinadi. Qurilish mijozni charchatadigan jarayon bo'lmasligi kerak.", descRu: "Время, средства и доверие заказчика уважаются. Строительство не должно быть процессом, утомляющим клиента.", detailsUz: "BARPO falsafasida mijoz — bu hamkor. Uning vaqti, mablag'i va ishonchi — qimmatli manba. Biz mijozni noaniqlik bilan charchatmaymiz: darhol tushuntiramiz, maslahat beramiz va muammoning yechimini taklif etamiz.", detailsRu: "В нашей философии клиент — это партнёр. Его время, средства и доверие — ценный ресурс. Мы не утомляем клиента неопределённостью: сразу объясняем, советуем и предлагаем решение проблемы.", principlesUz: ["Kunlik hisobot va jarayon haqida muntazam ma'lumot", "Tushuntirish va maslahat berish", "Muammolarni tezda hal qilish", "Muhim qarorlar oldidan mijozning roziligini olish", "Har kuni ishonchning ta'minlanishi"], principlesRu: ["Ежедневный отчёт и регулярная информация о процессе", "Разъяснение и консультирование", "Быстрое решение проблем", "Получение согласия клиента перед важными решениями", "Ежедневное укрепление доверия"] },
+    { titleUz: 'Meros', titleRu: 'Наследие', descUz: "O'zbekiston me'moriy merosi bizga shuni o'rgatadi: mustahkam inshoot faqat material bilan emas, fikr, o'lchov va tartib bilan barpo bo'ladi.", descRu: "Архитектурное наследие Узбекистана учит нас: прочное сооружение создаётся не только материалом, но и мыслью, расчётом и порядком.", detailsUz: "Qadimiy o'zbek me'morchiligi — asrlar davomida to'plangan texnik bilim va badiiy tafakkur belgisidir. Girih naqshi, zanjira naqshi, turunj, koshin, gumbaz — bu detallarning har birida chuqur aql va hisob borligini ko'ramiz. BARPO shu merosga tayanadi.", detailsRu: "Древнее узбекское зодчество — знак технических знаний и художественного мышления, накопленных веками. Гирих, занджира, турундж, кошин, купол — в каждой из этих деталей мы видим глубокий ум и расчёт. Мы опираемся на это наследие.", principlesUz: ["Zamonaviy texnologiya va qadimiy me'moriy tafakkur birligi", "Har bir detal va konstruksiyaning ma'nosi", "Milliy o'ziga xoslikning saqlanishi", "Ishni faqat material bilan emas, fikr bilan qilish", "O'tmish va bugun o'rtasidagi tarixiy aloqani saqlash"], principlesRu: ["Единство современных технологий и древнего архитектурного мышления", "Смысл каждой детали и конструкции", "Сохранение национальной самобытности", "Делать работу не только материалом, но и мыслью", "Сохранение исторической связи между прошлым и настоящим"] },
+  ].map((e) => ({ id: genId(), ...e, active: true, createdAt: new Date().toISOString() }))
+  await writeJson('culture-elements', defaults)
+}
+
 // ---------- Statistika (saqlanmaydi, faqat default — hero faktlar bilan almashtirilgan) ----------
 const DEFAULT_STATS = [
   { value: '10+', label: 'Yillik tajriba' },
@@ -346,6 +374,15 @@ export async function handleApi(req, res) {
       return json(200, { ok: true, projects: all.filter((x) => x.active !== false) })
     }
 
+    if (p === '/api/services' && method === 'GET') {
+      await ensureServices()
+      return json(200, { ok: true, services: (await readArray('services')).filter((s) => s.active !== false) })
+    }
+    if (p === '/api/culture-elements' && method === 'GET') {
+      await ensureCultureElements()
+      return json(200, { ok: true, cultureElements: (await readArray('culture-elements')).filter((e) => e.active !== false) })
+    }
+
     // ===== Rasm berish =====
     if (p === '/api/project-image' && method === 'GET') {
       const id = q.get('id') || ''
@@ -447,7 +484,7 @@ export async function handleApi(req, res) {
     // ===== ADMIN: barcha ma'lumot =====
     if (p === '/api/admin/data' && method === 'GET') {
       const admin = await requireAdmin(); if (!admin) return
-      await ensureOrnaments(); await ensureStandards(); await ensureInvestors(); await ensureBlog()
+      await ensureOrnaments(); await ensureStandards(); await ensureInvestors(); await ensureBlog(); await ensureServices(); await ensureCultureElements()
       const isSuper = admin.role === 'superadmin'
       let tasks = await readArray('tasks')
       if (!isSuper) tasks = tasks.filter((t) => t.assignee === admin.username)
@@ -463,6 +500,8 @@ export async function handleApi(req, res) {
           standards: await readArray('standards'),
           investors: await readArray('investors'),
           blog: await readArray('blog'),
+          services: await readArray('services'),
+          cultureElements: await readArray('culture-elements'),
           history: (await readArray('history')).slice(0, 10),
           tasks,
           me: { username: admin.username, name: admin.name, role: admin.role || 'admin', perms: isSuper ? defaultPerms(true) : (admin.perms || defaultPerms(true)) },
@@ -682,6 +721,30 @@ export async function handleApi(req, res) {
       const stats = [0, 1, 2].map((i) => ({ value: String(incoming[i]?.value ?? DEFAULT_STATS[i].value).slice(0, 20), label: String(incoming[i]?.label ?? DEFAULT_STATS[i].label).slice(0, 60) }))
       await writeJson('stats', stats); await logHistory(admin.name, 'hero statistikasini yangiladi')
       return json(200, { ok: true, stats })
+    }
+
+    if (p === '/api/admin/services' && method === 'POST') {
+      const admin = await requirePerm('services'); if (!admin) return
+      await ensureServices(); const body = await getJson(req); const action = body.action
+      let items = await readArray('services')
+      if (action === 'create') { items.unshift({ id: genId(), titleUz: body.titleUz || 'Nomsiz', titleRu: body.titleRu || '', descUz: body.descUz || '', descRu: body.descRu || '', highlightUz: body.highlightUz || '', highlightRu: body.highlightRu || '', active: true, createdAt: new Date().toISOString() }); await logHistory(admin.name, `yangi xizmat qo'shdi: "${body.titleUz || ''}"`) }
+      else if (action === 'update') { items = items.map((s) => s.id === body.id ? { ...s, titleUz: body.titleUz, titleRu: body.titleRu, descUz: body.descUz, descRu: body.descRu, highlightUz: body.highlightUz, highlightRu: body.highlightRu } : s); await logHistory(admin.name, `xizmatni tahrirladi: "${body.titleUz || ''}"`) }
+      else if (action === 'toggle') { let st = true; items = items.map((s) => { if (s.id === body.id) { st = !(s.active !== false); return { ...s, active: st } } return s }); const it = items.find((s) => s.id === body.id); await logHistory(admin.name, `xizmatni ${st ? "ko'rsatdi" : 'yashirdi'}: "${it ? it.titleUz : ''}"`) }
+      else if (action === 'delete') { const it = items.find((s) => s.id === body.id); items = items.filter((s) => s.id !== body.id); await logHistory(admin.name, `xizmatni o'chirdi: "${it ? it.titleUz : ''}"`) }
+      else return json(400, { ok: false, error: "Noma'lum amal" })
+      await writeArray('services', items); return json(200, { ok: true, services: items })
+    }
+    if (p === '/api/admin/culture-elements' && method === 'POST') {
+      const admin = await requirePerm('culture'); if (!admin) return
+      await ensureCultureElements(); const body = await getJson(req); const action = body.action
+      let items = await readArray('culture-elements')
+      const toArr = (v) => Array.isArray(v) ? v : (typeof v === 'string' ? v.split('\n').map((x) => x.trim()).filter(Boolean) : [])
+      if (action === 'create') { items.unshift({ id: genId(), titleUz: body.titleUz || 'Nomsiz', titleRu: body.titleRu || '', descUz: body.descUz || '', descRu: body.descRu || '', detailsUz: body.detailsUz || '', detailsRu: body.detailsRu || '', principlesUz: toArr(body.principlesUz), principlesRu: toArr(body.principlesRu), active: true, createdAt: new Date().toISOString() }); await logHistory(admin.name, `yangi madaniyat elementi qo'shdi: "${body.titleUz || ''}"`) }
+      else if (action === 'update') { items = items.map((e) => e.id === body.id ? { ...e, titleUz: body.titleUz, titleRu: body.titleRu, descUz: body.descUz, descRu: body.descRu, detailsUz: body.detailsUz, detailsRu: body.detailsRu, principlesUz: toArr(body.principlesUz), principlesRu: toArr(body.principlesRu) } : e); await logHistory(admin.name, `madaniyat elementini tahrirladi: "${body.titleUz || ''}"`) }
+      else if (action === 'toggle') { let st = true; items = items.map((e) => { if (e.id === body.id) { st = !(e.active !== false); return { ...e, active: st } } return e }); const it = items.find((e) => e.id === body.id); await logHistory(admin.name, `madaniyat elementini ${st ? "ko'rsatdi" : 'yashirdi'}: "${it ? it.titleUz : ''}"`) }
+      else if (action === 'delete') { const it = items.find((e) => e.id === body.id); items = items.filter((e) => e.id !== body.id); await logHistory(admin.name, `madaniyat elementini o'chirdi: "${it ? it.titleUz : ''}"`) }
+      else return json(400, { ok: false, error: "Noma'lum amal" })
+      await writeArray('culture-elements', items); return json(200, { ok: true, cultureElements: items })
     }
 
     // ===== ADMIN: rasm bilan (multipart) — naqsh / loyiha / bo'lim =====

@@ -3,26 +3,14 @@ import { motion } from "motion/react";
 import { BarpoWord, barpo } from "../app/components/Barpo";
 import { useT } from "../app/i18n";
 
-export function CulturePage() {
-  const t = useT();
-  const [sectionImages, setSectionImages] = useState<Record<string, number>>({});
-  useEffect(() => {
-    fetch("/api/section-images")
-      .then((r) => r.json())
-      .then((j) => { if (j.ok) setSectionImages(j.images || {}); })
-      .catch(() => {});
-  }, []);
+type CultureItem = {
+  title: string[];
+  description: string[];
+  details: string[];
+  principles: string[][];
+};
 
-  type Ornament = { id: string; old: string; new: string; desc: string; history?: string; hasImage?: boolean };
-  const [ornaments, setOrnaments] = useState<Ornament[]>([]);
-  useEffect(() => {
-    fetch("/api/ornaments")
-      .then((r) => r.json())
-      .then((j) => { if (j.ok) setOrnaments(j.ornaments || []); })
-      .catch(() => {});
-  }, []);
-
-  const cultureElements = [
+const DEFAULT_CULTURE: CultureItem[] = [
     {
       title: ["Tartib", "Порядок"],
       description: ["Qurilish maydonida tartib bo'lmasa, sifat ham, tezlik ham, iqtisodiy foyda ham xavf ostida qoladi.", "Если на стройплощадке нет порядка, под угрозой и качество, и скорость, и экономическая выгода."],
@@ -83,7 +71,43 @@ export function CulturePage() {
         ["O'tmish va bugun o'rtasidagi tarixiy aloqani saqlash", "Сохранение исторической связи между прошлым и настоящим"],
       ],
     },
-  ];
+];
+
+export function CulturePage() {
+  const t = useT();
+  const [sectionImages, setSectionImages] = useState<Record<string, number>>({});
+  useEffect(() => {
+    fetch("/api/section-images")
+      .then((r) => r.json())
+      .then((j) => { if (j.ok) setSectionImages(j.images || {}); })
+      .catch(() => {});
+  }, []);
+
+  type Ornament = { id: string; old: string; new: string; desc: string; history?: string; hasImage?: boolean };
+  const [ornaments, setOrnaments] = useState<Ornament[]>([]);
+  useEffect(() => {
+    fetch("/api/ornaments")
+      .then((r) => r.json())
+      .then((j) => { if (j.ok) setOrnaments(j.ornaments || []); })
+      .catch(() => {});
+  }, []);
+
+  const [cultureElements, setCultureElements] = useState<CultureItem[]>(DEFAULT_CULTURE);
+  useEffect(() => {
+    fetch("/api/culture-elements")
+      .then((r) => r.json())
+      .then((j) => {
+        if (j.ok && Array.isArray(j.cultureElements) && j.cultureElements.length > 0) {
+          setCultureElements(j.cultureElements.map((e: any) => ({
+            title: [e.titleUz, e.titleRu],
+            description: [e.descUz, e.descRu],
+            details: [e.detailsUz, e.detailsRu],
+            principles: (e.principlesUz || []).map((p: string, i: number) => [p, (e.principlesRu || [])[i] || '']),
+          })));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <div className="relative bg-white pt-32">

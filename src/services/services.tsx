@@ -17,6 +17,62 @@ for (const [filePath, url] of Object.entries(serviceImageModules)) {
   serviceImageByName[baseName] = url;
 }
 
+type ServiceItem = {
+  number: string;
+  title: string[];
+  description: string[];
+  detailsLabel: string[];
+  details: string[][];
+  highlight: string[];
+};
+
+const DEFAULT_SERVICES: ServiceItem[] = [
+  {
+    number: "1",
+    title: ["Bosh pudratchi xizmatlari", "Услуги генподрядчика"],
+    description: ["BARPO bosh pudratchi sifatida obyektning umumiy qurilish jarayonini boshqaradi: rejalashtirish, ishchi kuchi, materiallar, muhandislik tizimlari, pudratchilar, grafik va sifat nazorati.", "Как генподрядчик мы управляем общим строительным процессом объекта: планирование, рабочая сила, материалы, инженерные системы, подрядчики, график и контроль качества."],
+    detailsLabel: ["Nimalarni o'z ichiga oladi", "Что включает"],
+    details: [
+      ["Ish jarayonini rejalashtirish", "Планирование рабочего процесса"],
+      ["GPR va bosqichma-bosqich grafik", "ГПР и поэтапный график"],
+      ["Pudratchilarni muvofiqlashtirish", "Координация подрядчиков"],
+      ["Kunlik nazorat", "Ежедневный контроль"],
+      ["Sifat tekshiruvi", "Проверка качества"],
+      ["Muddat va xarajat intizomi", "Дисциплина сроков и расходов"],
+      ["Obyektni topshirishga tayyorlash", "Подготовка объекта к сдаче"],
+    ],
+    highlight: ["Biz uchun bosh pudratchi — bu shunchaki ijrochi emas. Bu obyekt natijasi uchun javobgar markaz.", "Для нас генподрядчик — это не просто исполнитель. Это центр, ответственный за результат объекта."],
+  },
+  {
+    number: "2",
+    title: ["Qurilish-montaj ishlari", "Строительно-монтажные работы"],
+    description: ["Qurilish-montaj ishlari har qanday obyektning asosiy poydevoridir. Bu bosqichda xato qilish keyingi barcha jarayonlarga ta'sir qiladi. BARPO konstruktiv yechimlar, montaj sifati, texnologik ketma-ketlik va xavfsizlik talablariga qat'iy amal qiladi.", "Строительно-монтажные работы — основа любого объекта. Ошибка на этом этапе влияет на все последующие процессы. Мы строго соблюдаем конструктивные решения, качество монтажа, технологическую последовательность и требования безопасности."],
+    detailsLabel: ["", ""], details: [],
+    highlight: ["Biz tezlikni shoshilish deb tushunmaymiz. Tezlik — bu oldindan tuzilgan reja va intizom natijasi.", "Мы не понимаем скорость как спешку. Скорость — результат заранее составленного плана и дисциплины."],
+  },
+  {
+    number: "3",
+    title: ["Fasad va tashqi ishlar", "Фасад и наружные работы"],
+    description: ["Fasad — obyektning birinchi taassuroti. Lekin u faqat ko'rinish emas. Fasad binoning himoyasi, energetik samaradorligi, arxitekturaviy xarakteri va uzoq muddatli qiymatiga ta'sir qiladi. BARPO fasad ishlarida estetika, texnik yechim va ekspluatatsion mustahkamlikni birlashtiradi.", "Фасад — первое впечатление об объекте. Но это не только внешний вид. Фасад влияет на защиту здания, энергоэффективность, архитектурный характер и долгосрочную ценность. В фасадных работах мы объединяем эстетику, техническое решение и эксплуатационную прочность."],
+    detailsLabel: ["", ""], details: [],
+    highlight: ["Biz uchun chiroyli fasad — bu bugun ko'rinadigan, ertaga esa o'z sifatini saqlaydigan yechim.", "Для нас красивый фасад — это решение, которое выглядит хорошо сегодня и сохраняет качество завтра."],
+  },
+  {
+    number: "4",
+    title: ["Pardozlash ishlari", "Отделочные работы"],
+    description: ["Pardoz — obyektning yakuniy hissiyoti. Aynan shu bosqichda mijoz, ijarachi yoki foydalanuvchi sifatni ko'radi, his qiladi va baholaydi. BARPO pardozlash ishlarida detal, aniqlik, material tanlovi va ijro madaniyatiga e'tibor beradi.", "Отделка — финальное ощущение от объекта. Именно на этом этапе клиент, арендатор или пользователь видит, чувствует и оценивает качество. В отделочных работах мы уделяем внимание деталям, точности, выбору материалов и культуре исполнения."],
+    detailsLabel: ["", ""], details: [],
+    highlight: ["Chiroyli ko'rinish yetarli emas. To'g'ri bajarilgan pardoz uzoq xizmat qilishi kerak.", "Красивого вида недостаточно. Правильно выполненная отделка должна служить долго."],
+  },
+  {
+    number: "5",
+    title: ["Muhandislik tizimlari", "Инженерные системы"],
+    description: ["Muhandislik tizimlari — obyektning ko'rinmaydigan, lekin eng muhim qismi. Elektr, ventilyatsiya, isitish, sovutish, suv, kanalizatsiya, yong'in xavfsizligi va zaif tok tizimlari binoning ishlash sifatini belgilaydi. BARPO muhandislik tizimlariga alohida e'tibor beradi, chunki obyektning haqiqiy qulayligi aynan shu yerda boshlanadi.", "Инженерные системы — невидимая, но самая важная часть объекта. Электрика, вентиляция, отопление, охлаждение, водоснабжение, канализация, пожарная безопасность и слаботочные системы определяют качество работы здания. Мы уделяем инженерным системам особое внимание, ведь реальный комфорт объекта начинается именно здесь."],
+    detailsLabel: ["", ""], details: [],
+    highlight: ["Yaxshi bino faqat chiroyli bo'lmaydi. U to'g'ri ishlaydi.", "Хорошее здание не просто красиво. Оно правильно работает."],
+  },
+];
+
 export function ServicesPage() {
   const t = useT();
   const [sectionImages, setSectionImages] = useState<Record<string, number>>({});
@@ -27,59 +83,24 @@ export function ServicesPage() {
       .catch(() => {});
   }, []);
 
-  const services = [
-    {
-      number: "1",
-      title: ["Bosh pudratchi xizmatlari", "Услуги генподрядчика"],
-      description: ["BARPO bosh pudratchi sifatida obyektning umumiy qurilish jarayonini boshqaradi: rejalashtirish, ishchi kuchi, materiallar, muhandislik tizimlari, pudratchilar, grafik va sifat nazorati.", "Как генподрядчик мы управляем общим строительным процессом объекта: планирование, рабочая сила, материалы, инженерные системы, подрядчики, график и контроль качества."],
-      detailsLabel: ["Nimalarni o'z ichiga oladi", "Что включает"],
-      details: [
-        ["Ish jarayonini rejalashtirish", "Планирование рабочего процесса"],
-        ["GPR va bosqichma-bosqich grafik", "ГПР и поэтапный график"],
-        ["Pudratchilarni muvofiqlashtirish", "Координация подрядчиков"],
-        ["Kunlik nazorat", "Ежедневный контроль"],
-        ["Sifat tekshiruvi", "Проверка качества"],
-        ["Muddat va xarajat intizomi", "Дисциплина сроков и расходов"],
-        ["Obyektni topshirishga tayyorlash", "Подготовка объекта к сдаче"],
-      ],
-      highlight: ["Biz uchun bosh pudratchi — bu shunchaki ijrochi emas. Bu obyekt natijasi uchun javobgar markaz.", "Для нас генподрядчик — это не просто исполнитель. Это центр, ответственный за результат объекта."],
-    },
-    {
-      number: "2",
-      title: ["Qurilish-montaj ishlari", "Строительно-монтажные работы"],
-      description: ["Qurilish-montaj ishlari har qanday obyektning asosiy poydevoridir. Bu bosqichda xato qilish keyingi barcha jarayonlarga ta'sir qiladi. BARPO konstruktiv yechimlar, montaj sifati, texnologik ketma-ketlik va xavfsizlik talablariga qat'iy amal qiladi.", "Строительно-монтажные работы — основа любого объекта. Ошибка на этом этапе влияет на все последующие процессы. Мы строго соблюдаем конструктивные решения, качество монтажа, технологическую последовательность и требования безопасности."],
-      detailsLabel: ["", ""], details: [],
-      highlight: ["Biz tezlikni shoshilish deb tushunmaymiz. Tezlik — bu oldindan tuzilgan reja va intizom natijasi.", "Мы не понимаем скорость как спешку. Скорость — результат заранее составленного плана и дисциплины."],
-    },
-    {
-      number: "3",
-      title: ["Fasad va tashqi ishlar", "Фасад и наружные работы"],
-      description: ["Fasad — obyektning birinchi taassuroti. Lekin u faqat ko'rinish emas. Fasad binoning himoyasi, energetik samaradorligi, arxitekturaviy xarakteri va uzoq muddatli qiymatiga ta'sir qiladi. BARPO fasad ishlarida estetika, texnik yechim va ekspluatatsion mustahkamlikni birlashtiradi.", "Фасад — первое впечатление об объекте. Но это не только внешний вид. Фасад влияет на защиту здания, энергоэффективность, архитектурный характер и долгосрочную ценность. В фасадных работах мы объединяем эстетику, техническое решение и эксплуатационную прочность."],
-      detailsLabel: ["", ""], details: [],
-      highlight: ["Biz uchun chiroyli fasad — bu bugun ko'rinadigan, ertaga esa o'z sifatini saqlaydigan yechim.", "Для нас красивый фасад — это решение, которое выглядит хорошо сегодня и сохраняет качество завтра."],
-    },
-    {
-      number: "4",
-      title: ["Pardozlash ishlari", "Отделочные работы"],
-      description: ["Pardoz — obyektning yakuniy hissiyoti. Aynan shu bosqichda mijoz, ijarachi yoki foydalanuvchi sifatni ko'radi, his qiladi va baholaydi. BARPO pardozlash ishlarida detal, aniqlik, material tanlovi va ijro madaniyatiga e'tibor beradi.", "Отделка — финальное ощущение от объекта. Именно на этом этапе клиент, арендатор или пользователь видит, чувствует и оценивает качество. В отделочных работах мы уделяем внимание деталям, точности, выбору материалов и культуре исполнения."],
-      detailsLabel: ["", ""], details: [],
-      highlight: ["Chiroyli ko'rinish yetarli emas. To'g'ri bajarilgan pardoz uzoq xizmat qilishi kerak.", "Красивого вида недостаточно. Правильно выполненная отделка должна служить долго."],
-    },
-    {
-      number: "5",
-      title: ["Muhandislik tizimlari", "Инженерные системы"],
-      description: ["Muhandislik tizimlari — obyektning ko'rinmaydigan, lekin eng muhim qismi. Elektr, ventilyatsiya, isitish, sovutish, suv, kanalizatsiya, yong'in xavfsizligi va zaif tok tizimlari binoning ishlash sifatini belgilaydi. BARPO muhandislik tizimlariga alohida e'tibor beradi, chunki obyektning haqiqiy qulayligi aynan shu yerda boshlanadi.", "Инженерные системы — невидимая, но самая важная часть объекта. Электрика, вентиляция, отопление, охлаждение, водоснабжение, канализация, пожарная безопасность и слаботочные системы определяют качество работы здания. Мы уделяем инженерным системам особое внимание, ведь реальный комфорт объекта начинается именно здесь."],
-      detailsLabel: ["", ""], details: [],
-      highlight: ["Yaxshi bino faqat chiroyli bo'lmaydi. U to'g'ri ishlaydi.", "Хорошее здание не просто красиво. Оно правильно работает."],
-    },
-    {
-      number: "6",
-      title: ["Premium pardoz va interyer ijrosi", "Премиум-отделка и реализация интерьера"],
-      description: ["Premium segmentda sifat ko'zga tashlanishi shart emas — u sezilishi kerak. Materiallar, chiziqlar, yoritish, tutashuvlar, faktura va umumiy atmosfera bir butun bo'lishi kerak. BARPO premium pardozda nozik detal, yuqori ijro intizomi va muvozanatli estetika bilan ishlaydi.", "В премиум-сегменте качество не обязано бросаться в глаза — оно должно ощущаться. Материалы, линии, освещение, стыки, фактура и общая атмосфера должны быть единым целым. В премиум-отделке мы работаем с тонкими деталями, высокой дисциплиной исполнения и сбалансированной эстетикой."],
-      detailsLabel: ["", ""], details: [],
-      highlight: ["Premium — bu qimmat material emas. Premium — bu xato ko'rinmaydigan darajadagi aniqlik.", "Премиум — это не дорогой материал. Премиум — это точность, при которой не видно ошибок."],
-    },
-  ];
+  const [services, setServices] = useState<ServiceItem[]>(DEFAULT_SERVICES);
+  useEffect(() => {
+    fetch("/api/services")
+      .then((r) => r.json())
+      .then((j) => {
+        if (j.ok && Array.isArray(j.services) && j.services.length > 0) {
+          setServices(j.services.map((s: any, i: number) => ({
+            number: String(i + 1),
+            title: [s.titleUz, s.titleRu],
+            description: [s.descUz, s.descRu],
+            detailsLabel: ["", ""],
+            details: [],
+            highlight: [s.highlightUz, s.highlightRu],
+          })));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const whyItems = [
     { title: ["Tizim", "Система"], desc: ["Xizmatlar o'zaro bog'langan jarayon sifatida amalga oshiriladi, bu esa mijozning xotirjamligini ta'minlaydi.", "Услуги выполняются как взаимосвязанный процесс, что обеспечивает спокойствие клиента."] },

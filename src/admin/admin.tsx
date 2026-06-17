@@ -21,7 +21,7 @@ function loadCreds(): Creds | null {
   }
 }
 
-type Tab = "projects" | "ornaments" | "offers" | "standards" | "investors" | "blog" | "sections" | "stats" | "suggestions" | "hr" | "contacts" | "settings" | "tasks" | "admins";
+type Tab = "projects" | "ornaments" | "offers" | "standards" | "investors" | "blog" | "sections" | "stats" | "suggestions" | "hr" | "contacts" | "settings" | "tasks" | "admins" | "services" | "culture";
 
 interface BlogArticle {
   id: string; title: string; rubric: string; content: string;
@@ -42,6 +42,8 @@ const PERM_LABELS: { key: string; label: string; ru: string }[] = [
   { key: "hr", label: "HR arizalari", ru: "HR-заявки" },
   { key: "contacts", label: "Aloqa so'rovlari", ru: "Запросы на связь" },
   { key: "settings", label: "Sozlamalar", ru: "Настройки" },
+  { key: "services", label: "Xizmatlar", ru: "Услуги" },
+  { key: "culture", label: "Madaniyat", ru: "Культура" },
 ];
 
 interface AdminUser {
@@ -119,7 +121,6 @@ const SECTION_IMAGE_GROUPS: { group: string; groupRu: string; items: { key: stri
       { key: "service-3", label: "3 · Fasad va tashqi ishlar", ru: "3 · Фасад и наружные работы" },
       { key: "service-4", label: "4 · Pardozlash ishlari", ru: "4 · Отделочные работы" },
       { key: "service-5", label: "5 · Muhandislik tizimlari", ru: "5 · Инженерные системы" },
-      { key: "service-6", label: "6 · Premium pardoz va interyer ijrosi", ru: "6 · Премиум-отделка и исполнение интерьера" },
     ],
   },
 ];
@@ -159,11 +160,22 @@ interface Investor {
 interface HistoryEntry {
   id: string; actor: string; action: string; time: string;
 }
+interface Service {
+  id: string; titleUz: string; titleRu: string; descUz: string; descRu: string;
+  highlightUz: string; highlightRu: string; active: boolean; createdAt: string;
+}
+interface CultureElement {
+  id: string; titleUz: string; titleRu: string; descUz: string; descRu: string;
+  detailsUz: string; detailsRu: string;
+  principlesUz: string[]; principlesRu: string[];
+  active: boolean; createdAt: string;
+}
 interface AdminData {
   projects: Project[]; ornaments: Ornament[]; standards: Standard[]; investors: Investor[];
   hr: HRRecord[]; offers: Offer[];
   suggestions: Suggestion[]; contacts: Contact[]; history: HistoryEntry[];
   blog?: BlogArticle[];
+  services?: Service[]; cultureElements?: CultureElement[];
   tasks?: TaskItem[]; me?: Me; admins?: AdminUser[];
 }
 
@@ -206,6 +218,10 @@ export function AdminPage() {
   const [editingBlog, setEditingBlog] = useState<BlogArticle | null>(null);
   const [showBlogModal, setShowBlogModal] = useState(false);
   const [blogSort, setBlogSort] = useState<"new" | "old">("new");
+  const [editingService, setEditingService] = useState<Service | null>(null);
+  const [showServiceModal, setShowServiceModal] = useState(false);
+  const [editingCulture, setEditingCulture] = useState<CultureElement | null>(null);
+  const [showCultureModal, setShowCultureModal] = useState(false);
   const [editingAdmin, setEditingAdmin] = useState<AdminUser | null>(null);
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [showTaskModal, setShowTaskModal] = useState(false);
@@ -594,6 +610,59 @@ export function AdminPage() {
     blogSimple("delete", id);
   };
 
+  // ---- Xizmat amallari (JSON) ----
+  const serviceAction = async (payload: Record<string, unknown>) => {
+    const res = await fetch(`/api/admin/services?${authQS()}`, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
+    return json;
+  };
+  const saveService = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSaving(true);
+    const body = Object.fromEntries(new FormData(e.currentTarget).entries());
+    try {
+      if (editingService) await serviceAction({ action: "update", id: editingService.id, ...body });
+      else await serviceAction({ action: "create", ...body });
+      setShowServiceModal(false); setEditingService(null); loadData();
+    } catch {} finally { setSaving(false); }
+  };
+  const toggleService = async (id: string) => { try { await serviceAction({ action: "toggle", id }); loadData(); } catch {} };
+  const deleteService = async (id: string) => {
+    if (!confirm(t("Bu xizmat o'chirilsinmi?", "Удалить эту услугу?"))) return;
+    try { await serviceAction({ action: "delete", id }); loadData(); } catch {}
+  };
+
+  // ---- Madaniyat elementi amallari (JSON) ----
+  const cultureAction = async (payload: Record<string, unknown>) => {
+    const res = await fetch(`/api/admin/culture-elements?${authQS()}`, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
+    return json;
+  };
+  const saveCulture = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSaving(true);
+    const fd = new FormData(e.currentTarget);
+    const body: Record<string, unknown> = Object.fromEntries(fd.entries());
+    body.principlesUz = String(body.principlesUz || "").split("\n").map((x: string) => x.trim()).filter(Boolean);
+    body.principlesRu = String(body.principlesRu || "").split("\n").map((x: string) => x.trim()).filter(Boolean);
+    try {
+      if (editingCulture) await cultureAction({ action: "update", id: editingCulture.id, ...body });
+      else await cultureAction({ action: "create", ...body });
+      setShowCultureModal(false); setEditingCulture(null); loadData();
+    } catch {} finally { setSaving(false); }
+  };
+  const toggleCulture = async (id: string) => { try { await cultureAction({ action: "toggle", id }); loadData(); } catch {} };
+  const deleteCulture = async (id: string) => {
+    if (!confirm(t("Bu element o'chirilsinmi?", "Удалить этот элемент?"))) return;
+    try { await cultureAction({ action: "delete", id }); loadData(); } catch {}
+  };
+
   // ---- Bo'lim rasmlari (culture / services boxlari) ----
   const uploadSectionImage = async (key: string, file: File) => {
     const fd = new FormData();
@@ -699,6 +768,8 @@ export function AdminPage() {
     { id: "hr" as Tab, label: t("HR Arizalari", "HR-заявки"), count: data?.hr.length ?? 0 },
     { id: "contacts" as Tab, label: t("Aloqa So'rovlari", "Запросы на связь"), count: data?.contacts.length ?? 0 },
     { id: "settings" as Tab, label: t("Sozlamalar", "Настройки"), count: (settings.telegram?.chatIds || []).filter(Boolean).length },
+    { id: "services" as Tab, label: t("Xizmatlar", "Услуги"), count: data?.services?.length ?? 0 },
+    { id: "culture" as Tab, label: t("Madaniyat", "Культура"), count: data?.cultureElements?.length ?? 0 },
   ].filter((tab) => hasPerm(tab.id));
 
   // Topshiriqlar hammaga, Adminlar faqat superadminga
@@ -1413,6 +1484,77 @@ export function AdminPage() {
               </div>
             )}
 
+            {/* ===== XIZMATLAR ===== */}
+            {activeTab === "services" && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between mb-2 flex-wrap gap-3">
+                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("Xizmatlar", "Услуги")} ({data.services?.length ?? 0})</h2>
+                  <button onClick={() => { setEditingService(null); setShowServiceModal(true); }} style={{ fontFamily: "var(--font-body)" }}
+                    className="px-5 py-2.5 bg-[#060920] text-white rounded-xl text-sm tracking-wide hover:shadow-lg transition-all">
+                    + {t("Yangi xizmat", "Новая услуга")}
+                  </button>
+                </div>
+                {(data.services?.length ?? 0) === 0 ? <EmptyState text={t("Hozircha xizmat qo'shilmagan.", "Пока услуги не добавлены.")} /> : data.services!.map((s, i) => (
+                  <motion.div key={s.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
+                    className={`p-6 bg-white/60 border rounded-2xl ${s.active ? "border-[#060920]/10" : "border-[#060920]/10 opacity-60"}`}>
+                    <div className="flex items-start justify-between flex-wrap gap-3">
+                      <div className="flex-1 min-w-[200px]">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span style={{ fontFamily: "var(--font-body)" }} className="text-xs tracking-[0.1em] uppercase text-[#060920]/40">{i + 1}</span>
+                          <div style={{ fontFamily: "var(--font-display)" }} className="text-lg text-[#060920]">{s.titleUz}</div>
+                          {!s.active && <span style={{ fontFamily: "var(--font-body)" }} className="px-2.5 py-0.5 text-xs tracking-wide uppercase bg-[#060920]/10 text-[#060920] rounded-full">{t("Yashirin", "Скрыт")}</span>}
+                        </div>
+                        <div style={{ fontFamily: "var(--font-body)" }} className="text-xs text-[#060920]/40 mt-0.5 italic">{s.titleRu}</div>
+                        <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/65 text-sm mt-2 leading-relaxed line-clamp-2">{s.descUz}</p>
+                        {s.highlightUz && <p style={{ fontFamily: "var(--font-body)" }} className="text-xs text-[#060920]/50 mt-1 italic line-clamp-1">{s.highlightUz}</p>}
+                      </div>
+                      <div className="flex gap-2 flex-wrap" style={{ fontFamily: "var(--font-body)" }}>
+                        <button onClick={() => { setEditingService(s); setShowServiceModal(true); }} className={btnGhost}>{t("Tahrirlash", "Редактировать")}</button>
+                        <button onClick={() => toggleService(s.id)} className={btnGhost}>{s.active ? t("Yashirish", "Скрыть") : t("Ko'rsatish", "Показать")}</button>
+                        <button onClick={() => deleteService(s.id)} className={btnDanger}>{t("O'chirish", "Удалить")}</button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+
+            {/* ===== MADANIYAT ===== */}
+            {activeTab === "culture" && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between mb-2 flex-wrap gap-3">
+                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("Madaniyat elementlari", "Элементы культуры")} ({data.cultureElements?.length ?? 0})</h2>
+                  <button onClick={() => { setEditingCulture(null); setShowCultureModal(true); }} style={{ fontFamily: "var(--font-body)" }}
+                    className="px-5 py-2.5 bg-[#060920] text-white rounded-xl text-sm tracking-wide hover:shadow-lg transition-all">
+                    + {t("Yangi element", "Новый элемент")}
+                  </button>
+                </div>
+                {(data.cultureElements?.length ?? 0) === 0 ? <EmptyState text={t("Hozircha element qo'shilmagan.", "Пока элементы не добавлены.")} /> : data.cultureElements!.map((e, i) => (
+                  <motion.div key={e.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
+                    className={`p-6 bg-white/60 border rounded-2xl ${e.active ? "border-[#060920]/10" : "border-[#060920]/10 opacity-60"}`}>
+                    <div className="flex items-start justify-between flex-wrap gap-3">
+                      <div className="flex-1 min-w-[200px]">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <div style={{ fontFamily: "var(--font-display)" }} className="text-lg text-[#060920]">{e.titleUz}</div>
+                          {!e.active && <span style={{ fontFamily: "var(--font-body)" }} className="px-2.5 py-0.5 text-xs tracking-wide uppercase bg-[#060920]/10 text-[#060920] rounded-full">{t("Yashirin", "Скрыт")}</span>}
+                        </div>
+                        <div style={{ fontFamily: "var(--font-body)" }} className="text-xs text-[#060920]/40 mt-0.5 italic">{e.titleRu}</div>
+                        <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/65 text-sm mt-2 leading-relaxed line-clamp-2">{e.descUz}</p>
+                        {(e.principlesUz || []).length > 0 && (
+                          <p style={{ fontFamily: "var(--font-body)" }} className="text-xs text-[#060920]/40 mt-1">{(e.principlesUz || []).length} {t("tamoyil", "принципов")}</p>
+                        )}
+                      </div>
+                      <div className="flex gap-2 flex-wrap" style={{ fontFamily: "var(--font-body)" }}>
+                        <button onClick={() => { setEditingCulture(e); setShowCultureModal(true); }} className={btnGhost}>{t("Tahrirlash", "Редактировать")}</button>
+                        <button onClick={() => toggleCulture(e.id)} className={btnGhost}>{e.active ? t("Yashirish", "Скрыть") : t("Ko'rsatish", "Показать")}</button>
+                        <button onClick={() => deleteCulture(e.id)} className={btnDanger}>{t("O'chirish", "Удалить")}</button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+
           </motion.div>
         )}
 
@@ -1452,6 +1594,96 @@ export function AdminPage() {
           )}
         </div>
       </div>
+
+      {/* ===== XIZMAT MODAL ===== */}
+      <AnimatePresence>
+        {showServiceModal && (
+          <ModalShell wide title={editingService ? t("Xizmatni tahrirlash", "Редактировать услугу") : t("Yangi xizmat", "Новая услуга")} onClose={() => { setShowServiceModal(false); setEditingService(null); }}>
+            <form onSubmit={saveService} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Sarlavha (UZ) *", "Заголовок (UZ) *")}</label>
+                  <input name="titleUz" required defaultValue={editingService?.titleUz || ""} placeholder={t("Sarlavha o'zbekcha *", "Заголовок на узбекском *")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                </div>
+                <div>
+                  <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Sarlavha (RU)", "Заголовок (RU)")}</label>
+                  <input name="titleRu" defaultValue={editingService?.titleRu || ""} placeholder={t("Sarlavha ruscha", "Заголовок на русском")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                </div>
+              </div>
+              <div>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Tavsif (UZ)", "Описание (UZ)")}</label>
+                <textarea name="descUz" rows={4} defaultValue={editingService?.descUz || ""} placeholder={t("Xizmat tavsifi o'zbekcha...", "Описание услуги на узбекском...")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+              </div>
+              <div>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Tavsif (RU)", "Описание (RU)")}</label>
+                <textarea name="descRu" rows={4} defaultValue={editingService?.descRu || ""} placeholder={t("Xizmat tavsifi ruscha...", "Описание услуги на русском...")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Ajratilgan fikr (UZ)", "Выделенная мысль (UZ)")}</label>
+                  <textarea name="highlightUz" rows={2} defaultValue={editingService?.highlightUz || ""} placeholder={t("Asosiy g'oya o'zbekcha...", "Главная идея на узбекском...")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+                </div>
+                <div>
+                  <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Ajratilgan fikr (RU)", "Выделенная мысль (RU)")}</label>
+                  <textarea name="highlightRu" rows={2} defaultValue={editingService?.highlightRu || ""} placeholder={t("Asosiy g'oya ruscha...", "Главная идея на русском...")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+                </div>
+              </div>
+              <SaveBtn saving={saving} editing={!!editingService} />
+            </form>
+          </ModalShell>
+        )}
+      </AnimatePresence>
+
+      {/* ===== MADANIYAT ELEMENTI MODAL ===== */}
+      <AnimatePresence>
+        {showCultureModal && (
+          <ModalShell wide title={editingCulture ? t("Elementni tahrirlash", "Редактировать элемент") : t("Yangi madaniyat elementi", "Новый элемент культуры")} onClose={() => { setShowCultureModal(false); setEditingCulture(null); }}>
+            <form onSubmit={saveCulture} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Sarlavha (UZ) *", "Заголовок (UZ) *")}</label>
+                  <input name="titleUz" required defaultValue={editingCulture?.titleUz || ""} placeholder={t("Masalan: Tartib", "Например: Порядок")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                </div>
+                <div>
+                  <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Sarlavha (RU)", "Заголовок (RU)")}</label>
+                  <input name="titleRu" defaultValue={editingCulture?.titleRu || ""} placeholder={t("Masalan: Порядок", "Например: Порядок")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Qisqa tavsif (UZ)", "Краткое описание (UZ)")}</label>
+                  <textarea name="descUz" rows={2} defaultValue={editingCulture?.descUz || ""} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+                </div>
+                <div>
+                  <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Qisqa tavsif (RU)", "Краткое описание (RU)")}</label>
+                  <textarea name="descRu" rows={2} defaultValue={editingCulture?.descRu || ""} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Batafsil matn (UZ)", "Подробный текст (UZ)")}</label>
+                  <textarea name="detailsUz" rows={3} defaultValue={editingCulture?.detailsUz || ""} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+                </div>
+                <div>
+                  <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Batafsil matn (RU)", "Подробный текст (RU)")}</label>
+                  <textarea name="detailsRu" rows={3} defaultValue={editingCulture?.detailsRu || ""} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Tamoyillar (UZ) — har biri yangi qatordan", "Принципы (UZ) — каждый с новой строки")}</label>
+                  <textarea name="principlesUz" rows={5} defaultValue={(editingCulture?.principlesUz || []).join("\n")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+                </div>
+                <div>
+                  <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Tamoyillar (RU) — har biri yangi qatordan", "Принципы (RU) — каждый с новой строки")}</label>
+                  <textarea name="principlesRu" rows={5} defaultValue={(editingCulture?.principlesRu || []).join("\n")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+                </div>
+              </div>
+              <SaveBtn saving={saving} editing={!!editingCulture} />
+            </form>
+          </ModalShell>
+        )}
+      </AnimatePresence>
 
       {/* ===== OFFER MODAL ===== */}
       <AnimatePresence>
