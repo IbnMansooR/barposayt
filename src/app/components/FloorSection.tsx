@@ -34,7 +34,7 @@ export function FloorSection({
       whileInView={{ opacity: 1, x: 0, y: 0 }}
       viewport={{ once: false, margin: "-100px" }}
       transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-      className={`space-y-6 w-full ${isCenter ? "max-w-3xl mx-auto text-center" : isLeft ? "max-w-xl" : "max-w-xl ml-auto text-right"}`}
+      className={`space-y-6 w-full ${isCenter ? "max-w-3xl mx-auto text-center" : "max-w-xl"}`}
     >
       <motion.h2
         initial={{ opacity: 0, y: 20 }}
@@ -53,7 +53,7 @@ export function FloorSection({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false }}
           transition={{ duration: 1, delay: 0.5 }}
-          className={`leading-relaxed tracking-wide opacity-70 max-w-lg ${isLeft || isCenter ? "" : "ml-auto"}`}
+          className="leading-relaxed tracking-wide opacity-70 max-w-lg"
           style={{ fontFamily: 'var(--font-body)', fontSize: 'clamp(0.9rem, 1.35vw, 1.0125rem)', letterSpacing: '0.02em' }}
         >
           {barpo(description)}
