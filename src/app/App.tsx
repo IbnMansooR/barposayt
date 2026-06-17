@@ -182,39 +182,7 @@ export default function App() {
               >
                 {t("Investorlar uchun takliflar", "Предложения для инвесторов")}
               </motion.a>
-              <motion.a
-                href="#standard"
-                whileTap={{ scale: 0.97 }}
-                style={{ fontFamily: 'var(--font-body)', textDecoration: 'none' }}
-                className="group px-8 py-3 bg-white text-[#060920] border border-[#060920] hover:bg-[#060920] hover:text-white tracking-[0.15em] uppercase text-sm font-medium rounded-2xl transition-colors duration-300 inline-flex items-center"
-              >
-                <BarpoWord className="mr-2 transition-[filter] duration-300 group-hover:brightness-0 group-hover:invert" /> {t("standartlari bilan tanishish", "ознакомиться со стандартами")}
-              </motion.a>
             </motion.div>
-          </motion.div>
-
-          {/* Hero faktlar */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 1.9 }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 mt-20 pt-12 border-t border-[#060920]/10 text-left"
-          >
-            {[
-              { title: ["Tijorat obyektlari", "Коммерческие объекты"], desc: ["Klinikalar, ofislar, savdo markazlari, ishlab chiqarish binolari", "Клиники, офисы, торговые центры, производственные здания"] },
-              { title: ["Genpudrat va kompleks ishlar", "Генподряд и комплексные работы"], desc: ["Bitta tizimda boshqariladigan jarayon", "Процесс, управляемый в единой системе"] },
-              { title: ["Nazorat ostidagi sifat", "Качество под контролем"], desc: ["Har bosqich tekshiriladi, har ish qabul qilinadi", "Каждый этап проверяется, каждая работа принимается"] },
-              { title: ["Mijoz xotirjamligi", "Спокойствие клиента"], desc: ["Buyurtmachi har kuni obyekt \"dispetcheri\" bo'lib qolmaydi", "Заказчик не становится ежедневным «диспетчером» объекта"] },
-            ].map((fact) => (
-              <div key={fact.title[0]} className="space-y-2">
-                <div style={{ fontFamily: 'var(--font-display)', color: '#060920', textShadow: 'none' }} className="text-lg leading-snug">
-                  {t(fact.title[0], fact.title[1])}
-                </div>
-                <div style={{ fontFamily: 'var(--font-body)', textShadow: 'none' }} className="tracking-wide text-[#060920]/60 text-sm leading-relaxed">
-                  {t(fact.desc[0], fact.desc[1])}
-                </div>
-              </div>
-            ))}
           </motion.div>
         </div>
       </section>
