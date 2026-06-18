@@ -94,7 +94,7 @@ export default function App() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, delay: 0.5 }}
-        className="fixed top-0 left-0 right-0 z-40 px-8 md:px-16 py-8 bg-white/95 backdrop-blur-sm border-b border-[#060920]/10"
+        className="fixed top-0 left-0 right-0 z-40 px-5 md:px-16 py-4 md:py-8 bg-white/95 backdrop-blur-sm border-b border-[#060920]/10"
       >
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <img 
@@ -108,7 +108,7 @@ export default function App() {
       </motion.nav>
 
       {/* Hero Section - Bosh Sahifa */}
-      <section className="relative min-h-screen flex items-center justify-center px-8 md:px-16 pt-32 overflow-hidden">
+      <section className="relative min-h-screen flex items-center justify-center px-5 md:px-16 pt-20 md:pt-32 overflow-hidden">
         <div className="max-w-7xl w-full mx-auto text-center space-y-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}

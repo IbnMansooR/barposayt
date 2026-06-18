@@ -110,7 +110,7 @@ export function HorizontalGallery({
   const ordered = reverse ? Children.toArray(children).reverse() : children;
 
   return (
-    <div ref={wrapRef} className="relative w-full h-screen overflow-hidden bg-white" style={{ touchAction: "none" }}>
+    <div ref={wrapRef} className="relative w-full h-[100dvh] overflow-hidden bg-white" style={{ touchAction: "none" }}>
       <div ref={stripRef} className="flex h-full will-change-transform" style={{ width: "max-content" }}>
         {ordered}
       </div>

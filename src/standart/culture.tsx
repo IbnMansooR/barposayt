@@ -110,9 +110,9 @@ export function CulturePage() {
   }, []);
 
   return (
-    <div className="relative bg-white pt-32">
+    <div className="relative bg-white pt-20 md:pt-32">
       {/* Hero Section */}
-      <section className="relative min-h-[70vh] flex items-center justify-center px-8 md:px-16 py-20 overflow-hidden">
+      <section className="relative min-h-[55vh] flex items-center justify-center px-5 md:px-16 py-12 md:py-20 overflow-hidden">
         <div className="max-w-5xl w-full mx-auto text-center space-y-8">
           <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
             style={{ fontFamily: 'var(--font-display)' }} className="text-sm tracking-[0.15em] uppercase text-[#060920]/50">
@@ -137,16 +137,16 @@ export function CulturePage() {
       </section>
 
       {/* Culture Pillars */}
-      <section className="relative py-24 px-8 md:px-16">
+      <section className="relative py-14 md:py-24 px-5 md:px-16">
         <div className="max-w-7xl mx-auto">
-          <div className="space-y-20">
+          <div className="space-y-14 md:space-y-20">
             {cultureElements.map((element, index) => (
               <motion.div key={element.title[0]} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.8, delay: index * 0.1 }}
-                className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
                 <div className={index % 2 === 1 ? "md:order-2" : ""}>
                   <div className="space-y-6">
                     <motion.h2 initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.1 }}
-                      style={{ fontFamily: 'var(--font-display)' }} className="text-[#060920] text-4xl font-light leading-tight">
+                      style={{ fontFamily: 'var(--font-display)' }} className="text-[#060920] text-2xl md:text-4xl font-light leading-tight">
                       {t(element.title[0], element.title[1])}
                     </motion.h2>
                     <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.15 }}
@@ -189,11 +189,11 @@ export function CulturePage() {
       </section>
 
       {/* Heritage Connection */}
-      <section className="relative py-24 px-8 md:px-16 bg-white">
+      <section className="relative py-14 md:py-24 px-5 md:px-16 bg-white">
         <div className="max-w-6xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="text-center mb-16">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="text-center mb-10 md:mb-16">
             <p style={{ fontFamily: 'var(--font-display)' }} className="text-sm tracking-[0.15em] uppercase text-[#060920]/50 mb-4">{t("Tarixiy aloqa", "Историческая связь")}</p>
-            <h2 style={{ fontFamily: 'var(--font-display)' }} className="text-4xl md:text-5xl font-light text-[#060920] leading-tight">
+            <h2 style={{ fontFamily: 'var(--font-display)' }} className="text-2xl md:text-5xl font-light text-[#060920] leading-tight">
               {t("Qadim fikr — Zamonaviy Tizim", "Древняя мысль — современная система")}
             </h2>
           </motion.div>
@@ -233,7 +233,7 @@ export function CulturePage() {
       </section>
 
       {/* Call to Action */}
-      <section className="relative py-20 px-8 md:px-16">
+      <section className="relative py-12 md:py-20 px-5 md:px-16">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="space-y-6">
             <h2 style={{ fontFamily: 'var(--font-display)' }} className="text-3xl md:text-4xl font-light text-[#060920]">

@@ -25,7 +25,7 @@ export function Footer() {
   ].filter((s) => s.href);
 
   return (
-    <footer className="relative py-16 px-8 md:px-16 bg-[#060920]">
+    <footer className="relative py-12 md:py-16 px-5 md:px-16 bg-[#060920]">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12">
           <div>

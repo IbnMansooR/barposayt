@@ -98,7 +98,7 @@ export function FloorSection({
         </motion.div>
 
         {/* Matn yarmi */}
-        <div className={`w-full md:w-1/2 flex items-center px-8 md:px-16 py-14 md:py-12 ${isLeft ? "md:order-1" : "md:order-2"}`}>
+        <div className={`w-full md:w-1/2 flex items-center px-5 md:px-16 py-10 md:py-12 ${isLeft ? "md:order-1" : "md:order-2"}`}>
           {textBlock}
         </div>
       </section>
@@ -107,7 +107,7 @@ export function FloorSection({
 
   // ── Markaziy yoki rasmsiz floor ──
   return (
-    <section className="relative min-h-screen flex items-center justify-center px-8 md:px-16 py-20">
+    <section className="relative min-h-screen flex items-center justify-center px-5 md:px-16 py-14 md:py-20">
       <div className="max-w-7xl w-full mx-auto">
         {isCenter ? (
           <div className="flex flex-col items-center text-center">{textBlock}</div>

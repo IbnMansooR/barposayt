@@ -137,7 +137,7 @@ export function TakliflarPage() {
         return (
           <div key={inv.id} className="h-full flex items-center shrink-0">
             {/* 4:5 portret rasm joyi (1080×1350 px shu yerga sig'adi) */}
-            <div className="relative self-center h-[78vh] overflow-hidden shrink-0" style={{ aspectRatio: "4 / 5" }}>
+            <div className="relative self-center h-[45vh] md:h-[78vh] overflow-hidden shrink-0" style={{ aspectRatio: "4 / 5" }}>
               {sectionImages[`investor-${i}`] ? (
                 <img
                   src={`/api/section-image?key=investor-${i}&v=${sectionImages[`investor-${i}`]}`}
@@ -157,7 +157,7 @@ export function TakliflarPage() {
             </div>
 
             {/* Panel */}
-            <div className="h-full flex flex-col justify-center px-10 md:px-14 shrink-0" style={{ width: "38vw", background: panel.bg, color: panel.fg }}>
+            <div className="h-full flex flex-col justify-center px-5 md:px-14 shrink-0 w-[52vw] md:w-[38vw]" style={{ background: panel.bg, color: panel.fg }}>
               <div style={{ fontFamily: "var(--font-body)" }} className="text-xs tracking-[0.25em] uppercase opacity-60">
                 {t("INVESTOR KONSEPSIYASI", "КОНЦЕПЦИЯ ДЛЯ ИНВЕСТОРА")}
               </div>
@@ -183,8 +183,8 @@ export function TakliflarPage() {
       })}
 
       {/* Forma slaydi — taklif yuborish */}
-      <div className="h-full flex items-center shrink-0" style={{ width: "min(94vw, 720px)" }}>
-        <div className="w-full px-8 md:px-16">
+      <div className="h-full flex items-center shrink-0" style={{ width: "min(96vw, 720px)" }}>
+        <div className="w-full px-5 md:px-16">
           <div style={{ fontFamily: "var(--font-body)" }} className="text-xs tracking-[0.3em] uppercase text-[#060920]/50">
             {t("SIZNING TAKLIFINGIZ", "ВАШЕ ПРЕДЛОЖЕНИЕ")}
           </div>

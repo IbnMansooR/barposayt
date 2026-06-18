@@ -189,7 +189,7 @@ export function AppRouter() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.5 }}
-          className="fixed top-0 left-0 right-0 z-40 px-8 md:px-16 py-8 bg-white/95 backdrop-blur-sm border-b border-[#060920]/10"
+          className="fixed top-0 left-0 right-0 z-40 px-5 md:px-16 py-4 md:py-8 bg-white/95 backdrop-blur-sm border-b border-[#060920]/10"
         >
           <div className="flex items-center justify-between max-w-7xl mx-auto">
             <a href="#home" className="flex-shrink-0">
@@ -212,7 +212,7 @@ export function AppRouter() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.1 }}
-          className="fixed top-6 right-[5.5rem] z-[60] h-11 flex items-center gap-4 md:gap-6"
+          className="fixed top-[14px] md:top-6 right-[5.5rem] z-[60] h-11 flex items-center gap-4 md:gap-6"
         >
           <div className="hidden md:flex items-center gap-6">
             {[
@@ -266,7 +266,7 @@ export function AppRouter() {
           whileTap={{ scale: 0.92 }}
           onClick={() => setIsGlobalMenuOpen((v) => !v)}
           aria-label="Navigatsiya menyusi"
-          className="fixed top-6 right-6 z-[60] flex flex-col items-center justify-center gap-[5px] w-11 h-11 rounded-full bg-[#060920] shadow-[0_4px_20px_-4px_rgba(6,9,32,0.45)] transition-shadow hover:shadow-[0_8px_28px_-4px_rgba(6,9,32,0.55)]"
+          className="fixed top-[14px] md:top-6 right-6 z-[60] flex flex-col items-center justify-center gap-[5px] w-11 h-11 rounded-full bg-[#060920] shadow-[0_4px_20px_-4px_rgba(6,9,32,0.45)] transition-shadow hover:shadow-[0_8px_28px_-4px_rgba(6,9,32,0.55)]"
         >
           <AnimatePresence mode="wait">
             {isGlobalMenuOpen ? (
@@ -321,7 +321,7 @@ export function AppRouter() {
               animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
               exit={{ opacity: 0, x: 40, y: -20, scale: 0.95 }}
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="fixed top-20 right-6 z-[58] w-72 bg-[#060920] rounded-3xl shadow-[0_24px_64px_-12px_rgba(6,9,32,0.7)] overflow-hidden"
+              className="fixed top-16 md:top-20 right-6 z-[58] w-[min(72vw,288px)] md:w-72 bg-[#060920] rounded-3xl shadow-[0_24px_64px_-12px_rgba(6,9,32,0.7)] overflow-hidden"
             >
               {/* Panel header */}
               <div className="px-6 pt-6 pb-4 border-b border-white/10">

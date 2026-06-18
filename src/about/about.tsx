@@ -40,9 +40,9 @@ export function AboutPage() {
   ];
 
   return (
-    <div className="relative bg-white pt-32">
+    <div className="relative bg-white pt-20 md:pt-32">
       {/* Hero */}
-      <section className="relative min-h-[60vh] flex items-center justify-center px-8 md:px-16 py-20">
+      <section className="relative min-h-[50vh] flex items-center justify-center px-5 md:px-16 py-12 md:py-20">
         <div className="max-w-4xl w-full mx-auto space-y-8">
           <motion.h1
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
@@ -77,8 +77,8 @@ export function AboutPage() {
       </section>
 
       {/* Mission & Vision */}
-      <section className="relative py-20 px-8 md:px-16 bg-white">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
+      <section className="relative py-12 md:py-20 px-5 md:px-16 bg-white">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
           <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: false }} transition={{ duration: 0.8 }}>
             <h2 style={{ fontFamily: 'var(--font-display)', color: '#060920' }} className="text-2xl mb-4 tracking-tight">
               {t("Bizning missiyamiz", "Наша миссия")}
@@ -103,9 +103,9 @@ export function AboutPage() {
       </section>
 
       {/* Values */}
-      <section className="relative py-20 px-8 md:px-16">
+      <section className="relative py-12 md:py-20 px-5 md:px-16">
         <div className="max-w-6xl mx-auto">
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', color: '#060920' }} className="text-center mb-12 tracking-tight">
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', color: '#060920' }} className="text-center mb-8 md:mb-12 tracking-tight">
             {t("Qadriyatlarimiz", "Наши ценности")}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-x-12 gap-y-10">

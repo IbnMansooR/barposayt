@@ -88,9 +88,9 @@ export function ContactPage() {
   ].filter((s) => s.link);
 
   return (
-    <div className="relative bg-white pt-32">
+    <div className="relative bg-white pt-20 md:pt-32">
       {/* Hero Section */}
-      <section className="relative min-h-[60vh] flex items-center justify-center px-8 md:px-16 py-20 overflow-hidden">
+      <section className="relative min-h-[50vh] flex items-center justify-center px-5 md:px-16 py-12 md:py-20 overflow-hidden">
         <div className="max-w-5xl w-full mx-auto text-center space-y-8">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -128,9 +128,9 @@ export function ContactPage() {
       </section>
 
       {/* Contact Methods Grid */}
-      <section className="relative py-24 px-8 md:px-16">
+      <section className="relative py-12 md:py-24 px-5 md:px-16">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-8 md:gap-x-12 md:gap-y-10">
             {contactMethods.map((method, i) => (
               <motion.div
                 key={method.title[0]}
@@ -168,7 +168,7 @@ export function ContactPage() {
       </section>
 
       {/* Tezkor aloqa — Murojaat formasi */}
-      <section className="relative py-24 px-8 md:px-16 bg-white">
+      <section className="relative py-12 md:py-24 px-5 md:px-16 bg-white">
         <div className="max-w-3xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
