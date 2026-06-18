@@ -34,7 +34,7 @@ export function FloorSection({
       whileInView={{ opacity: 1, x: 0, y: 0 }}
       viewport={{ once: false, margin: "-100px" }}
       transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-      className={`space-y-6 w-full ${isCenter ? "max-w-3xl mx-auto text-center" : "max-w-xl"}`}
+      className={`space-y-6 w-full ${isCenter ? "max-w-3xl mx-auto text-center" : "max-w-2xl"}`}
     >
       <motion.h2
         initial={{ opacity: 0, y: 20 }}
@@ -42,7 +42,7 @@ export function FloorSection({
         viewport={{ once: false }}
         transition={{ duration: 1, delay: 0.4 }}
         className="leading-[1.2] tracking-tight"
-        style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.875rem, 3.75vw, 3rem)' }}
+        style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 3.5vw, 3.5rem)' }}
       >
         {barpo(title)}
       </motion.h2>
@@ -53,8 +53,8 @@ export function FloorSection({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false }}
           transition={{ duration: 1, delay: 0.5 }}
-          className="leading-relaxed tracking-wide opacity-70 max-w-lg"
-          style={{ fontFamily: 'var(--font-body)', fontSize: 'clamp(0.9rem, 1.35vw, 1.0125rem)', letterSpacing: '0.02em' }}
+          className="leading-relaxed tracking-wide opacity-70"
+          style={{ fontFamily: 'var(--font-body)', fontSize: 'clamp(1rem, 1.3vw, 1.2rem)', letterSpacing: '0.02em' }}
         >
           {barpo(description)}
         </motion.p>
@@ -66,7 +66,6 @@ export function FloorSection({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false }}
           transition={{ duration: 1, delay: 0.6 }}
-          style={{ zoom: 0.9 }}
         >
           {children}
         </motion.div>
@@ -77,14 +76,14 @@ export function FloorSection({
   // ── Rasmli (markaziy bo'lmagan) floor ──
   if (!isCenter && finalImage) {
     return (
-      <section className="relative flex flex-col md:flex-row">
-        {/* Rasm — mobil: 45vw balandlik, desktop: to'liq balandlik */}
+      <section className="relative min-h-screen flex flex-col md:flex-row">
+        {/* Rasm — mobil: 42vh, desktop: to'liq balandlik */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: false }}
           transition={{ duration: 1 }}
-          className={`relative w-full overflow-hidden h-[45vw] md:h-auto md:w-1/2 md:self-stretch ${isLeft ? "md:order-2" : "md:order-1"}`}
+          className={`relative w-full h-[42vh] md:h-auto md:w-1/2 overflow-hidden ${isLeft ? "md:order-2" : "md:order-1"}`}
         >
           <motion.img
             src={finalImage}
@@ -98,7 +97,7 @@ export function FloorSection({
         </motion.div>
 
         {/* Matn yarmi */}
-        <div className={`w-full md:w-1/2 flex items-center px-5 md:px-16 py-10 md:py-16 ${isLeft ? "md:order-1" : "md:order-2"}`}>
+        <div className={`w-full md:w-1/2 flex items-center px-8 md:px-14 py-12 md:py-16 ${isLeft ? "md:order-1" : "md:order-2"}`}>
           {textBlock}
         </div>
       </section>
