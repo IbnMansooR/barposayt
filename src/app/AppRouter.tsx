@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useLang, useT } from "./i18n";
 import Lenis from "lenis";
-import Snap from "lenis/snap";
 
 import App from "./App";
 import { ServicesPage } from "../services/services";
@@ -62,34 +61,6 @@ export function AppRouter() {
     return () => { cancelAnimationFrame(raf); lenis.destroy(); lenisRef.current = null; (window as any).__barpoLenis = null; };
   }, []);
 
-  // Bosh sahifa floor'lari uchun yumshoq snap + speedramp.
-  // type "proximity": faqat floor chegarasiga yaqin kelganda snap qiladi — bir ekrandan
-  // baland floor'lar to'liq o'qiladi (matn kesilmaydi). Har floor ~1 ekran bo'lgani uchun
-  // settle bo'lganda eng yaqin floor topiga olib boradi ("1 scroll = 1 floor" hissi).
-  // easeInOutCubic = speedramp (tezlanib-sekinlashish).
-  useEffect(() => {
-    if (currentPage !== "home") return;
-    let snap: Snap | null = null;
-    let cancelled = false;
-    let raf = 0;
-    const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-    const setup = () => {
-      if (cancelled) return;
-      const lenis = lenisRef.current;
-      const sections = Array.from(document.querySelectorAll("section")) as HTMLElement[];
-      // App mount bo'lib floor'lar paydo bo'lguncha kutamiz
-      if (!lenis || sections.length < 5) { raf = requestAnimationFrame(setup); return; }
-      snap = new Snap(lenis, {
-        type: "proximity",
-        duration: 1.1,
-        easing: easeInOutCubic,
-        debounce: 350,
-      });
-      snap.addElements(sections, { align: ["start"] });
-    };
-    raf = requestAnimationFrame(setup);
-    return () => { cancelled = true; cancelAnimationFrame(raf); if (snap) snap.destroy(); };
-  }, [currentPage]);
 
   // Close global menu on Escape
   useEffect(() => {

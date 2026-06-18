@@ -75,18 +75,16 @@ export function FloorSection({
   );
 
   // ── Rasmli (markaziy bo'lmagan) floor ──
-  // Desktop: rasm sticky (full-screen balandlik), matn yonida erkin scroll
-  // Mobil: rasm 42vh tepada, matn pastida
   if (!isCenter && finalImage) {
     return (
       <section className="relative flex flex-col md:flex-row">
-        {/* Rasm — mobil: 42vh, desktop: sticky full-screen */}
+        {/* Rasm — mobil: 45vw balandlik, desktop: to'liq balandlik */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: false }}
           transition={{ duration: 1 }}
-          className={`relative w-full h-[42vh] overflow-hidden shrink-0 md:sticky md:top-0 md:h-screen md:w-1/2 ${isLeft ? "md:order-2" : "md:order-1"}`}
+          className={`relative w-full overflow-hidden h-[45vw] md:h-auto md:w-1/2 md:self-stretch ${isLeft ? "md:order-2" : "md:order-1"}`}
         >
           <motion.img
             src={finalImage}
@@ -99,8 +97,8 @@ export function FloorSection({
           />
         </motion.div>
 
-        {/* Matn — erkin o'sadi, rasm yonida sticky turadi */}
-        <div className={`w-full md:w-1/2 flex flex-col justify-center px-5 md:px-16 py-14 md:py-24 min-h-screen ${isLeft ? "md:order-1" : "md:order-2"}`}>
+        {/* Matn yarmi */}
+        <div className={`w-full md:w-1/2 flex items-center px-5 md:px-16 py-10 md:py-16 ${isLeft ? "md:order-1" : "md:order-2"}`}>
           {textBlock}
         </div>
       </section>
