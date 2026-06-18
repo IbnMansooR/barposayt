@@ -84,7 +84,7 @@ export function FloorSection({
           whileInView={{ opacity: 1 }}
           viewport={{ once: false }}
           transition={{ duration: 1 }}
-          className={`relative w-full h-[38vh] md:h-auto md:w-1/4 overflow-hidden ${isLeft ? "md:order-2" : "md:order-1"}`}
+          className={`relative w-full h-[42vh] md:h-auto md:w-1/2 overflow-hidden ${isLeft ? "md:order-2" : "md:order-1"}`}
         >
           <motion.img
             src={finalImage}
@@ -98,7 +98,7 @@ export function FloorSection({
         </motion.div>
 
         {/* Matn yarmi */}
-        <div className={`w-full md:w-3/4 flex items-center px-5 md:px-16 py-10 md:py-12 ${isLeft ? "md:order-1" : "md:order-2"}`}>
+        <div className={`w-full md:w-1/2 flex items-center px-5 md:px-16 py-10 md:py-12 ${isLeft ? "md:order-1" : "md:order-2"}`}>
           {textBlock}
         </div>
       </section>
