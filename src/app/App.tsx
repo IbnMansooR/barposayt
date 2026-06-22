@@ -630,6 +630,8 @@ export default function App() {
             </div>
           ) : (
           <form className="space-y-4" onSubmit={handleContactSubmit}>
+            {/* Honeypot — botlar uchun, odamlar ko'rmaydi */}
+            <input type="text" name="_hp" tabIndex={-1} autoComplete="off" style={{ position: "absolute", left: "-9999px", opacity: 0, pointerEvents: "none" }} aria-hidden="true" />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input
                 type="text"

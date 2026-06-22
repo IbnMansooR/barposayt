@@ -203,6 +203,8 @@ export function TakliflarPage() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="mt-6 space-y-3">
+              {/* Honeypot — botlar uchun, odamlar ko'rmaydi */}
+              <input type="text" name="_hp" tabIndex={-1} autoComplete="off" style={{ position: "absolute", left: "-9999px", opacity: 0, pointerEvents: "none" }} aria-hidden="true" />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <input type="text" name="fullName" placeholder={t("Ism-sharif (ixtiyoriy)", "Ф.И.О. (необязательно)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
                 <input type="tel" name="phone" placeholder={t("Telefon (ixtiyoriy)", "Телефон (необязательно)")} inputMode="tel"

@@ -9,6 +9,7 @@
 import {
   readArray, writeArray, readJson, writeJson,
   getFile, putFile, listFiles, deleteFile, deleteFiles,
+  checkRateLimit,
 } from './store.mjs'
 
 // ---------- Adminlar / ruxsatlar ----------
@@ -30,6 +31,11 @@ function defaultPerms(value = true) {
 
 function genId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8)
+}
+function getClientIp(req) {
+  const fwd = req.headers?.['x-forwarded-for']
+  if (fwd) return String(fwd).split(',')[0].trim()
+  return req.socket?.remoteAddress || 'unknown'
 }
 function htmlEscape(v) {
   return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -422,8 +428,14 @@ export async function handleApi(req, res) {
     // ===== Ommaviy POST'lar (forma) =====
     if (p === '/api/suggestions' && method === 'POST') {
       const body = await getJson(req)
+      if (body._hp) return json(400, { ok: false, error: "Noto'g'ri so'rov." })
+      const ip = getClientIp(req)
+      if (!(await checkRateLimit(`suggestions:${ip}`, 3, 10 * 60 * 1000)))
+        return json(429, { ok: false, error: "Juda ko'p so'rov yuborildingiz. 10 daqiqadan keyin qayta urinib ko'ring." })
       if (!body.subject || !String(body.subject).trim() || !body.message || !String(body.message).trim())
         return json(400, { ok: false, error: 'Mavzu va xabar majburiy' })
+      if (String(body.message).length > 5000 || String(body.subject).length > 300)
+        return json(400, { ok: false, error: "Matn juda uzun." })
       const list = await readArray('suggestions')
       const rec = { id: genId(), fullName: body.fullName || '', phone: body.phone || '', category: body.category || '', subject: body.subject, message: body.message, submittedAt: new Date().toISOString() }
       list.unshift(rec); await writeArray('suggestions', list)
@@ -432,8 +444,14 @@ export async function handleApi(req, res) {
     }
     if (p === '/api/contact' && method === 'POST') {
       const body = await getJson(req)
+      if (body._hp) return json(400, { ok: false, error: "Noto'g'ri so'rov." })
+      const ip = getClientIp(req)
+      if (!(await checkRateLimit(`contact:${ip}`, 3, 10 * 60 * 1000)))
+        return json(429, { ok: false, error: "Juda ko'p so'rov yuborildingiz. 10 daqiqadan keyin qayta urinib ko'ring." })
       if (!body.fullName || !String(body.fullName).trim() || !body.phone || !String(body.phone).trim())
         return json(400, { ok: false, error: 'Ism va telefon majburiy' })
+      if (String(body.fullName).length > 200 || String(body.phone).length > 30 || String(body.message || '').length > 3000)
+        return json(400, { ok: false, error: "Matn juda uzun." })
       const list = await readArray('contacts')
       const rec = { id: genId(), fullName: body.fullName, phone: body.phone, email: body.email || '', company: body.company || '', message: body.message || '', submittedAt: new Date().toISOString() }
       list.unshift(rec); await writeArray('contacts', list)
@@ -442,6 +460,10 @@ export async function handleApi(req, res) {
     }
     if (p === '/api/apply' && method === 'POST') {
       const body = fields(req)
+      if (body._hp) return json(400, { ok: false, error: "Noto'g'ri so'rov." })
+      const ip = getClientIp(req)
+      if (!(await checkRateLimit(`apply:${ip}`, 2, 60 * 60 * 1000)))
+        return json(429, { ok: false, error: "Siz allaqachon ariza yuborgansiz. 1 soatdan keyin qayta urinib ko'ring." })
       for (const key of ['fullName', 'field', 'phone'])
         if (!body[key] || !String(body[key]).trim()) return json(400, { ok: false, error: `Majburiy maydon to'ldirilmagan: ${key}` })
       const id = genId()

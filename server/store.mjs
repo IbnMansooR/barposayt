@@ -102,4 +102,20 @@ export async function deleteFiles(kind, pathKeys) {
   try { await sb().storage.from(bucketFor(kind)).remove(pathKeys) } catch (e) { console.error('[store.deleteFiles]', e?.message || e) }
 }
 
+// ---------- Rate limiter (Supabase KV orqali) ----------
+// Har oyna (windowMs ms) da bitta IP dan maxCount so'rovgacha ruxsat beradi.
+// Returns: true = ruxsat, false = bloklangan
+export async function checkRateLimit(key, maxCount = 3, windowMs = 10 * 60 * 1000) {
+  try {
+    const windowId = Math.floor(Date.now() / windowMs)
+    const rlKey = `rl:${key}:${windowId}`
+    const count = await readJson(rlKey, 0)
+    if (count >= maxCount) return false
+    await writeJson(rlKey, count + 1)
+    return true
+  } catch {
+    return true // DB xatosi -> o'tkazib yuboramiz
+  }
+}
+
 export { BUCKET_IMAGES, BUCKET_RESUMES }
