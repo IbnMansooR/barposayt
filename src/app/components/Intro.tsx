@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "motion/react";
-import renderImg from "../../assets/render.jpg";
-import renderMobImg from "../../assets/render-mob.jpg";
+import renderImg from "../../assets/render.webp";
+import renderMobImg from "../../assets/render-mob.webp";
 import cloudImg from "../../assets/cloud.png";
 import logoWhite from "../../assets/oqlogo.png";
 import { useT } from "../i18n";
@@ -114,12 +114,16 @@ export function Intro() {
         <img
           src={renderImg}
           alt=""
+          fetchPriority="high"
+          decoding="async"
           className={"hidden md:block w-full h-full object-cover " + (phase >= 1 ? "barpo-pan" : "")}
           style={{ objectPosition: "center 0%" }}
         />
         <img
           src={renderMobImg}
           alt=""
+          fetchPriority="high"
+          decoding="async"
           className={"md:hidden w-full h-full object-cover " + (phase >= 1 ? "barpo-pan" : "")}
           style={{ objectPosition: "center 0%" }}
         />

@@ -1,1 +1,2 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap');
+/* Shriftlar index.html'da <link rel="preconnect"> + <link rel="stylesheet"> orqali yuklanadi
+   (CSS @import render-blocking edi — endi tezroq). */

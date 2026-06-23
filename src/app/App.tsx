@@ -94,12 +94,13 @@ export default function App() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, delay: 0.5 }}
-        className="fixed top-0 left-0 right-0 z-40 px-5 md:px-16 py-4 md:py-8 bg-white/95 backdrop-blur-sm border-b border-[#060920]/10"
+        className="fixed top-0 left-0 right-0 z-40 px-5 md:px-16 py-4 md:py-8 bg-white/95 border-b border-[#060920]/10"
       >
         <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <img 
-            src={logo} 
-            alt="BARPO Logo" 
+          <img
+            src={logo}
+            alt="BARPO Logo"
+            decoding="async"
             className="h-8 cursor-pointer hover:opacity-80 transition-opacity"
           />
 
@@ -133,6 +134,7 @@ export default function App() {
                   <img
                     src={logoHero}
                     alt="BARPO"
+                    decoding="async"
                     style={{ height: '1em', display: 'inline-block', transform: 'translateY(0.05em)' }}
                   />
                 )}
@@ -275,7 +277,7 @@ export default function App() {
               key={service.title[0]}
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false }}
+              viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.3 + i * 0.08 }}
               className="space-y-3"
             >
@@ -307,7 +309,7 @@ export default function App() {
               key={item.num}
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: false }}
+              viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.3 + i * 0.08 }}
               className="flex gap-4 items-start"
             >
@@ -332,7 +334,7 @@ export default function App() {
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: false }}
+          viewport={{ once: true }}
           transition={{ duration: 1, delay: 0.8 }}
           className="mt-8 space-y-4"
         >
@@ -372,7 +374,7 @@ export default function App() {
                 key={step[0]}
                 initial={{ opacity: 0, x: 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: false }}
+                viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.5 + i * 0.08 }}
                 className="flex items-center gap-4"
               >
@@ -418,7 +420,7 @@ export default function App() {
                   href={`#project-${project.id}`}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: false }}
+                  viewport={{ once: true }}
                   transition={{ duration: 0.8, delay: 0.5 + i * 0.1 }}
                   whileHover={{ y: -4 }}
                   className="block cursor-pointer bg-white rounded-3xl p-7 shadow-[0_12px_32px_-12px_rgba(6,9,32,0.20)] hover:shadow-[0_18px_44px_-12px_rgba(6,9,32,0.28)] transition-shadow"
@@ -475,7 +477,7 @@ export default function App() {
                 key={item.label}
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false }}
+                viewport={{ once: true }}
                 transition={{ duration: 0.7, delay: 0.5 + i * 0.08 }}
                 className="space-y-3"
               >
@@ -490,7 +492,7 @@ export default function App() {
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            viewport={{ once: false }}
+            viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.8 }}
             className="pt-4 border-t border-[#060920]/10"
           >
@@ -527,7 +529,7 @@ export default function App() {
               key={item.num}
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: false }}
+              viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.5 + i * 0.1 }}
               className="flex gap-5 items-start"
             >
@@ -538,7 +540,7 @@ export default function App() {
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            viewport={{ once: false }}
+            viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.9 }}
             className="pt-5 border-t border-[#060920]/10"
           >
@@ -572,7 +574,7 @@ export default function App() {
                 key={word[0]}
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false }}
+                viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.5 + i * 0.07 }}
                 className="w-fit"
               >
@@ -586,7 +588,7 @@ export default function App() {
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false }}
+            viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.9 }}
             style={{ fontFamily: 'var(--font-body)' }}
             className="text-[#060920]/60 leading-relaxed"
@@ -607,7 +609,7 @@ export default function App() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false }}
+          viewport={{ once: true }}
           transition={{ duration: 1, delay: 0.8 }}
           className="mt-8 space-y-6"
         >

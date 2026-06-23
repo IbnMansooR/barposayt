@@ -33,6 +33,8 @@ export function Footer() {
               <img
                 src={logoLight}
                 alt="BARPO Logo"
+                loading="lazy"
+                decoding="async"
                 className="h-10 mb-4 cursor-pointer hover:opacity-80 transition-opacity"
               />
             </a>

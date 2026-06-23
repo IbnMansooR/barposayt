@@ -67,5 +67,19 @@ export default defineConfig(({ mode }) => {
       },
     },
     assetsInclude: ['**/*.svg', '**/*.csv'],
+    build: {
+      chunkSizeWarningLimit: 900,
+      rollupOptions: {
+        output: {
+          // Kam o'zgaradigan yirik kutubxonalar alohida chunk — deploy'lar orasida
+          // kesh saqlanadi. lucide-react ataylab bu yerda yo'q (per-icon tree-shake).
+          manualChunks: {
+            'react-vendor': ['react', 'react-dom'],
+            'motion-vendor': ['motion'],
+            'lenis': ['lenis'],
+          },
+        },
+      },
+    },
   }
 })

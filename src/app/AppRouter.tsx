@@ -1,33 +1,40 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, lazy, Suspense } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useLang, useT } from "./i18n";
 import Lenis from "lenis";
 
+// Bosh sahifa (App) eager — bu LCP sahifa, birinchi paint.
+// Footer va PageReveal ham eager — ular lazy sahifalar atrofida darhol chiziladi.
 import App from "./App";
-import { ServicesPage } from "../services/services";
-import { StandardPage } from "../standart/standard";
-import { CulturePage } from "../standart/culture";
-import { ProjectsPage } from "../projects/projects";
-import { ProjectDetailPage } from "../projects/projectDetail";
-import { ContactPage } from "../contacts/contacts";
-import { AboutPage } from "../about/about";
-import { HRPage } from "../hr/hr";
-import { TakliflarPage } from "../takliflar/takliflar";
-import { AdminPage } from "../admin/admin";
-import { JarayonPage } from "../jarayon/jarayon";
-import { OrnamentDetailPage } from "../standart/ornamentDetail";
-import { FoydaPage } from "../foyda/foyda";
-import { RahbarPage } from "../rahbar/rahbar";
-import { JamoaPage } from "../jamoa/jamoa";
-import { BlogPage } from "../blog/blog";
-import { BlogDetailPage } from "../blog/blogDetail";
-import { NazoratPage } from "../nazorat/nazorat";
+import { Footer } from "./components/Footer";
+import { PageReveal } from "./components/PageReveal";
+
+// Qolgan barcha sahifalar lazy — faqat o'sha sahifa ochilganda yuklanadi.
+// Bu bosh sahifaning boshlang'ich JS yukini keskin yengillashtiradi
+// (admin/admin.tsx ~2000 qator va boshqa ~17 sahifa endi initial bundle'da emas).
+// Hammasi named export, shuning uchun .then(m => ({ default: m.Xxx })) bilan o'raladi.
+const ServicesPage = lazy(() => import("../services/services").then((m) => ({ default: m.ServicesPage })));
+const StandardPage = lazy(() => import("../standart/standard").then((m) => ({ default: m.StandardPage })));
+const CulturePage = lazy(() => import("../standart/culture").then((m) => ({ default: m.CulturePage })));
+const ProjectsPage = lazy(() => import("../projects/projects").then((m) => ({ default: m.ProjectsPage })));
+const ProjectDetailPage = lazy(() => import("../projects/projectDetail").then((m) => ({ default: m.ProjectDetailPage })));
+const ContactPage = lazy(() => import("../contacts/contacts").then((m) => ({ default: m.ContactPage })));
+const AboutPage = lazy(() => import("../about/about").then((m) => ({ default: m.AboutPage })));
+const HRPage = lazy(() => import("../hr/hr").then((m) => ({ default: m.HRPage })));
+const TakliflarPage = lazy(() => import("../takliflar/takliflar").then((m) => ({ default: m.TakliflarPage })));
+const AdminPage = lazy(() => import("../admin/admin").then((m) => ({ default: m.AdminPage })));
+const JarayonPage = lazy(() => import("../jarayon/jarayon").then((m) => ({ default: m.JarayonPage })));
+const OrnamentDetailPage = lazy(() => import("../standart/ornamentDetail").then((m) => ({ default: m.OrnamentDetailPage })));
+const FoydaPage = lazy(() => import("../foyda/foyda").then((m) => ({ default: m.FoydaPage })));
+const RahbarPage = lazy(() => import("../rahbar/rahbar").then((m) => ({ default: m.RahbarPage })));
+const JamoaPage = lazy(() => import("../jamoa/jamoa").then((m) => ({ default: m.JamoaPage })));
+const BlogPage = lazy(() => import("../blog/blog").then((m) => ({ default: m.BlogPage })));
+const BlogDetailPage = lazy(() => import("../blog/blogDetail").then((m) => ({ default: m.BlogDetailPage })));
+const NazoratPage = lazy(() => import("../nazorat/nazorat").then((m) => ({ default: m.NazoratPage })));
 // Xavf kalkulyatori vaqtincha saytdan olib qo'yilgan (fayl saqlanadi: src/kalkulyator/kalkulyator.tsx).
 // Qaytarish uchun: shu importni, menyu elementini va "kalkulyator" case'ini tiklash kifoya.
 // import { KalkulyatorPage } from "../kalkulyator/kalkulyator";
-import { LugatPage } from "../lugat/lugat";
-import { Footer } from "./components/Footer";
-import { PageReveal } from "./components/PageReveal";
+const LugatPage = lazy(() => import("../lugat/lugat").then((m) => ({ default: m.LugatPage })));
 
 import logo from '../assets/logo.png';
 
@@ -70,6 +77,24 @@ export function AppRouter() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
+
+  // Bosh sahifa ochilgach, eng ko'p bosiladigan sahifa chunklarini fon rejimida
+  // (browser bo'sh bo'lganda) oldindan yuklaymiz — birinchi navigatsiya tez bo'ladi.
+  // Admin (boshqaruv) ataylab yuklanmaydi — u faqat kerak bo'lganda olinadi.
+  useEffect(() => {
+    if (currentPage !== "home") return;
+    const warm = () => {
+      import("../contacts/contacts");
+      import("../services/services");
+      import("../takliflar/takliflar");
+    };
+    const ric = (window as any).requestIdleCallback as undefined | ((cb: () => void) => number);
+    const id = ric ? ric(warm) : window.setTimeout(warm, 1500);
+    return () => {
+      const cic = (window as any).cancelIdleCallback as undefined | ((h: number) => void);
+      if (cic) cic(id); else clearTimeout(id);
+    };
+  }, [currentPage]);
 
   // All pages for global menu
   const allNavItems = [
@@ -160,7 +185,7 @@ export function AppRouter() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.5 }}
-          className="fixed top-0 left-0 right-0 z-40 px-5 md:px-16 py-4 md:py-8 bg-white/95 backdrop-blur-sm border-b border-[#060920]/10"
+          className="fixed top-0 left-0 right-0 z-40 px-5 md:px-16 py-4 md:py-8 bg-white/95 border-b border-[#060920]/10"
         >
           <div className="flex items-center justify-between max-w-7xl mx-auto">
             <a href="#home" className="flex-shrink-0">
@@ -348,8 +373,10 @@ export function AppRouter() {
         )}
       </AnimatePresence>
 
-      {/* Page Content */}
-      {renderPage()}
+      {/* Page Content — lazy sahifalar chunk yuklanguncha oq parda ko'rsatiladi */}
+      <Suspense fallback={<div className="fixed inset-0 z-[30] bg-white" />}>
+        {renderPage()}
+      </Suspense>
 
       {/* Footer — bosh sahifa (o'zi ko'rsatadi) va admin'dan tashqari barcha sahifalarda */}
       {currentPage !== "home" && currentPage !== "boshqaruv" && currentPage !== "projects" && currentPage !== "takliflar" && <Footer />}
