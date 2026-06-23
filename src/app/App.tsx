@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, useScroll } from "motion/react";
 import logo from '../assets/logo.png';
-import logoHero from '../assets/Logo dark night.png';
+import logoHero from '../assets/logo-dark.png';
 import { FloorSection } from "./components/FloorSection";
 import { SoftDivider } from "./components/SoftDivider";
 import { Footer } from "./components/Footer";

@@ -1,4 +1,4 @@
-import logoDark from "../../assets/Logo dark night.png"; // #060920 (to'q) matn joylari uchun
+import logoDark from "../../assets/logo-dark.png"; // #060920 (to'q) matn joylari uchun
 import logoLight from "../../assets/oqlogo.png";          // oq matn joylari uchun
 import { useLang } from "../i18n";
 
