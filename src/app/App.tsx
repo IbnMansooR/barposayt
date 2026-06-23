@@ -120,7 +120,7 @@ export default function App() {
               style={{
                 fontFamily: 'var(--font-display)',
                 fontSize: 'clamp(2.5rem, 6vw, 6rem)',
-                lineHeight: '1.1',
+                lineHeight: '1.25',
                 color: '#060920',
                 textShadow: 'none'
               }}
