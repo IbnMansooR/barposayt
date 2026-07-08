@@ -1,3 +1,4 @@
-@import './fonts.css';
+/* Shriftlar bu yerda @import qilinmaydi (render-blocking bo'lardi) — index.html'da
+   <link rel="preconnect"> + <link rel="stylesheet"> orqali to'g'ridan-to'g'ri yuklanadi. */
 @import './tailwind.css';
 @import './theme.css';
