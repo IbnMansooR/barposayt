@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { BarpoWord } from "../app/components/Barpo";
 import { useT } from "../app/i18n";
@@ -6,16 +6,21 @@ import { Eye, EyeOff } from "lucide-react";
 
 const CREDS_KEY = "barpo_admin_creds";
 
+// DIQQAT: parol bu yerda HECH QACHON saqlanmaydi — faqat login paytida
+// bir martalik almashinuvda ishlatiladi. Keyingi barcha so'rovlar server
+// bergan muddatli sessiya tokeni (Authorization sarlavhasi) orqali boradi.
 interface Creds {
+  token: string;
   username: string;
-  password: string;
   name: string;
 }
 
 function loadCreds(): Creds | null {
   try {
     const raw = sessionStorage.getItem(CREDS_KEY);
-    return raw ? (JSON.parse(raw) as Creds) : null;
+    const parsed = raw ? (JSON.parse(raw) as Partial<Creds>) : null;
+    if (!parsed || !parsed.token) return null;
+    return parsed as Creds;
   } catch {
     return null;
   }
@@ -24,7 +29,7 @@ function loadCreds(): Creds | null {
 type Tab = "projects" | "ornaments" | "offers" | "standards" | "investors" | "blog" | "sections" | "stats" | "suggestions" | "hr" | "contacts" | "settings" | "tasks" | "admins" | "services" | "culture";
 
 interface BlogArticle {
-  id: string; title: string; rubric: string; content: string;
+  id: string; title: string; titleRu?: string; rubric: string; rubricRu?: string; content: string; contentRu?: string;
   hasImage?: boolean; status: "draft" | "published"; createdAt: string; publishedAt?: string | null;
 }
 
@@ -35,7 +40,7 @@ const PERM_LABELS: { key: string; label: string; ru: string }[] = [
   { key: "standards", label: "Standartlar", ru: "Стандарты" },
   { key: "investors", label: "Investorlar", ru: "Инвесторы" },
   { key: "blog", label: "Bilim markazi", ru: "Центр знаний" },
-  { key: "offers", label: "Takliflar", ru: "Предложения" },
+  { key: "offers", label: "Cheklangan takliflar", ru: "Ограниченные предложения" },
   { key: "sections", label: "Bo'lim rasmlari", ru: "Изображения разделов" },
   { key: "stats", label: "Statistika", ru: "Статистика" },
   { key: "suggestions", label: "Kelgan takliflar", ru: "Поступившие предложения" },
@@ -47,7 +52,8 @@ const PERM_LABELS: { key: string; label: string; ru: string }[] = [
 ];
 
 interface AdminUser {
-  username: string; password: string; name: string;
+  // Parol hech qachon serverdan qaytarilmaydi (tahrirlash formasi bo'sh boshlanadi).
+  username: string; name: string;
   role: "superadmin" | "admin";
   perms: Record<string, boolean>;
 }
@@ -82,69 +88,62 @@ const DEFAULT_STATS: StatItem[] = [
 ];
 
 // Madaniyat va Xizmatlar sahifalaridagi rasm boxlari
-const SECTION_IMAGE_GROUPS: { group: string; groupRu: string; items: { key: string; label: string; ru: string }[] }[] = [
-  {
-    group: "Bosh sahifa qavatlari",
-    groupRu: "Этажи главной страницы",
-    items: [
-      { key: "floor-1", label: "1 · Yangi qurilish madaniyati", ru: "1 · Новая культура" },
-      { key: "floor-2", label: "2 · Biz haqimizda", ru: "2 · О нас" },
-      { key: "floor-3", label: "3 · Missiya", ru: "3 · Миссия" },
-      { key: "floor-4", label: "4 · BARPO nima qiladi", ru: "4 · Что делает BARPO" },
-      { key: "floor-5", label: "5 · Nima uchun BARPO", ru: "5 · Почему BARPO" },
-      { key: "floor-6", label: "6 · BARPO standarti", ru: "6 · Стандарт BARPO" },
-      { key: "floor-7", label: "7 · Qanday ishlaymiz", ru: "7 · Как мы работаем" },
-      { key: "floor-8", label: "8 · Loyihalar", ru: "8 · Проекты" },
-      { key: "floor-9", label: "9 · Hisobot va nazorat", ru: "9 · Отчётность и контроль" },
-      { key: "floor-10", label: "10 · Iqtisodiy foyda", ru: "10 · Экономическая выгода" },
-      { key: "floor-11", label: "11 · Milliy identitet", ru: "11 · Национальная идентичность" },
-      { key: "floor-12", label: "12 · Aloqa", ru: "12 · Контакты" },
-    ],
-  },
-  {
-    group: "Madaniyat sahifasi",
-    groupRu: "Страница «Культура»",
-    items: [
-      { key: "culture-0", label: "Tartib", ru: "Порядок" },
-      { key: "culture-1", label: "Hisob", ru: "Учёт" },
-      { key: "culture-2", label: "Intizom", ru: "Дисциплина" },
-      { key: "culture-3", label: "Hurmat", ru: "Уважение" },
-      { key: "culture-4", label: "Meros", ru: "Наследие" },
-    ],
-  },
-  {
-    group: "Xizmatlar sahifasi",
-    groupRu: "Страница «Услуги»",
-    items: [
-      { key: "service-1", label: "1 · Bosh pudratchi xizmatlari", ru: "1 · Услуги генподрядчика" },
-      { key: "service-2", label: "2 · Qurilish-montaj ishlari", ru: "2 · Строительно-монтажные работы" },
-      { key: "service-3", label: "3 · Fasad va tashqi ishlar", ru: "3 · Фасад и наружные работы" },
-      { key: "service-4", label: "4 · Pardozlash ishlari", ru: "4 · Отделочные работы" },
-      { key: "service-5", label: "5 · Muhandislik tizimlari", ru: "5 · Инженерные системы" },
-    ],
-  },
-  {
-    group: "Investorlar sahifasi",
-    groupRu: "Страница «Инвесторам»",
-    items: [
-      { key: "investor-0", label: "1 · Investor konsepsiyasi", ru: "1 · Концепция инвестора" },
-      { key: "investor-1", label: "2 · Investor konsepsiyasi", ru: "2 · Концепция инвестора" },
-      { key: "investor-2", label: "3 · Investor konsepsiyasi", ru: "3 · Концепция инвестора" },
-      { key: "investor-3", label: "4 · Investor konsepsiyasi", ru: "4 · Концепция инвестора" },
-      { key: "investor-4", label: "5 · Investor konsepsiyasi", ru: "5 · Концепция инвестора" },
-    ],
-  },
-];
+// Xizmatlar/Madaniyat guruhlari data.services / data.cultureElements'dan DINAMIK tuziladi
+// (elementning haqiqiy .id'si bo'yicha) — shunda rasm biriktiruvi elementlar
+// qo'shilsa/o'chirilsa/tartibi o'zgarsa ham to'g'ri elementga bog'liq bo'lib qoladi.
+// "Investorlar sahifasi" guruhi ataylab yo'q: investor kartalari hech qachon rasm
+// ko'rsatmaydi (faqat matn), shuning uchun bu yerda mavjud bo'lgan eski investor-0..4
+// slotlari hech qachon hech qaerda render qilinmagan — o'lik UI edi, olib tashlandi.
+function sectionImageGroups(data: AdminData): { group: string; groupRu: string; items: { key: string; label: string; ru: string }[] }[] {
+  return [
+    {
+      group: "Bosh sahifa qavatlari",
+      groupRu: "Этажи главной страницы",
+      items: [
+        { key: "floor-1", label: "1 · Yangi qurilish madaniyati", ru: "1 · Новая культура строительства" },
+        { key: "floor-2", label: "2 · Biz haqimizda", ru: "2 · О нас" },
+        { key: "floor-3", label: "3 · Missiya", ru: "3 · Миссия" },
+        { key: "floor-4", label: "4 · BARPO nima qiladi", ru: "4 · Что делает BARPO" },
+        { key: "floor-5", label: "5 · Nima uchun BARPO", ru: "5 · Почему BARPO" },
+        { key: "floor-6", label: "6 · BARPO standarti", ru: "6 · Стандарт BARPO" },
+        { key: "floor-7", label: "7 · Qanday ishlaymiz", ru: "7 · Как мы работаем" },
+        { key: "floor-8", label: "8 · Loyihalar", ru: "8 · Проекты" },
+        { key: "floor-9", label: "9 · Hisobot va nazorat", ru: "9 · Отчётность и контроль" },
+        { key: "floor-10", label: "10 · Iqtisodiy foyda", ru: "10 · Экономическая выгода" },
+        { key: "floor-11", label: "11 · Milliy identitet", ru: "11 · Национальная идентичность" },
+        { key: "floor-12", label: "12 · Aloqa", ru: "12 · Контакты" },
+      ],
+    },
+    {
+      group: "Madaniyat sahifasi",
+      groupRu: "Страница «Культура»",
+      items: (data.cultureElements ?? []).map((e, i) => ({
+        key: `culture-${e.id}`,
+        label: `${i + 1} · ${e.titleUz || "?"}`,
+        ru: `${i + 1} · ${e.titleRu || e.titleUz || "?"}`,
+      })),
+    },
+    {
+      group: "Xizmatlar sahifasi",
+      groupRu: "Страница «Услуги»",
+      items: (data.services ?? []).map((s, i) => ({
+        key: `service-${s.id}`,
+        label: `${i + 1} · ${s.titleUz || "?"}`,
+        ru: `${i + 1} · ${s.titleRu || s.titleUz || "?"}`,
+      })),
+    },
+  ];
+}
 
 interface Project {
-  id: string; name: string; location: string; area: string; year: string;
-  status: string; description: string; details: string; features: string;
-  direction?: string; task?: string; solution?: string; result?: string;
-  workType?: string; duration?: string; role?: string; problem?: string; process?: string;
+  id: string; name: string; nameRu?: string; location: string; locationRu?: string; area: string; areaRu?: string; year: string;
+  status: string; statusRu?: string; description: string; descriptionRu?: string; details: string; detailsRu?: string; features: string; featuresRu?: string;
+  direction?: string; directionRu?: string; task?: string; taskRu?: string; solution?: string; solutionRu?: string; result?: string; resultRu?: string;
+  workType?: string; workTypeRu?: string; duration?: string; durationRu?: string; role?: string; roleRu?: string; problem?: string; problemRu?: string; process?: string; processRu?: string;
   hasImage?: boolean; active: boolean; createdAt: string;
 }
 interface Offer {
-  id: string; title: string; description: string; tag: string; active: boolean; createdAt: string;
+  id: string; title: string; titleRu?: string; description: string; descriptionRu?: string; tag: string; tagRu?: string; active: boolean; createdAt: string;
 }
 interface HRRecord {
   fullName: string; field: string; experienceYears: string; phone: string;
@@ -159,14 +158,14 @@ interface Contact {
   id: string; fullName: string; phone: string; company: string; message: string; submittedAt: string;
 }
 interface Ornament {
-  id: string; old: string; new: string; desc: string; history: string;
+  id: string; old: string; oldRu?: string; new: string; newRu?: string; desc: string; descRu?: string; history: string; historyRu?: string;
   hasImage?: boolean; active: boolean; createdAt: string;
 }
 interface Standard {
-  id: string; title: string; desc: string; active: boolean; createdAt: string;
+  id: string; title: string; titleRu?: string; desc: string; descRu?: string; active: boolean; createdAt: string;
 }
 interface Investor {
-  id: string; title: string; text: string; key: string; active: boolean; createdAt: string;
+  id: string; title: string; titleRu?: string; text: string; textRu?: string; key: string; keyRu?: string; active: boolean; createdAt: string;
 }
 interface HistoryEntry {
   id: string; actor: string; action: string; time: string;
@@ -235,31 +234,57 @@ export function AdminPage() {
   const [showCultureModal, setShowCultureModal] = useState(false);
   const [editingAdmin, setEditingAdmin] = useState<AdminUser | null>(null);
   const [showAdminModal, setShowAdminModal] = useState(false);
+  const [showAdminPass, setShowAdminPass] = useState(false);
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [saving, setSaving] = useState(false);
   const [settings, setSettings] = useState<Settings>({ notifyEmails: [], notifyEmailsByType: { hr: [], suggestion: [], contact: [] }, smtp: {}, sheetsWebhook: "", telegram: emptyTg(), telegramByType: { hr: emptyTg(), suggestion: emptyTg(), contact: emptyTg() }, socials: { telegram: "", instagram: "", facebook: "", youtube: "" }, contactInfo: { phone: "", email: "", address: "" } });
   const [settingsMsg, setSettingsMsg] = useState("");
 
   const isLoggedIn = !!creds;
-  // Har bir admin so'rovi uchun autentifikatsiya query-string
-  const authQS = () =>
-    `username=${encodeURIComponent(creds?.username || "")}&password=${encodeURIComponent(creds?.password || "")}`;
 
   const inputClass =
     "w-full px-4 py-3 bg-white/50 border border-[#060920]/15 text-[#060920] placeholder-[#060920]/40 focus:outline-none focus:border-[#060920]/40 transition-colors rounded-lg";
 
+  const handleLogout = useCallback(() => {
+    setCreds((prev) => {
+      if (prev?.token) fetch("/api/admin/logout", { method: "POST", headers: { Authorization: `Bearer ${prev.token}` } }).catch(() => {});
+      return null;
+    });
+    sessionStorage.removeItem(CREDS_KEY);
+    setData(null);
+  }, []);
+
+  // Barcha autentifikatsiyalangan so'rovlar shu yordamchi orqali o'tadi: token
+  // Authorization sarlavhasida yuboriladi — URL manzilida HECH QACHON parol
+  // (yoki hatto token) ko'rinmaydi. 401 kelsa, sessiya tugagan/bekor bo'lgan
+  // deb hisoblanadi (masalan, o'z loginingizni endigina o'zgartirgan bo'lsangiz)
+  // — avtomatik chiqib, login ekraniga qaytariladi.
+  const apiCall = useCallback(async (url: string, options: RequestInit = {}) => {
+    const headers = new Headers(options.headers || {});
+    if (creds?.token) headers.set("Authorization", `Bearer ${creds.token}`);
+    const res = await fetch(url, { ...options, headers });
+    if (res.status === 401) {
+      handleLogout();
+      throw new Error(t("Sessiya tugadi — qaytadan tizimga kiring", "Сессия истекла — войдите снова"));
+    }
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
+    return json;
+  }, [creds, handleLogout, t]);
+
+  // window.open / <a href> kabi to'g'ridan-to'g'ri navigatsiyalar maxsus
+  // sarlavha qo'sha olmaydi — shu bir nechta joyda (CSV eksport, rezyume
+  // yuklab olish) token URL query-parametri sifatida yuboriladi. Bu ham
+  // ochiq parol emas — muddati tugaydigan va chiqishda bekor qilinadigan token.
+  const authTokenQS = () => `token=${encodeURIComponent(creds?.token || "")}`;
+
   const loadData = useCallback(() => {
-    const c = loadCreds();
-    if (!c) return;
+    if (!creds?.token) return;
     setLoading(true);
     setFetchError("");
-    fetch(`/api/admin/data?username=${encodeURIComponent(c.username)}&password=${encodeURIComponent(c.password)}`)
-      .then((r) => r.json())
-      .then((json) => {
-        if (json.ok) setData(json.data);
-        else setFetchError(json.error || t("Ma'lumot olishda xatolik", "Ошибка при получении данных"));
-      })
-      .catch(() => setFetchError(t("Server bilan bog'lanib bo'lmadi", "Не удалось связаться с сервером")))
+    apiCall("/api/admin/data")
+      .then((json) => setData(json.data))
+      .catch((err) => setFetchError(err instanceof Error ? err.message : t("Ma'lumot olishda xatolik", "Ошибка при получении данных")))
       .finally(() => setLoading(false));
     fetch("/api/section-images")
       .then((r) => r.json())
@@ -269,11 +294,10 @@ export function AdminPage() {
       .then((r) => r.json())
       .then((j) => { if (j.ok && Array.isArray(j.stats) && j.stats.length) setStats(j.stats); })
       .catch(() => {});
-    fetch(`/api/admin/settings?username=${encodeURIComponent(c.username)}&password=${encodeURIComponent(c.password)}`)
-      .then((r) => r.json())
-      .then((j) => { if (j.ok && j.settings) setSettings({ notifyEmails: j.settings.notifyEmails || [], notifyEmailsByType: { hr: j.settings.notifyEmailsByType?.hr || [], suggestion: j.settings.notifyEmailsByType?.suggestion || [], contact: j.settings.notifyEmailsByType?.contact || [] }, smtp: j.settings.smtp || {}, sheetsWebhook: j.settings.sheetsWebhook || "", telegram: { botToken: j.settings.telegram?.botToken || "", chatIds: j.settings.telegram?.chatIds || [] }, telegramByType: { hr: { botToken: j.settings.telegramByType?.hr?.botToken || "", chatIds: j.settings.telegramByType?.hr?.chatIds || [] }, suggestion: { botToken: j.settings.telegramByType?.suggestion?.botToken || "", chatIds: j.settings.telegramByType?.suggestion?.chatIds || [] }, contact: { botToken: j.settings.telegramByType?.contact?.botToken || "", chatIds: j.settings.telegramByType?.contact?.chatIds || [] } }, socials: { telegram: j.settings.socials?.telegram || "", instagram: j.settings.socials?.instagram || "", facebook: j.settings.socials?.facebook || "", youtube: j.settings.socials?.youtube || "" }, contactInfo: { phone: j.settings.contactInfo?.phone || "", email: j.settings.contactInfo?.email || "", address: j.settings.contactInfo?.address || "" } }); })
+    apiCall("/api/admin/settings")
+      .then((j) => { if (j.settings) setSettings({ notifyEmails: j.settings.notifyEmails || [], notifyEmailsByType: { hr: j.settings.notifyEmailsByType?.hr || [], suggestion: j.settings.notifyEmailsByType?.suggestion || [], contact: j.settings.notifyEmailsByType?.contact || [] }, smtp: j.settings.smtp || {}, sheetsWebhook: j.settings.sheetsWebhook || "", telegram: { botToken: j.settings.telegram?.botToken || "", chatIds: j.settings.telegram?.chatIds || [] }, telegramByType: { hr: { botToken: j.settings.telegramByType?.hr?.botToken || "", chatIds: j.settings.telegramByType?.hr?.chatIds || [] }, suggestion: { botToken: j.settings.telegramByType?.suggestion?.botToken || "", chatIds: j.settings.telegramByType?.suggestion?.chatIds || [] }, contact: { botToken: j.settings.telegramByType?.contact?.botToken || "", chatIds: j.settings.telegramByType?.contact?.chatIds || [] } }, socials: { telegram: j.settings.socials?.telegram || "", instagram: j.settings.socials?.instagram || "", facebook: j.settings.socials?.facebook || "", youtube: j.settings.socials?.youtube || "" }, contactInfo: { phone: j.settings.contactInfo?.phone || "", email: j.settings.contactInfo?.email || "", address: j.settings.contactInfo?.address || "" } }); })
       .catch(() => {});
-  }, []);
+  }, [creds, apiCall, t]);
 
   // HR holatini o'zgartirish (qabul/rad/kutish)
   const setHrStatus = async (folder: string, status: string) => {
@@ -284,50 +308,47 @@ export function AdminPage() {
     };
     if (!confirm(t(`Bu arizani ${labels[status]}ni tasdiqlaysizmi?`, `Подтверждаете действие «${labels[status]}» для этой заявки?`))) return;
     try {
-      await fetch(`/api/admin/hr-status?${authQS()}`, {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ folder, status }),
-      });
+      await apiCall("/api/admin/hr-status", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ folder, status }) });
       loadData();
-    } catch {}
+    } catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
 
   // HR arizasini butunlay o'chirish (rezyume papkasi bilan)
   const deleteHr = async (folder: string, name: string) => {
     if (!confirm(t(`"${name}" arizasi butunlay o'chirilsinmi? Rezyume fayli ham o'chadi va qaytarib bo'lmaydi.`, `Полностью удалить заявку «${name}»? Файл резюме также будет удалён без возможности восстановления.`))) return;
     try {
-      await fetch(`/api/admin/hr-delete?${authQS()}`, {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ folder }),
-      });
+      await apiCall("/api/admin/hr-delete", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ folder }) });
       loadData();
-    } catch {}
+    } catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
 
   // CSV yuklab olish
   const exportCsv = (type: string) => {
-    const c = loadCreds();
-    if (!c) return;
-    window.open(`/api/admin/export?type=${type}&username=${encodeURIComponent(c.username)}&password=${encodeURIComponent(c.password)}`, "_blank");
+    if (!creds?.token) return;
+    window.open(`/api/admin/export?type=${type}&${authTokenQS()}`, "_blank");
   };
 
   // Sozlamalarni saqlash
   const saveSettings = async () => {
     setSaving(true); setSettingsMsg("");
     try {
-      const res = await fetch(`/api/admin/settings?${authQS()}`, {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(settings),
-      });
-      const json = await res.json().catch(() => ({}));
-      if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
+      await apiCall("/api/admin/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(settings) });
       setSettingsMsg(t("Saqlandi ✅", "Сохранено ✅"));
-    } catch { setSettingsMsg(t("Saqlashda xatolik", "Ошибка при сохранении")); } finally { setSaving(false); }
+    } catch (err) { setSettingsMsg(err instanceof Error ? err.message : t("Saqlashda xatolik", "Ошибка при сохранении")); } finally { setSaving(false); }
   };
   const sendTestTelegram = async (type: TgKey) => {
     setSettingsMsg(t("Yuborilmoqda...", "Отправляется..."));
     try {
-      const res = await fetch(`/api/admin/test-telegram?type=${type}&${authQS()}`, { method: "POST" });
-      const json = await res.json().catch(() => ({}));
-      setSettingsMsg(json.ok ? t("Telegram test xabari yuborildi ✅", "Тестовое сообщение в Telegram отправлено ✅") : (json.error || t("Xatolik", "Ошибка")));
-    } catch { setSettingsMsg(t("Xatolik", "Ошибка")); }
+      await apiCall(`/api/admin/test-telegram?type=${type}`, { method: "POST" });
+      setSettingsMsg(t("Telegram test xabari yuborildi ✅", "Тестовое сообщение в Telegram отправлено ✅"));
+    } catch (err) { setSettingsMsg(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
+  };
+  const sendTestEmail = async (type: TgKey) => {
+    setSettingsMsg(t("Yuborilmoqda...", "Отправляется..."));
+    try {
+      await apiCall(`/api/admin/test-email?type=${type}`, { method: "POST" });
+      setSettingsMsg(t("Test email yuborildi ✅", "Тестовое письмо отправлено ✅"));
+    } catch (err) { setSettingsMsg(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
 
   // Telegram konfigini olish/yangilash (umumiy yoki tur bo'yicha)
@@ -367,7 +388,7 @@ export function AdminPage() {
         setLoginError(json.error || t("Login yoki parol noto'g'ri", "Неверный логин или пароль"));
         return;
       }
-      const newCreds: Creds = { username: username.trim(), password, name: json.name };
+      const newCreds: Creds = { token: json.token, username: json.username, name: json.name };
       sessionStorage.setItem(CREDS_KEY, JSON.stringify(newCreds));
       setCreds(newCreds);
       setPassword("");
@@ -378,20 +399,9 @@ export function AdminPage() {
     }
   };
 
-  const handleLogout = () => {
-    sessionStorage.removeItem(CREDS_KEY);
-    setCreds(null);
-    setData(null);
-  };
-
   // ---- Admin boshqaruvi amallari (faqat superadmin) ----
   const adminUserAction = async (payload: Record<string, unknown>) => {
-    const res = await fetch(`/api/admin/admins?${authQS()}`, {
-      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
-    });
-    const json = await res.json().catch(() => ({}));
-    if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
-    return json;
+    return apiCall("/api/admin/admins", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
   };
   const saveAdminUser = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -416,6 +426,7 @@ export function AdminPage() {
           username: String(fd.get("username") || "").trim(),
           password: String(fd.get("password") || ""),
           name: String(fd.get("name") || "").trim(),
+          role: String(fd.get("role") || "admin"),
           perms,
         });
       }
@@ -431,14 +442,8 @@ export function AdminPage() {
   };
 
   // ---- Topshiriq amallari ----
-  const taskAction = async (payload: Record<string, unknown>) => {
-    const res = await fetch(`/api/admin/tasks?${authQS()}`, {
-      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
-    });
-    const json = await res.json().catch(() => ({}));
-    if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
-    return json;
-  };
+  const taskAction = (payload: Record<string, unknown>) =>
+    apiCall("/api/admin/tasks", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
   const saveTask = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
@@ -450,23 +455,20 @@ export function AdminPage() {
       alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка"));
     } finally { setSaving(false); }
   };
-  const toggleTaskDone = async (t: TaskItem) => {
-    try { await taskAction({ action: t.status === "done" ? "undone" : "done", id: t.id }); loadData(); } catch {}
+  // (parametr `task` deb nomlangan — tashqi tarjima funksiyasi `t`ni soyalamasligi uchun)
+  const toggleTaskDone = async (task: TaskItem) => {
+    try { await taskAction({ action: task.status === "done" ? "undone" : "done", id: task.id }); loadData(); }
+    catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
   const deleteTask = async (id: string) => {
     if (!confirm(t("Bu topshiriq o'chirilsinmi?", "Удалить это задание?"))) return;
-    try { await taskAction({ action: "delete", id }); loadData(); } catch {}
+    try { await taskAction({ action: "delete", id }); loadData(); }
+    catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
 
   // ---- Offer amallari (JSON) ----
-  const offerAction = async (payload: Record<string, unknown>) => {
-    const res = await fetch(`/api/admin/offers?${authQS()}`, {
-      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
-    });
-    const json = await res.json().catch(() => ({}));
-    if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
-    return json;
-  };
+  const offerAction = (payload: Record<string, unknown>) =>
+    apiCall("/api/admin/offers", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
   const saveOffer = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
@@ -475,21 +477,20 @@ export function AdminPage() {
       if (editingOffer) await offerAction({ action: "update", id: editingOffer.id, ...body });
       else await offerAction({ action: "create", ...body });
       setShowOfferModal(false); setEditingOffer(null); loadData();
-    } catch {} finally { setSaving(false); }
+    } catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); } finally { setSaving(false); }
   };
-  const toggleOffer = async (id: string) => { try { await offerAction({ action: "toggle", id }); loadData(); } catch {} };
+  const toggleOffer = async (id: string) => {
+    try { await offerAction({ action: "toggle", id }); loadData(); }
+    catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
+  };
   const deleteOffer = async (id: string) => {
     if (!confirm(t("Bu taklif o'chirilsinmi?", "Удалить это предложение?"))) return;
-    try { await offerAction({ action: "delete", id }); loadData(); } catch {}
+    try { await offerAction({ action: "delete", id }); loadData(); }
+    catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
 
   // ---- Loyiha amallari (FormData — rasm bilan) ----
-  const projectAction = async (fd: FormData) => {
-    const res = await fetch(`/api/admin/projects?${authQS()}`, { method: "POST", body: fd });
-    const json = await res.json().catch(() => ({}));
-    if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
-    return json;
-  };
+  const projectAction = (fd: FormData) => apiCall("/api/admin/projects", { method: "POST", body: fd });
   const saveProject = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
@@ -499,12 +500,13 @@ export function AdminPage() {
     try {
       await projectAction(fd);
       setShowProjectModal(false); setEditingProject(null); loadData();
-    } catch {} finally { setSaving(false); }
+    } catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); } finally { setSaving(false); }
   };
   const projectSimple = async (action: string, id: string) => {
     const fd = new FormData();
     fd.append("action", action); fd.append("id", id);
-    try { await projectAction(fd); loadData(); } catch {}
+    try { await projectAction(fd); loadData(); }
+    catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
   const toggleProject = (id: string) => projectSimple("toggle", id);
   const deleteProject = (id: string) => {
@@ -513,12 +515,7 @@ export function AdminPage() {
   };
 
   // ---- Naqsh amallari (FormData — rasm bilan) ----
-  const ornamentAction = async (fd: FormData) => {
-    const res = await fetch(`/api/admin/ornaments?${authQS()}`, { method: "POST", body: fd });
-    const json = await res.json().catch(() => ({}));
-    if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
-    return json;
-  };
+  const ornamentAction = (fd: FormData) => apiCall("/api/admin/ornaments", { method: "POST", body: fd });
   const saveOrnament = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
@@ -528,12 +525,13 @@ export function AdminPage() {
     try {
       await ornamentAction(fd);
       setShowOrnamentModal(false); setEditingOrnament(null); loadData();
-    } catch {} finally { setSaving(false); }
+    } catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); } finally { setSaving(false); }
   };
   const ornamentSimple = async (action: string, id: string) => {
     const fd = new FormData();
     fd.append("action", action); fd.append("id", id);
-    try { await ornamentAction(fd); loadData(); } catch {}
+    try { await ornamentAction(fd); loadData(); }
+    catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
   const toggleOrnament = (id: string) => ornamentSimple("toggle", id);
   const deleteOrnament = (id: string) => {
@@ -542,14 +540,8 @@ export function AdminPage() {
   };
 
   // ---- Standart amallari (JSON) ----
-  const standardAction = async (payload: Record<string, unknown>) => {
-    const res = await fetch(`/api/admin/standards?${authQS()}`, {
-      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
-    });
-    const json = await res.json().catch(() => ({}));
-    if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
-    return json;
-  };
+  const standardAction = (payload: Record<string, unknown>) =>
+    apiCall("/api/admin/standards", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
   const saveStandard = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
@@ -558,23 +550,21 @@ export function AdminPage() {
       if (editingStandard) await standardAction({ action: "update", id: editingStandard.id, ...body });
       else await standardAction({ action: "create", ...body });
       setShowStandardModal(false); setEditingStandard(null); loadData();
-    } catch {} finally { setSaving(false); }
+    } catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); } finally { setSaving(false); }
   };
-  const toggleStandard = async (id: string) => { try { await standardAction({ action: "toggle", id }); loadData(); } catch {} };
+  const toggleStandard = async (id: string) => {
+    try { await standardAction({ action: "toggle", id }); loadData(); }
+    catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
+  };
   const deleteStandard = async (id: string) => {
     if (!confirm(t("Bu standart o'chirilsinmi?", "Удалить этот стандарт?"))) return;
-    try { await standardAction({ action: "delete", id }); loadData(); } catch {}
+    try { await standardAction({ action: "delete", id }); loadData(); }
+    catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
 
   // ---- Investor amallari (JSON) ----
-  const investorAction = async (payload: Record<string, unknown>) => {
-    const res = await fetch(`/api/admin/investors?${authQS()}`, {
-      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
-    });
-    const json = await res.json().catch(() => ({}));
-    if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
-    return json;
-  };
+  const investorAction = (payload: Record<string, unknown>) =>
+    apiCall("/api/admin/investors", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
   const saveInvestor = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
@@ -583,21 +573,20 @@ export function AdminPage() {
       if (editingInvestor) await investorAction({ action: "update", id: editingInvestor.id, ...body });
       else await investorAction({ action: "create", ...body });
       setShowInvestorModal(false); setEditingInvestor(null); loadData();
-    } catch {} finally { setSaving(false); }
+    } catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); } finally { setSaving(false); }
   };
-  const toggleInvestor = async (id: string) => { try { await investorAction({ action: "toggle", id }); loadData(); } catch {} };
+  const toggleInvestor = async (id: string) => {
+    try { await investorAction({ action: "toggle", id }); loadData(); }
+    catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
+  };
   const deleteInvestor = async (id: string) => {
     if (!confirm(t("Bu bo'lim o'chirilsinmi?", "Удалить этот раздел?"))) return;
-    try { await investorAction({ action: "delete", id }); loadData(); } catch {}
+    try { await investorAction({ action: "delete", id }); loadData(); }
+    catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
 
   // ---- Blog / Bilim markazi amallari (FormData — rasm bilan) ----
-  const blogAction = async (fd: FormData) => {
-    const res = await fetch(`/api/admin/blog?${authQS()}`, { method: "POST", body: fd });
-    const json = await res.json().catch(() => ({}));
-    if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
-    return json;
-  };
+  const blogAction = (fd: FormData) => apiCall("/api/admin/blog", { method: "POST", body: fd });
   const saveBlog = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
@@ -612,7 +601,7 @@ export function AdminPage() {
   const blogSimple = async (action: string, id: string) => {
     const fd = new FormData();
     fd.append("action", action); fd.append("id", id);
-    try { await blogAction(fd); loadData(); } catch (err) { alert(err instanceof Error ? err.message : "Xatolik"); }
+    try { await blogAction(fd); loadData(); } catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
   const publishBlog = (id: string) => blogSimple("publish", id);
   const unpublishBlog = (id: string) => blogSimple("unpublish", id);
@@ -622,14 +611,8 @@ export function AdminPage() {
   };
 
   // ---- Xizmat amallari (JSON) ----
-  const serviceAction = async (payload: Record<string, unknown>) => {
-    const res = await fetch(`/api/admin/services?${authQS()}`, {
-      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
-    });
-    const json = await res.json().catch(() => ({}));
-    if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
-    return json;
-  };
+  const serviceAction = (payload: Record<string, unknown>) =>
+    apiCall("/api/admin/services", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
   const saveService = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
@@ -638,23 +621,21 @@ export function AdminPage() {
       if (editingService) await serviceAction({ action: "update", id: editingService.id, ...body });
       else await serviceAction({ action: "create", ...body });
       setShowServiceModal(false); setEditingService(null); loadData();
-    } catch {} finally { setSaving(false); }
+    } catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); } finally { setSaving(false); }
   };
-  const toggleService = async (id: string) => { try { await serviceAction({ action: "toggle", id }); loadData(); } catch {} };
+  const toggleService = async (id: string) => {
+    try { await serviceAction({ action: "toggle", id }); loadData(); }
+    catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
+  };
   const deleteService = async (id: string) => {
     if (!confirm(t("Bu xizmat o'chirilsinmi?", "Удалить эту услугу?"))) return;
-    try { await serviceAction({ action: "delete", id }); loadData(); } catch {}
+    try { await serviceAction({ action: "delete", id }); loadData(); }
+    catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
 
   // ---- Madaniyat elementi amallari (JSON) ----
-  const cultureAction = async (payload: Record<string, unknown>) => {
-    const res = await fetch(`/api/admin/culture-elements?${authQS()}`, {
-      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
-    });
-    const json = await res.json().catch(() => ({}));
-    if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
-    return json;
-  };
+  const cultureAction = (payload: Record<string, unknown>) =>
+    apiCall("/api/admin/culture-elements", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
   const saveCulture = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
@@ -666,12 +647,16 @@ export function AdminPage() {
       if (editingCulture) await cultureAction({ action: "update", id: editingCulture.id, ...body });
       else await cultureAction({ action: "create", ...body });
       setShowCultureModal(false); setEditingCulture(null); loadData();
-    } catch {} finally { setSaving(false); }
+    } catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); } finally { setSaving(false); }
   };
-  const toggleCulture = async (id: string) => { try { await cultureAction({ action: "toggle", id }); loadData(); } catch {} };
+  const toggleCulture = async (id: string) => {
+    try { await cultureAction({ action: "toggle", id }); loadData(); }
+    catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
+  };
   const deleteCulture = async (id: string) => {
     if (!confirm(t("Bu element o'chirilsinmi?", "Удалить этот элемент?"))) return;
-    try { await cultureAction({ action: "delete", id }); loadData(); } catch {}
+    try { await cultureAction({ action: "delete", id }); loadData(); }
+    catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
 
   // ---- Bo'lim rasmlari (culture / services boxlari) ----
@@ -679,9 +664,7 @@ export function AdminPage() {
     const fd = new FormData();
     fd.append("key", key);
     fd.append("image", file);
-    const res = await fetch(`/api/admin/section-image?${authQS()}`, { method: "POST", body: fd });
-    const json = await res.json().catch(() => ({}));
-    if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
+    await apiCall("/api/admin/section-image", { method: "POST", body: fd });
     loadData();
   };
   const deleteSectionImage = async (key: string) => {
@@ -690,11 +673,9 @@ export function AdminPage() {
     fd.append("key", key);
     fd.append("action", "delete");
     try {
-      const res = await fetch(`/api/admin/section-image?${authQS()}`, { method: "POST", body: fd });
-      const json = await res.json().catch(() => ({}));
-      if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
+      await apiCall("/api/admin/section-image", { method: "POST", body: fd });
       loadData();
-    } catch {}
+    } catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
 
   // ---- Hero statistikasini saqlash ----
@@ -706,26 +687,20 @@ export function AdminPage() {
     setSavingStats(true);
     setStatsSaved(false);
     try {
-      const res = await fetch(`/api/admin/stats?${authQS()}`, {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ stats }),
-      });
-      const json = await res.json().catch(() => ({}));
-      if (!res.ok || !json.ok) throw new Error(json.error || t("Xatolik", "Ошибка"));
+      const json = await apiCall("/api/admin/stats", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ stats }) });
       if (Array.isArray(json.stats)) setStats(json.stats);
       setStatsSaved(true);
       loadData();
-    } catch {} finally { setSavingStats(false); }
+    } catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); } finally { setSavingStats(false); }
   };
 
   // ---- Kelgan taklif / aloqani o'chirish ----
   const deleteItem = async (type: "suggestion" | "contact", id: string) => {
     if (!confirm(t("O'chirilsinmi?", "Удалить?"))) return;
     try {
-      await fetch(`/api/admin/delete?${authQS()}`, {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type, id }),
-      });
+      await apiCall("/api/admin/delete", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type, id }) });
       loadData();
-    } catch {}
+    } catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
 
   // ---- LOGIN EKRANI ----
@@ -765,6 +740,7 @@ export function AdminPage() {
   const me = data?.me;
   const isSuper = me?.role === "superadmin";
   const hasPerm = (key: string) => isSuper || !me || me.perms?.[key] !== false;
+  const assignableAdmins = (data?.admins || []).filter((a) => a.username !== me?.username);
 
   const tabs = [
     { id: "projects" as Tab, label: t("Loyihalar", "Проекты"), count: data?.projects.length ?? 0 },
@@ -778,7 +754,7 @@ export function AdminPage() {
     { id: "suggestions" as Tab, label: t("Kelgan takliflar", "Поступившие предложения"), count: data?.suggestions.length ?? 0 },
     { id: "hr" as Tab, label: t("HR Arizalari", "HR-заявки"), count: data?.hr.length ?? 0 },
     { id: "contacts" as Tab, label: t("Aloqa So'rovlari", "Запросы на связь"), count: data?.contacts.length ?? 0 },
-    { id: "settings" as Tab, label: t("Sozlamalar", "Настройки"), count: (settings.telegram?.chatIds || []).filter(Boolean).length },
+    { id: "settings" as Tab, label: t("Sozlamalar", "Настройки"), count: [settings.telegram, settings.telegramByType.hr, settings.telegramByType.suggestion, settings.telegramByType.contact].reduce((sum, cfg) => sum + (cfg?.chatIds || []).filter(Boolean).length, 0) },
     { id: "services" as Tab, label: t("Xizmatlar", "Услуги"), count: data?.services?.length ?? 0 },
     { id: "culture" as Tab, label: t("Madaniyat", "Культура"), count: data?.cultureElements?.length ?? 0 },
   ].filter((tab) => hasPerm(tab.id));
@@ -879,13 +855,18 @@ export function AdminPage() {
                   <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">
                     {t("Topshiriqlar", "Задания")} ({(data.tasks || []).length})
                   </h2>
-                  {isSuper && (
+                  {isSuper && assignableAdmins.length > 0 && (
                     <button onClick={() => setShowTaskModal(true)} style={{ fontFamily: "var(--font-body)" }}
                       className="px-5 py-2.5 bg-[#060920] text-white rounded-xl text-sm tracking-wide hover:shadow-lg transition-all">
                       + {t("Yangi topshiriq", "Новое задание")}
                     </button>
                   )}
                 </div>
+                {isSuper && assignableAdmins.length === 0 && (
+                  <p style={{ fontFamily: "var(--font-body)" }} className="text-xs text-[#060920]/45">
+                    {t("Topshiriq berish uchun avval yana bitta admin qo'shing.", "Чтобы назначать задания, сначала добавьте ещё одного администратора.")}
+                  </p>
+                )}
                 {(data.tasks || []).length === 0 ? (
                   <EmptyState text={isSuper ? t("Hozircha topshiriq yo'q. '+ Yangi topshiriq' tugmasini bosing.", "Пока заданий нет. Нажмите кнопку «+ Новое задание».") : t("Sizga hozircha topshiriq berilmagan.", "Вам пока не назначено заданий.")} />
                 ) : (data.tasks || []).map((tk, i) => (
@@ -1165,7 +1146,7 @@ export function AdminPage() {
                     "Загрузите изображение для каждого блока на страницах «Культура» и «Услуги». При загрузке изображения вместо пустого блока появится оно. При удалении — вернётся прежний вид (градиент/номер).",
                   )}
                 </p>
-                {SECTION_IMAGE_GROUPS.map((grp) => (
+                {sectionImageGroups(data).filter((grp) => grp.items.length > 0).map((grp) => (
                   <div key={grp.group} className="space-y-4">
                     <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t(grp.group, grp.groupRu)}</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1273,7 +1254,7 @@ export function AdminPage() {
                     ? { t: t("Rad etilgan", "Отклонён"), c: "bg-[#060920]/10 text-[#060920]" }
                     : { t: t("Kutilmoqda", "Ожидает"), c: "bg-[#060920]/8 text-[#060920]/60" };
                   return (
-                  <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
+                  <motion.div key={r.folder} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
                     className="p-6 bg-white/60 border border-[#060920]/10 rounded-2xl space-y-3">
                     <div className="flex items-start justify-between flex-wrap gap-3">
                       <div>
@@ -1300,7 +1281,7 @@ export function AdminPage() {
                       {r.email && <span className="text-[#060920]/70">Email: {r.email}</span>}
                       {r.contact && <span className="text-[#060920]/70">{t("Aloqa:", "Контакт:")} {r.contact}</span>}
                       {r.resumeFile && (
-                        <a href={`/api/admin/resume?folder=${encodeURIComponent(r.folder)}&file=${encodeURIComponent(r.resumeFile)}&${authQS()}`}
+                        <a href={`/api/admin/resume?folder=${encodeURIComponent(r.folder)}&file=${encodeURIComponent(r.resumeFile)}&${authTokenQS()}`}
                           target="_blank" rel="noopener noreferrer"
                           className="text-[#060920] underline underline-offset-2 hover:opacity-70 transition-opacity">
                           {t("Rezyumeni ko'rish", "Посмотреть резюме")}
@@ -1484,6 +1465,114 @@ export function AdminPage() {
                     </div>
                   );
                 })}
+
+                {/* Email bildirishnomalar (SMTP) */}
+                <div className="space-y-3">
+                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("Email bildirishnomalar (SMTP)", "Email-уведомления (SMTP)")}</h2>
+                  <p style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]/55">
+                    {t("Yangi ariza/xabar kelganda shu SMTP orqali email yuboriladi. To'liq to'ldirilmasa (host, foydalanuvchi, parol), email yuborilmaydi — Telegram bildirishnomasi baribir ishlayveradi.", "При поступлении новой заявки/сообщения письмо отправляется через этот SMTP. Если не заполнено полностью (хост, пользователь, пароль), письма не отправляются — Telegram-уведомление продолжит работать.")}
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50">{t("SMTP host", "SMTP-хост")}</label>
+                      <input value={settings.smtp.host || ""} onChange={(e) => setSettings({ ...settings, smtp: { ...settings.smtp, host: e.target.value } })}
+                        placeholder="smtp.gmail.com" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50">{t("Port", "Порт")}</label>
+                      <input value={settings.smtp.port || ""} onChange={(e) => setSettings({ ...settings, smtp: { ...settings.smtp, port: e.target.value.replace(/\D/g, "") } })}
+                        placeholder="587" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50">{t("Foydalanuvchi (email)", "Пользователь (email)")}</label>
+                      <input value={settings.smtp.user || ""} onChange={(e) => setSettings({ ...settings, smtp: { ...settings.smtp, user: e.target.value } })}
+                        placeholder="noreply@barpo.uz" autoComplete="off" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50">{t("Parol / ilova paroli", "Пароль / пароль приложения")}</label>
+                      <input type="password" value={settings.smtp.pass || ""} onChange={(e) => setSettings({ ...settings, smtp: { ...settings.smtp, pass: e.target.value } })}
+                        autoComplete="new-password" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                    </div>
+                    <div className="space-y-1.5 md:col-span-2">
+                      <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50">{t("Kimdan (from)", "От кого (from)")}</label>
+                      <input value={settings.smtp.from || ""} onChange={(e) => setSettings({ ...settings, smtp: { ...settings.smtp, from: e.target.value } })}
+                        placeholder="BARPO <noreply@barpo.uz>" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                    </div>
+                    <label className="flex items-center gap-2 md:col-span-2 text-sm text-[#060920]/70" style={{ fontFamily: "var(--font-body)" }}>
+                      <input type="checkbox" checked={!!settings.smtp.secure} onChange={(e) => setSettings({ ...settings, smtp: { ...settings.smtp, secure: e.target.checked } })} className="accent-[#060920]" />
+                      {t("SSL/TLS (odatda 465-port uchun yoqiladi)", "SSL/TLS (обычно включается для порта 465)")}
+                    </label>
+                  </div>
+                </div>
+
+                {/* Har tur uchun email ro'yxati */}
+                {([
+                  { key: "general" as TgKey, label: t("Umumiy email ro'yxati", "Общий список email"), hint: t("Maxsus ro'yxat kiritilmagan turlar uchun ishlaydi", "Работает для типов, у которых не указан отдельный список") },
+                  { key: "hr" as TgKey, label: t("HR arizalari email ro'yxati", "Список email для HR-заявок"), hint: t("HR arizalari shu manzillarga xabar qiladi", "О HR-заявках сообщается на эти адреса") },
+                  { key: "suggestion" as TgKey, label: t("Kelgan takliflar email ro'yxati", "Список email для предложений"), hint: t("Takliflar sahifasidan kelgan murojaatlar", "Обращения со страницы предложений") },
+                  { key: "contact" as TgKey, label: t("Aloqa so'rovlari email ro'yxati", "Список email для запросов на связь"), hint: t("Aloqa formasidan kelgan so'rovlar", "Запросы из формы связи") },
+                ]).map((sec) => {
+                  const list = sec.key === "general" ? settings.notifyEmails : settings.notifyEmailsByType[sec.key];
+                  const setList = (next: string[]) => {
+                    if (sec.key === "general") setSettings({ ...settings, notifyEmails: next });
+                    else setSettings({ ...settings, notifyEmailsByType: { ...settings.notifyEmailsByType, [sec.key]: next } });
+                  };
+                  return (
+                    <div key={sec.key} className="space-y-3 p-5 border border-[#060920]/10 rounded-2xl bg-white/50">
+                      <div className="flex items-center justify-between flex-wrap gap-2">
+                        <div>
+                          <h3 style={{ fontFamily: "var(--font-display)" }} className="text-base text-[#060920]">{sec.label}</h3>
+                          <p style={{ fontFamily: "var(--font-body)" }} className="text-xs text-[#060920]/45 mt-0.5">{sec.hint}</p>
+                        </div>
+                        <button onClick={() => sendTestEmail(sec.key)} className={btnGhost}>{t("Test yuborish", "Отправить тест")}</button>
+                      </div>
+                      <div className="space-y-2">
+                        {(list || []).map((email, idx) => (
+                          <div key={idx} className="flex items-center gap-2">
+                            <input
+                              value={email}
+                              onChange={(e) => { const next = [...(list || [])]; next[idx] = e.target.value; setList(next); }}
+                              placeholder="admin@barpo.uz"
+                              style={{ fontFamily: "var(--font-body)" }} className={inputClass}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setList((list || []).filter((_, i) => i !== idx))}
+                              style={{ fontFamily: "var(--font-body)" }}
+                              className="shrink-0 w-10 h-10 rounded-lg border border-[#060920]/15 text-[#060920]/50 hover:text-[#060920] hover:bg-[#060920]/5 transition-colors"
+                              aria-label={t("O'chirish", "Удалить")}
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                        <button
+                          type="button"
+                          onClick={() => setList([...(list || []), ""])}
+                          style={{ fontFamily: "var(--font-body)" }}
+                          className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-dashed border-[#060920]/25 text-sm text-[#060920]/60 hover:text-[#060920] hover:border-[#060920]/50 transition-colors"
+                        >
+                          <span className="w-5 h-5 rounded-full bg-[#060920] text-white flex items-center justify-center text-xs leading-none">+</span>
+                          {t("Email qo'shish", "Добавить email")}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* Google Sheets webhook */}
+                <div className="space-y-3">
+                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("Google Sheets webhook", "Google Sheets webhook")}</h2>
+                  <p style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]/55">
+                    {t("Har bir yangi ariza/xabar shu manzilga ham POST qilinadi (Google Apps Script Web App URL). Bo'sh qoldirilsa, hech narsa yuborilmaydi.", "Каждая новая заявка/сообщение также отправляется POST-запросом на этот адрес (URL веб-приложения Google Apps Script). Если оставить пустым — ничего не отправляется.")}
+                  </p>
+                  <input
+                    value={settings.sheetsWebhook}
+                    onChange={(e) => setSettings({ ...settings, sheetsWebhook: e.target.value })}
+                    placeholder="https://script.google.com/macros/s/XXXXX/exec"
+                    style={{ fontFamily: "var(--font-body)" }} className={inputClass}
+                  />
+                </div>
 
                 <div className="flex items-center gap-3 flex-wrap">
                   <button onClick={saveSettings} disabled={saving} style={{ fontFamily: "var(--font-body)" }}
@@ -1701,9 +1790,16 @@ export function AdminPage() {
         {showOfferModal && (
           <ModalShell title={editingOffer ? t("Taklifni tahrirlash", "Редактировать предложение") : t("Yangi taklif", "Новое предложение")} onClose={() => { setShowOfferModal(false); setEditingOffer(null); }}>
             <form onSubmit={saveOffer} className="space-y-4">
-              <input name="title" required defaultValue={editingOffer?.title || ""} placeholder={t("Taklif sarlavhasi *", "Заголовок предложения *")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
-              <input name="tag" defaultValue={editingOffer?.tag || ""} placeholder={t("Yorliq (masalan: Yangi, Chegirma) — ixtiyoriy", "Метка (например: Новое, Скидка) — необязательно")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
-              <textarea name="description" required rows={4} defaultValue={editingOffer?.description || ""} placeholder={t("Taklif tavsifi *", "Описание предложения *")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input name="title" required defaultValue={editingOffer?.title || ""} placeholder={t("Sarlavha (UZ) *", "Заголовок (UZ) *")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="titleRu" defaultValue={editingOffer?.titleRu || ""} placeholder={t("Sarlavha (RU)", "Заголовок (RU)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input name="tag" defaultValue={editingOffer?.tag || ""} placeholder={t("Yorliq (UZ) — ixtiyoriy", "Метка (UZ) — необязательно")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="tagRu" defaultValue={editingOffer?.tagRu || ""} placeholder={t("Yorliq (RU)", "Метка (RU)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              </div>
+              <textarea name="description" required rows={4} defaultValue={editingOffer?.description || ""} placeholder={t("Tavsif (UZ) *", "Описание (UZ) *")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+              <textarea name="descriptionRu" rows={4} defaultValue={editingOffer?.descriptionRu || ""} placeholder={t("Tavsif (RU)", "Описание (RU)")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               <SaveBtn saving={saving} editing={!!editingOffer} />
             </form>
           </ModalShell>
@@ -1715,51 +1811,96 @@ export function AdminPage() {
         {showProjectModal && (
           <ModalShell wide title={editingProject ? t("Loyihani tahrirlash", "Редактировать проект") : t("Yangi loyiha", "Новый проект")} onClose={() => { setShowProjectModal(false); setEditingProject(null); }}>
             <form onSubmit={saveProject} className="space-y-4">
-              <input name="name" required defaultValue={editingProject?.name || ""} placeholder={t("Obyekt nomi *", "Название объекта *")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input name="direction" defaultValue={editingProject?.direction || ""} placeholder={t("Yo'nalish (biznes markaz / JK / fasad...)", "Направление (бизнес-центр / ЖК / фасад...)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
-                <input name="location" defaultValue={editingProject?.location || ""} placeholder={t("Hudud (masalan: Toshkent)", "Регион (например: Ташкент)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="name" required defaultValue={editingProject?.name || ""} placeholder={t("Obyekt nomi (UZ) *", "Название объекта (UZ) *")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="nameRu" defaultValue={editingProject?.nameRu || ""} placeholder={t("Obyekt nomi (RU)", "Название объекта (RU)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input name="area" defaultValue={editingProject?.area || ""} placeholder={t("Maydon (masalan: 5000 m²)", "Площадь (например: 5000 м²)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
-                <input name="year" defaultValue={editingProject?.year || ""} placeholder={t("Yil (masalan: 2025)", "Год (например: 2025)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="direction" defaultValue={editingProject?.direction || ""} placeholder={t("Yo'nalish (UZ)", "Направление (UZ)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="directionRu" defaultValue={editingProject?.directionRu || ""} placeholder={t("Yo'nalish (RU)", "Направление (RU)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input name="status" defaultValue={editingProject?.status || ""} placeholder={t("Holati (masalan: Yakunlangan)", "Статус (например: Завершён)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
-                <input name="workType" defaultValue={editingProject?.workType || ""} placeholder={t("Ish turi (masalan: pardoz + muhandislik)", "Тип работ (например: отделка + инженерия)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="location" defaultValue={editingProject?.location || ""} placeholder={t("Hudud (UZ, masalan: Toshkent)", "Регион (UZ, например: Ташкент)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="locationRu" defaultValue={editingProject?.locationRu || ""} placeholder={t("Hudud (RU)", "Регион (RU)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input name="duration" defaultValue={editingProject?.duration || ""} placeholder={t("Muddat (masalan: 6 oy)", "Срок (например: 6 месяцев)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
-                <input name="role" defaultValue={editingProject?.role || ""} placeholder={t("BARPO roli (masalan: bosh pudratchi)", "Роль BARPO (например: генподрядчик)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="area" defaultValue={editingProject?.area || ""} placeholder={t("Maydon (UZ, masalan: 5000 m²)", "Площадь (UZ, например: 5000 м²)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="areaRu" defaultValue={editingProject?.areaRu || ""} placeholder={t("Maydon (RU)", "Площадь (RU)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              </div>
+              <input name="year" defaultValue={editingProject?.year || ""} placeholder={t("Yil (masalan: 2025)", "Год (например: 2025)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input name="status" defaultValue={editingProject?.status || ""} placeholder={t("Holati (UZ, masalan: Yakunlangan)", "Статус (UZ, например: Завершён)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="statusRu" defaultValue={editingProject?.statusRu || ""} placeholder={t("Holati (RU)", "Статус (RU)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input name="workType" defaultValue={editingProject?.workType || ""} placeholder={t("Ish turi (UZ)", "Тип работ (UZ)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="workTypeRu" defaultValue={editingProject?.workTypeRu || ""} placeholder={t("Ish turi (RU)", "Тип работ (RU)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input name="duration" defaultValue={editingProject?.duration || ""} placeholder={t("Muddat (UZ, masalan: 6 oy)", "Срок (UZ, например: 6 месяцев)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="durationRu" defaultValue={editingProject?.durationRu || ""} placeholder={t("Muddat (RU)", "Срок (RU)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input name="role" defaultValue={editingProject?.role || ""} placeholder={t("BARPO roli (UZ)", "Роль BARPO (UZ)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="roleRu" defaultValue={editingProject?.roleRu || ""} placeholder={t("BARPO roli (RU)", "Роль BARPO (RU)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
               </div>
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Vazifa (mijoz oldida qanday vazifa turgan edi?)", "Задача (какая задача стояла перед заказчиком?)")}</label>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Vazifa — UZ (mijoz oldida qanday vazifa turgan edi?)", "Задача — UZ (какая задача стояла перед заказчиком?)")}</label>
                 <textarea name="task" rows={2} defaultValue={editingProject?.task || ""} placeholder={t("Bu obyekt bo'yicha asosiy vazifa...", "Основная задача по этому объекту...")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               </div>
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Murakkablik (qaysi joyda xavf yoki muammo bor edi?)", "Сложность (где был риск или проблема?)")}</label>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Vazifa — RU", "Задача — RU")}</label>
+                <textarea name="taskRu" rows={2} defaultValue={editingProject?.taskRu || ""} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+              </div>
+              <div>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Murakkablik — UZ (qaysi joyda xavf yoki muammo bor edi?)", "Сложность — UZ (где был риск или проблема?)")}</label>
                 <textarea name="problem" rows={2} defaultValue={editingProject?.problem || ""} placeholder={t("Asosiy muammo yoki texnik murakkablik...", "Основная проблема или техническая сложность...")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               </div>
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5"><BarpoWord /> {t("yechimi (qanday yondashuv qo'llandi?)", "решение (какой подход применён?)")}</label>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Murakkablik — RU", "Сложность — RU")}</label>
+                <textarea name="problemRu" rows={2} defaultValue={editingProject?.problemRu || ""} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+              </div>
+              <div>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5"><BarpoWord /> {t("yechimi — UZ (qanday yondashuv qo'llandi?)", "решение — UZ (какой подход применён?)")}</label>
                 <textarea name="solution" rows={2} defaultValue={editingProject?.solution || ""} placeholder={t("BARPO jarayonni qanday boshqardi...", "Как BARPO управлял процессом...")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               </div>
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Jarayon (ishlar qanday ketdi, qaysi bosqichlar bo'ldi?)", "Процесс (как шли работы, какие были этапы?)")}</label>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5"><BarpoWord /> {t("yechimi — RU", "решение — RU")}</label>
+                <textarea name="solutionRu" rows={2} defaultValue={editingProject?.solutionRu || ""} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+              </div>
+              <div>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Jarayon — UZ (ishlar qanday ketdi, qaysi bosqichlar bo'ldi?)", "Процесс — UZ (как шли работы, какие были этапы?)")}</label>
                 <textarea name="process" rows={2} defaultValue={editingProject?.process || ""} placeholder={t("Ishlar bosqichlari...", "Этапы работ...")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               </div>
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Natija (mijoz nimaga erishdi?)", "Результат (чего достиг заказчик?)")}</label>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Jarayon — RU", "Процесс — RU")}</label>
+                <textarea name="processRu" rows={2} defaultValue={editingProject?.processRu || ""} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+              </div>
+              <div>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Natija — UZ (mijoz nimaga erishdi?)", "Результат — UZ (чего достиг заказчик?)")}</label>
                 <textarea name="result" rows={2} defaultValue={editingProject?.result || ""} placeholder={t("Natija qanday bo'ldi...", "Каким был результат...")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               </div>
-              <textarea name="description" rows={2} defaultValue={editingProject?.description || ""} placeholder={t("Qisqa tavsif (kartochkada ko'rinadi)", "Краткое описание (отображается на карточке)")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Batafsil matn (har bir xatboshi yangi qatordan)", "Подробный текст (каждый абзац с новой строки)")}</label>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Natija — RU", "Результат — RU")}</label>
+                <textarea name="resultRu" rows={2} defaultValue={editingProject?.resultRu || ""} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+              </div>
+              <textarea name="description" rows={2} defaultValue={editingProject?.description || ""} placeholder={t("Qisqa tavsif — UZ (kartochkada ko'rinadi)", "Краткое описание — UZ (отображается на карточке)")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+              <textarea name="descriptionRu" rows={2} defaultValue={editingProject?.descriptionRu || ""} placeholder={t("Qisqa tavsif — RU", "Краткое описание — RU")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+              <div>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Batafsil matn — UZ (har bir xatboshi yangi qatordan)", "Подробный текст — UZ (каждый абзац с новой строки)")}</label>
                 <textarea name="details" rows={5} defaultValue={editingProject?.details || ""} placeholder={t("Loyiha haqida batafsil ma'lumot...", "Подробная информация о проекте...")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               </div>
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Asosiy ko'rsatkichlar (har biri yangi qatordan)", "Ключевые показатели (каждый с новой строки)")}</label>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Batafsil matn — RU", "Подробный текст — RU")}</label>
+                <textarea name="detailsRu" rows={5} defaultValue={editingProject?.detailsRu || ""} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+              </div>
+              <div>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Asosiy ko'rsatkichlar — UZ (har biri yangi qatordan)", "Ключевые показатели — UZ (каждый с новой строки)")}</label>
                 <textarea name="features" rows={3} defaultValue={editingProject?.features || ""} placeholder={t("Masalan:\n8 qavat\nMuddatda topshirildi\n0 ta nuqson", "Например:\n8 этажей\nСдан в срок\n0 дефектов")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+              </div>
+              <div>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Asosiy ko'rsatkichlar — RU", "Ключевые показатели — RU")}</label>
+                <textarea name="featuresRu" rows={3} defaultValue={editingProject?.featuresRu || ""} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               </div>
               <div>
                 <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">
@@ -1779,11 +1920,29 @@ export function AdminPage() {
         {showOrnamentModal && (
           <ModalShell wide title={editingOrnament ? t("Naqshni tahrirlash", "Редактировать орнамент") : t("Yangi naqsh", "Новый орнамент")} onClose={() => { setShowOrnamentModal(false); setEditingOrnament(null); }}>
             <form onSubmit={saveOrnament} className="space-y-4">
-              <input name="old" required defaultValue={editingOrnament?.old || ""} placeholder={t("Naqsh nomi (masalan: Girih naqshi) *", "Название орнамента (например: Гирих) *")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
-              <input name="desc" defaultValue={editingOrnament?.desc || ""} placeholder={t("Qisqa izoh (kartochkada ko'rinadi)", "Краткое описание (отображается на карточке)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input name="old" required defaultValue={editingOrnament?.old || ""} placeholder={t("Naqsh nomi (UZ, masalan: Girih naqshi) *", "Название орнамента (UZ, например: Гирих) *")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="oldRu" defaultValue={editingOrnament?.oldRu || ""} placeholder={t("Naqsh nomi (RU)", "Название орнамента (RU)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              </div>
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Tarixiy ma'lumot (batafsil)", "Историческая справка (подробно)")}</label>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Zamonaviy nomi / izohi (UZ) — ixtiyoriy", "Современное название / пояснение (UZ) — необязательно")}</label>
+                <input name="new" defaultValue={editingOrnament?.new || ""} placeholder={t("Masalan: zamonaviy grid tizimi", "Например: современная сетка")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              </div>
+              <div>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Zamonaviy nomi / izohi (RU)", "Современное название / пояснение (RU)")}</label>
+                <input name="newRu" defaultValue={editingOrnament?.newRu || ""} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input name="desc" defaultValue={editingOrnament?.desc || ""} placeholder={t("Qisqa izoh (UZ) — kartochkada ko'rinadi", "Краткое описание (UZ) — отображается на карточке")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="descRu" defaultValue={editingOrnament?.descRu || ""} placeholder={t("Qisqa izoh (RU)", "Краткое описание (RU)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              </div>
+              <div>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Tarixiy ma'lumot — UZ (batafsil)", "Историческая справка — UZ (подробно)")}</label>
                 <textarea name="history" rows={4} defaultValue={editingOrnament?.history || ""} placeholder={t("Naqsh va uning tarixi haqida batafsil...", "Подробно об орнаменте и его истории...")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+              </div>
+              <div>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Tarixiy ma'lumot — RU", "Историческая справка — RU")}</label>
+                <textarea name="historyRu" rows={4} defaultValue={editingOrnament?.historyRu || ""} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               </div>
               <div>
                 <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">
@@ -1803,8 +1962,12 @@ export function AdminPage() {
         {showStandardModal && (
           <ModalShell title={editingStandard ? t("Standartni tahrirlash", "Редактировать стандарт") : t("Yangi standart", "Новый стандарт")} onClose={() => { setShowStandardModal(false); setEditingStandard(null); }}>
             <form onSubmit={saveStandard} className="space-y-4">
-              <input name="title" required defaultValue={editingStandard?.title || ""} placeholder={t("Sarlavha (masalan: Tizim) *", "Заголовок (например: Система) *")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
-              <textarea name="desc" required rows={4} defaultValue={editingStandard?.desc || ""} placeholder={t("Tavsif *", "Описание *")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input name="title" required defaultValue={editingStandard?.title || ""} placeholder={t("Sarlavha (UZ, masalan: Tizim) *", "Заголовок (UZ, например: Система) *")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="titleRu" defaultValue={editingStandard?.titleRu || ""} placeholder={t("Sarlavha (RU)", "Заголовок (RU)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              </div>
+              <textarea name="desc" required rows={4} defaultValue={editingStandard?.desc || ""} placeholder={t("Tavsif (UZ) *", "Описание (UZ) *")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+              <textarea name="descRu" rows={4} defaultValue={editingStandard?.descRu || ""} placeholder={t("Tavsif (RU)", "Описание (RU)")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               <SaveBtn saving={saving} editing={!!editingStandard} />
             </form>
           </ModalShell>
@@ -1816,14 +1979,25 @@ export function AdminPage() {
         {showInvestorModal && (
           <ModalShell wide title={editingInvestor ? t("Bo'limni tahrirlash", "Редактировать раздел") : t("Yangi investor bo'limi", "Новый раздел для инвесторов")} onClose={() => { setShowInvestorModal(false); setEditingInvestor(null); }}>
             <form onSubmit={saveInvestor} className="space-y-4">
-              <input name="title" required defaultValue={editingInvestor?.title || ""} placeholder={t("Sarlavha *", "Заголовок *")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input name="title" required defaultValue={editingInvestor?.title || ""} placeholder={t("Sarlavha (UZ) *", "Заголовок (UZ) *")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="titleRu" defaultValue={editingInvestor?.titleRu || ""} placeholder={t("Sarlavha (RU)", "Заголовок (RU)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              </div>
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Matn (har bir xatboshi yangi qatordan)", "Текст (каждый абзац с новой строки)")}</label>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Matn — UZ (har bir xatboshi yangi qatordan)", "Текст — UZ (каждый абзац с новой строки)")}</label>
                 <textarea name="text" required rows={7} defaultValue={editingInvestor?.text || ""} placeholder={t("Bo'lim matni...", "Текст раздела...")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               </div>
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Kalit fikr", "Ключевая мысль")}</label>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Matn — RU", "Текст — RU")}</label>
+                <textarea name="textRu" rows={7} defaultValue={editingInvestor?.textRu || ""} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+              </div>
+              <div>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Kalit fikr — UZ", "Ключевая мысль — UZ")}</label>
                 <textarea name="key" rows={2} defaultValue={editingInvestor?.key || ""} placeholder={t("Asosiy g'oya...", "Главная идея...")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+              </div>
+              <div>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Kalit fikr — RU", "Ключевая мысль — RU")}</label>
+                <textarea name="keyRu" rows={2} defaultValue={editingInvestor?.keyRu || ""} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               </div>
               <SaveBtn saving={saving} editing={!!editingInvestor} />
             </form>
@@ -1836,20 +2010,39 @@ export function AdminPage() {
         {showBlogModal && (
           <ModalShell wide title={editingBlog ? t("Maqolani tahrirlash", "Редактировать статью") : t("Yangi maqola (qoralama)", "Новая статья (черновик)")} onClose={() => { setShowBlogModal(false); setEditingBlog(null); }}>
             <form onSubmit={saveBlog} className="space-y-4">
-              <input name="title" required defaultValue={editingBlog?.title || ""} placeholder={t("Maqola sarlavhasi *", "Заголовок статьи *")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
-              <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Rubrika (bo'lim nomi)", "Рубрика (название раздела)")}</label>
-                <input name="rubric" defaultValue={editingBlog?.rubric || ""} placeholder={t("Masalan: BARPO Standarti", "Например: Стандарт BARPO")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} list="blog-rubrics" />
-                <datalist id="blog-rubrics">
-                  <option value="BARPO Standarti" />
-                  <option value="Mijoz iqtisodiy foydasi" />
-                  <option value="Yangi qurilish madaniyati" />
-                  <option value="Tarix va zamonaviylik" />
-                </datalist>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input name="title" required defaultValue={editingBlog?.title || ""} placeholder={t("Sarlavha (UZ) *", "Заголовок (UZ) *")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input name="titleRu" defaultValue={editingBlog?.titleRu || ""} placeholder={t("Sarlavha (RU)", "Заголовок (RU)")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Rubrika (UZ)", "Рубрика (UZ)")}</label>
+                  <input name="rubric" defaultValue={editingBlog?.rubric || ""} placeholder={t("Masalan: BARPO Standarti", "Например: Стандарт BARPO")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} list="blog-rubrics" />
+                  <datalist id="blog-rubrics">
+                    <option value="BARPO Standarti" />
+                    <option value="Mijoz iqtisodiy foydasi" />
+                    <option value="Yangi qurilish madaniyati" />
+                    <option value="Tarix va zamonaviylik" />
+                  </datalist>
+                </div>
+                <div>
+                  <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Rubrika (RU)", "Рубрика (RU)")}</label>
+                  <input name="rubricRu" defaultValue={editingBlog?.rubricRu || ""} placeholder={t("Masalan: Стандарт BARPO", "Например: Стандарт BARPO")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} list="blog-rubrics-ru" />
+                  <datalist id="blog-rubrics-ru">
+                    <option value="Стандарт BARPO" />
+                    <option value="Экономическая выгода клиента" />
+                    <option value="Новая культура строительства" />
+                    <option value="История и современность" />
+                  </datalist>
+                </div>
               </div>
               <div>
-                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Maqola matni (har bir xatboshi yangi qatordan)", "Текст статьи (каждый абзац с новой строки)")}</label>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Maqola matni — UZ (har bir xatboshi yangi qatordan)", "Текст статьи — UZ (каждый абзац с новой строки)")}</label>
                 <textarea name="content" rows={10} defaultValue={editingBlog?.content || ""} placeholder={t("Maqola to'liq matni...", "Полный текст статьи...")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+              </div>
+              <div>
+                <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Maqola matni — RU", "Текст статьи — RU")}</label>
+                <textarea name="contentRu" rows={10} defaultValue={editingBlog?.contentRu || ""} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
               </div>
               <div>
                 <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">
@@ -1878,9 +2071,18 @@ export function AdminPage() {
                 <input name="name" required defaultValue={editingAdmin?.name || ""} placeholder={t("Ism *", "Имя *")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
                 <input name="username" required defaultValue={editingAdmin?.username || ""} placeholder={t("Login *", "Логин *")} autoComplete="off" style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
               </div>
-              <input name="password" type="text" required={!editingAdmin} defaultValue={editingAdmin?.password || ""} autoComplete="new-password"
-                placeholder={editingAdmin ? t("Parol (o'zgartirish uchun yangisini yozing)", "Пароль (для смены введите новый)") : t("Parol *", "Пароль *")}
-                style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+              {/* Mavjud parol hech qachon serverdan qaytarilmaydi — maydon doim
+                  bo'sh boshlanadi; admin faqat yangi parol kiritganda o'zgaradi. */}
+              <div className="relative">
+                <input name="password" type={showAdminPass ? "text" : "password"} required={!editingAdmin} minLength={editingAdmin ? undefined : 8} autoComplete="new-password"
+                  placeholder={editingAdmin ? t("Yangi parol (bo'sh qoldirsangiz o'zgarmaydi)", "Новый пароль (оставьте пустым, чтобы не менять)") : t("Parol * (kamida 8 belgi)", "Пароль * (минимум 8 символов)")}
+                  style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} pr-12`} />
+                <button type="button" onClick={() => setShowAdminPass((v) => !v)}
+                  aria-label={showAdminPass ? t("Parolni yashirish", "Скрыть пароль") : t("Parolni ko'rsatish", "Показать пароль")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#060920]/40 hover:text-[#060920] transition-colors">
+                  {showAdminPass ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
               {editingAdmin?.username !== me?.username && (
                 <div>
                   <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Rol", "Роль")}</label>
@@ -1918,7 +2120,7 @@ export function AdminPage() {
               <div>
                 <label style={{ fontFamily: "var(--font-body)" }} className="block text-xs tracking-wide uppercase text-[#060920]/50 mb-1.5">{t("Kimga", "Кому")}</label>
                 <select name="assignee" required style={{ fontFamily: "var(--font-body)" }} className={inputClass}>
-                  {(data?.admins || []).filter((a) => a.username !== me?.username).map((a) => (
+                  {assignableAdmins.map((a) => (
                     <option key={a.username} value={a.username}>{a.name} ({a.username})</option>
                   ))}
                 </select>
@@ -1934,14 +2136,29 @@ export function AdminPage() {
 
 function ModalShell({ title, onClose, children, wide }: { title: string; onClose: () => void; children: React.ReactNode; wide?: boolean }) {
   const t = useT();
+  const panelRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
+  // Escape bilan yopish + ochilganda panelga fokus, yopilganda oldingi
+  // elementga fokusni qaytarish (klaviatura bilan ishlaydigan foydalanuvchilar uchun).
+  useEffect(() => {
+    triggerRef.current = document.activeElement as HTMLElement | null;
+    panelRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      triggerRef.current?.focus?.();
+    };
+  }, [onClose]);
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       data-lenis-prevent
       className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-[#060920]/40 backdrop-blur-sm overflow-y-auto"
       onClick={onClose}>
-      <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
+      <motion.div ref={panelRef} tabIndex={-1} role="dialog" aria-modal="true" aria-label={title}
+        initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }}
         onClick={(e) => e.stopPropagation()}
-        className={`w-full ${wide ? "max-w-2xl" : "max-w-lg"} bg-white rounded-2xl p-8 shadow-2xl my-auto`}>
+        className={`w-full ${wide ? "max-w-2xl" : "max-w-lg"} bg-white rounded-2xl p-8 shadow-2xl my-auto outline-none`}>
         <div className="flex items-center justify-between mb-6">
           <h3 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{title}</h3>
           <button onClick={onClose} style={{ fontFamily: "var(--font-body)" }} className="px-3 py-1 rounded-lg hover:bg-[#060920]/5 text-[#060920]/50 text-sm">{t("Yopish", "Закрыть")}</button>
