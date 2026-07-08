@@ -44,7 +44,7 @@ export function JamoaPage() {
         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-x-14 gap-y-10">
           {ROLES.map((r, i) => (
             <motion.div
-              key={r.role}
+              key={r.role[0]}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: false }}

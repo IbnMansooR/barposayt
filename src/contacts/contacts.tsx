@@ -35,12 +35,12 @@ export function ContactPage() {
         }),
       });
       const json = await res.json().catch(() => ({}));
-      if (!res.ok || !json.ok) throw new Error(json.error || "Yuborishda xatolik yuz berdi");
+      if (!res.ok || !json.ok) throw new Error(json.error || t("Yuborishda xatolik yuz berdi", "Ошибка при отправке"));
       setFormStatus("success");
       setFormData({ name: "", email: "", phone: "", company: "", message: "" });
     } catch (err) {
       setFormStatus("error");
-      setFormError(err instanceof Error ? err.message : "Yuborishda xatolik yuz berdi");
+      setFormError(err instanceof Error ? err.message : t("Yuborishda xatolik yuz berdi", "Ошибка при отправке"));
     }
   };
 
@@ -50,17 +50,17 @@ export function ContactPage() {
   const contactMethods = [
     {
       title: ["Telefon", "Телефон"],
-      details: contactInfo.phone || "",
+      details: contactInfo.phone || "+998 (90) 123-45-67",
       description: ["Qo'ng'iroq qiling — biz bilan bog'laning", "Позвоните — свяжитесь с нами"]
     },
     {
       title: ["Email", "Email"],
-      details: contactInfo.email || "",
+      details: contactInfo.email || "info@barpo.uz",
       description: ["Javob vaqti: 24 soat ichida", "Время ответа: в течение 24 часов"]
     },
     {
       title: ["Manzil", "Адрес"],
-      details: contactInfo.address || "",
+      details: contactInfo.address || t("Toshkent, O'zbekiston", "Ташкент, Узбекистан"),
       description: ["Ofis manzili va uchrashuv joyi", "Адрес офиса и место встречи"]
     }
   ].filter((m) => m.details);
@@ -73,11 +73,26 @@ export function ContactPage() {
 
   // Ijtimoiy tarmoq linklari — admin paneldan boshqariladi
   const [socials, setSocials] = useState<{ telegram?: string; instagram?: string; facebook?: string; youtube?: string }>({});
-  useEffect(() => {
+  const [socialsStatus, setSocialsStatus] = useState<"loading" | "success" | "error">("loading");
+
+  const loadSocials = () => {
+    setSocialsStatus("loading");
     fetch("/api/socials")
       .then((r) => r.json())
-      .then((j) => { if (j.ok) { setSocials(j.socials || {}); setContactInfo(j.contact || {}); } })
-      .catch(() => {});
+      .then((j) => {
+        if (j.ok) {
+          setSocials(j.socials || {});
+          setContactInfo(j.contact || {});
+          setSocialsStatus("success");
+        } else {
+          setSocialsStatus("error");
+        }
+      })
+      .catch(() => setSocialsStatus("error"));
+  };
+
+  useEffect(() => {
+    loadSocials();
   }, []);
 
   const socialLinks = [
@@ -168,7 +183,7 @@ export function ContactPage() {
       </section>
 
       {/* Tezkor aloqa — Murojaat formasi */}
-      <section className="relative py-12 md:py-24 px-5 md:px-16 bg-white">
+      <section id="tezkor-aloqa" className="relative py-12 md:py-24 px-5 md:px-16 bg-white">
         <div className="max-w-3xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -193,7 +208,7 @@ export function ContactPage() {
                 </div>
 
                 {formStatus === "success" ? (
-                <div className="p-8 border border-[#060920]/15 bg-white/60 rounded-2xl text-center space-y-3">
+                <div aria-live="polite" role="status" className="p-8 border border-[#060920]/15 bg-white/60 rounded-2xl text-center space-y-3">
                   <div style={{ fontFamily: 'var(--font-display)' }} className="text-xl text-[#060920]">
                     {t("Rahmat! Murojaatingiz qabul qilindi.", "Спасибо! Ваша заявка принята.")}
                   </div>
@@ -263,11 +278,11 @@ export function ContactPage() {
                   />
 
                   {formStatus === "error" && (
-                    <p style={{ fontFamily: 'var(--font-body)' }} className="text-sm text-[#060920]">{formError}</p>
+                    <p role="alert" style={{ fontFamily: 'var(--font-body)' }} className="text-sm text-[#060920]">{formError}</p>
                   )}
                   <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                    whileHover={formStatus !== "sending" ? { scale: 1.02 } : undefined}
+                    whileTap={formStatus !== "sending" ? { scale: 0.98 } : undefined}
                     type="submit"
                     disabled={formStatus === "sending"}
                     style={{ fontFamily: 'var(--font-body)' }}
@@ -342,25 +357,40 @@ export function ContactPage() {
                 border: 1px solid #ffffff;
               }
             `}</style>
-            <div className="flex justify-center gap-6 flex-wrap">
-              {socialLinks.map((social, i) => (
-                <motion.a
-                  key={social.name}
-                  href={social.link}
-                  target={social.link !== "#" ? "_blank" : undefined}
-                  rel={social.link !== "#" ? "noopener noreferrer" : undefined}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: i * 0.1 }}
-                  className="social-btn"
+            {socialsStatus === "error" ? (
+              <div className="space-y-3">
+                <p style={{ fontFamily: 'var(--font-body)' }} className="text-sm text-[#060920]/50">
+                  {t("Ijtimoiy tarmoq havolalarini yuklab bo'lmadi.", "Не удалось загрузить ссылки на соцсети.")}
+                </p>
+                <button
+                  onClick={loadSocials}
                   style={{ fontFamily: 'var(--font-body)' }}
+                  className="px-6 py-2 text-sm tracking-[0.15em] uppercase text-[#060920]/70 border border-[#060920]/20 rounded-full hover:text-[#060920] hover:border-[#060920]/40 transition-colors"
                 >
-                  <social.Icon width={22} height={22} size={22} />
-                  <span>{social.name}</span>
-                </motion.a>
-              ))}
-            </div>
+                  {t("Qayta urinish", "Повторить")}
+                </button>
+              </div>
+            ) : (
+              <div className="flex justify-center gap-6 flex-wrap">
+                {socialLinks.map((social, i) => (
+                  <motion.a
+                    key={social.name}
+                    href={social.link}
+                    target={social.link !== "#" ? "_blank" : undefined}
+                    rel={social.link !== "#" ? "noopener noreferrer" : undefined}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: i * 0.1 }}
+                    className="social-btn"
+                    style={{ fontFamily: 'var(--font-body)' }}
+                  >
+                    <social.Icon width={22} height={22} size={22} />
+                    <span>{social.name}</span>
+                  </motion.a>
+                ))}
+              </div>
+            )}
           </motion.div>
         </div>
       </section>
@@ -381,7 +411,7 @@ export function ContactPage() {
               height="100%"
               frameBorder="0"
               allowFullScreen
-              title="BARPO ofisi — Yandex xarita"
+              title={t("BARPO ofisi — Yandex xarita", "Офис BARPO — карта Яндекс")}
               className="w-full h-full"
             />
           </motion.div>
@@ -414,7 +444,7 @@ export function ContactPage() {
             <p>{t("Sifat bor joyda natija bor.", "Где качество — там результат.")}</p>
           </motion.div>
           <motion.a
-            href="#contact"
+            href="#tezkor-aloqa"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             style={{ fontFamily: 'var(--font-body)', textDecoration: 'none' }}

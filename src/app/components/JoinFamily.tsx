@@ -32,15 +32,19 @@ const FIELDS_BY_DIRECTION: Record<string, [string, string][]> = {
 
 type Status = "idle" | "sending" | "success" | "error";
 
+const MAX_RESUME_SIZE = 10 * 1024 * 1024; // 10MB — server/multipart.mjs busboy limiti bilan bir xil
+
 export function JoinFamily() {
   const t = useT();
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [fileName, setFileName] = useState("");
+  const [fileError, setFileError] = useState("");
   const [direction, setDirection] = useState("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (fileError) return;
     const formEl = e.currentTarget;
     setStatus("sending");
     setErrorMsg("");
@@ -52,11 +56,24 @@ export function JoinFamily() {
       setStatus("success");
       formEl.reset();
       setFileName("");
+      setFileError("");
       setDirection("");
     } catch (err) {
       setStatus("error");
       setErrorMsg(err instanceof Error ? err.message : t("Yuborishda xatolik yuz berdi", "Произошла ошибка при отправке"));
     }
+  };
+
+  const handleResumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.size > MAX_RESUME_SIZE) {
+      setFileError(t("Fayl hajmi 10MB dan oshmasligi kerak", "Размер файла не должен превышать 10MB"));
+      setFileName("");
+      e.target.value = "";
+      return;
+    }
+    setFileError("");
+    setFileName(file?.name || "");
   };
 
   const inputClass =
@@ -141,111 +158,176 @@ export function JoinFamily() {
             {/* Honeypot — botlar uchun, odamlar ko'rmaydi */}
             <input type="text" name="_hp" tabIndex={-1} autoComplete="off" style={{ position: "absolute", left: "-9999px", opacity: 0, pointerEvents: "none" }} aria-hidden="true" />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input
-                type="text"
-                name="fullName"
-                required
-                placeholder={t("Ism-sharif *", "Ф.И.О. *")}
-                style={{ fontFamily: "var(--font-body)" }}
-                className={inputClass}
-              />
-              <input
-                type="tel"
-                name="phone"
-                required
-                placeholder={t("Telefon raqam *", "Телефон *")}
-                inputMode="tel"
-                onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/[^\d+()\-\s]/g, ""); }}
-                style={{ fontFamily: "var(--font-body)" }}
-                className={inputClass}
-              />
+              <div>
+                <label htmlFor="join-fullName" className="sr-only">
+                  {t("Ism-sharif *", "Ф.И.О. *")}
+                </label>
+                <input
+                  id="join-fullName"
+                  type="text"
+                  name="fullName"
+                  required
+                  placeholder={t("Ism-sharif *", "Ф.И.О. *")}
+                  style={{ fontFamily: "var(--font-body)" }}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label htmlFor="join-phone" className="sr-only">
+                  {t("Telefon raqam *", "Телефон *")}
+                </label>
+                <input
+                  id="join-phone"
+                  type="tel"
+                  name="phone"
+                  required
+                  placeholder={t("Telefon raqam *", "Телефон *")}
+                  inputMode="tel"
+                  onInput={(e) => {
+                    const el = e.currentTarget;
+                    const caret = el.selectionStart ?? el.value.length;
+                    const prefix = el.value.slice(0, caret).replace(/[^\d+()\-\s]/g, "");
+                    el.value = el.value.replace(/[^\d+()\-\s]/g, "");
+                    el.setSelectionRange(prefix.length, prefix.length);
+                  }}
+                  style={{ fontFamily: "var(--font-body)" }}
+                  className={inputClass}
+                />
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <select
-                required
-                value={direction}
-                onChange={(e) => setDirection(e.target.value)}
-                style={{ fontFamily: "var(--font-body)" }}
-                className={inputClass}
-              >
-                <option value="" disabled>
+              <div>
+                <label htmlFor="join-direction" className="sr-only">
                   {t("Yo'nalish *", "Направление *")}
-                </option>
-                <option value="Qurilish">{t("Qurilish", "Строительство")}</option>
-                <option value="Marketing">{t("Marketing", "Маркетинг")}</option>
-              </select>
-              <select
-                name="field"
-                required
-                defaultValue=""
-                disabled={!direction}
-                key={direction}
-                style={{ fontFamily: "var(--font-body)" }}
-                className={`${inputClass} disabled:opacity-50`}
-              >
-                <option value="" disabled>
-                  {direction ? t("Qaysi soha bo'yicha? *", "По какому направлению? *") : t("Avval yo'nalishni tanlang", "Сначала выберите направление")}
-                </option>
-                {(FIELDS_BY_DIRECTION[direction] || []).map((f) => (
-                  <option key={f[0]} value={f[0]}>
-                    {t(f[0], f[1])}
+                </label>
+                <select
+                  id="join-direction"
+                  name="direction"
+                  required
+                  value={direction}
+                  onChange={(e) => setDirection(e.target.value)}
+                  style={{ fontFamily: "var(--font-body)" }}
+                  className={inputClass}
+                >
+                  <option value="" disabled>
+                    {t("Yo'nalish *", "Направление *")}
                   </option>
-                ))}
-              </select>
+                  <option value="Qurilish">{t("Qurilish", "Строительство")}</option>
+                  <option value="Marketing">{t("Marketing", "Маркетинг")}</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="join-field" className="sr-only">
+                  {direction ? t("Qaysi soha bo'yicha? *", "По какому направлению? *") : t("Avval yo'nalishni tanlang", "Сначала выберите направление")}
+                </label>
+                <select
+                  id="join-field"
+                  name="field"
+                  required
+                  defaultValue=""
+                  disabled={!direction}
+                  key={direction}
+                  style={{ fontFamily: "var(--font-body)" }}
+                  className={`${inputClass} disabled:opacity-50`}
+                >
+                  <option value="" disabled>
+                    {direction ? t("Qaysi soha bo'yicha? *", "По какому направлению? *") : t("Avval yo'nalishni tanlang", "Сначала выберите направление")}
+                  </option>
+                  {(FIELDS_BY_DIRECTION[direction] || []).map((f) => (
+                    <option key={f[0]} value={f[0]}>
+                      {t(f[0], f[1])}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
-            <input
-              type="number"
-              name="experienceYears"
-              min={0}
-              max={60}
-              placeholder={t("Soha bo'yicha tajriba (yil)", "Опыт по направлению (лет)")}
-              style={{ fontFamily: "var(--font-body)" }}
-              className={inputClass}
-            />
+            <div>
+              <label htmlFor="join-experienceYears" className="sr-only">
+                {t("Soha bo'yicha tajriba (yil)", "Опыт по направлению (лет)")}
+              </label>
+              <input
+                id="join-experienceYears"
+                type="number"
+                name="experienceYears"
+                min={0}
+                max={60}
+                placeholder={t("Soha bo'yicha tajriba (yil)", "Опыт по направлению (лет)")}
+                style={{ fontFamily: "var(--font-body)" }}
+                className={inputClass}
+              />
+            </div>
 
-            <input
-              type="email"
-              name="email"
-              placeholder={t("Email pochtangiz (javob shu manzilga yuboriladi)", "Ваш email (ответ придёт на этот адрес)")}
-              inputMode="email"
-              pattern="[^@\s]+@[^@\s]+\.[^@\s]{2,}"
-              title={t("To'g'ri email kiriting, masalan: ism@gmail.com", "Введите корректный email, например: name@gmail.com")}
-              onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/[^A-Za-z0-9@._%+\-]/g, ""); }}
-              style={{ fontFamily: "var(--font-body)" }}
-              className={inputClass}
-            />
+            <div>
+              <label htmlFor="join-email" className="sr-only">
+                {t("Email pochtangiz (javob shu manzilga yuboriladi)", "Ваш email (ответ придёт на этот адрес)")}
+              </label>
+              <input
+                id="join-email"
+                type="email"
+                name="email"
+                placeholder={t("Email pochtangiz (javob shu manzilga yuboriladi)", "Ваш email (ответ придёт на этот адрес)")}
+                inputMode="email"
+                pattern="[^@\s]+@[^@\s]+\.[^@\s]{2,}"
+                title={t("To'g'ri email kiriting, masalan: ism@gmail.com", "Введите корректный email, например: name@gmail.com")}
+                onInput={(e) => {
+                  const el = e.currentTarget;
+                  const caret = el.selectionStart ?? el.value.length;
+                  const prefix = el.value.slice(0, caret).replace(/[^A-Za-z0-9@._%+\-]/g, "");
+                  el.value = el.value.replace(/[^A-Za-z0-9@._%+\-]/g, "");
+                  el.setSelectionRange(prefix.length, prefix.length);
+                }}
+                style={{ fontFamily: "var(--font-body)" }}
+                className={inputClass}
+              />
+            </div>
 
-            <input
-              type="text"
-              name="contact"
-              placeholder={t("Telegram yoki boshqa aloqa (masalan @username)", "Telegram или другой контакт (например @username)")}
-              style={{ fontFamily: "var(--font-body)" }}
-              className={inputClass}
-            />
+            <div>
+              <label htmlFor="join-contact" className="sr-only">
+                {t("Telegram yoki boshqa aloqa (masalan @username)", "Telegram или другой контакт (например @username)")}
+              </label>
+              <input
+                id="join-contact"
+                type="text"
+                name="contact"
+                placeholder={t("Telegram yoki boshqa aloqa (masalan @username)", "Telegram или другой контакт (например @username)")}
+                style={{ fontFamily: "var(--font-body)" }}
+                className={inputClass}
+              />
+            </div>
 
             {/* Rezyume yuklash */}
-            <label
-              style={{ fontFamily: "var(--font-body)" }}
-              className="flex items-center gap-3 w-full px-4 py-3 bg-white/50 border border-dashed border-[#060920]/25 text-[#060920]/70 hover:border-[#060920]/50 transition-colors rounded-lg cursor-pointer"
-            >
-              <span className="truncate">
-                {fileName || t("Rezyumeni yuklash (PDF, DOC, DOCX)", "Загрузить резюме (PDF, DOC, DOCX)")}
-              </span>
-              <input
-                type="file"
-                name="resume"
-                accept=".pdf,.doc,.docx,.rtf,.txt"
-                onChange={(e) => setFileName(e.target.files?.[0]?.name || "")}
-                className="hidden"
-              />
-            </label>
+            <div>
+              <label
+                style={{ fontFamily: "var(--font-body)" }}
+                className="flex items-center gap-3 w-full px-4 py-3 bg-white/50 border border-dashed border-[#060920]/25 text-[#060920]/70 hover:border-[#060920]/50 transition-colors rounded-lg cursor-pointer"
+              >
+                <span className="truncate">
+                  {fileName || t("Rezyumeni yuklash (PDF, DOC, DOCX, RTF, TXT)", "Загрузить резюме (PDF, DOC, DOCX, RTF, TXT)")}
+                </span>
+                <input
+                  type="file"
+                  name="resume"
+                  accept=".pdf,.doc,.docx,.rtf,.txt"
+                  onChange={handleResumeChange}
+                  className="hidden"
+                />
+              </label>
+              {fileError && (
+                <p
+                  style={{ fontFamily: "var(--font-body)" }}
+                  className="mt-2 text-sm font-semibold text-red-600"
+                >
+                  {fileError}
+                </p>
+              )}
+            </div>
 
             {status === "error" && (
               <p
                 style={{ fontFamily: "var(--font-body)" }}
-                className="text-sm text-[#060920]"
+                className="text-sm font-semibold text-red-600"
               >
                 {errorMsg}
               </p>

@@ -3,41 +3,42 @@ import { SoftDivider } from "../app/components/SoftDivider";
 import { barpo } from "../app/components/Barpo";
 import { useT } from "../app/i18n";
 
+const values = [
+  { title: ["Tizim", "Система"], desc: ["Har qanday katta natija boshqariladigan jarayondan boshlanadi.", "Любой большой результат начинается с управляемого процесса."] },
+  { title: ["Sifat", "Качество"], desc: ["Sifat — ko'rinish emas, qabul mezoni.", "Качество — не внешний вид, а критерий приёмки."] },
+  { title: ["Mas'uliyat", "Ответственность"], desc: ["Ishni olish — natija uchun javob berish degani.", "Взять работу — значит отвечать за результат."] },
+  { title: ["Tozalik", "Чистота"], desc: ["Toza obyekt — tartibli fikrning belgisi.", "Чистый объект — признак упорядоченного мышления."] },
+  { title: ["Hurmat", "Уважение"], desc: ["Mijozning vaqti, ishonchi va mablag'i hurmat qilinadi.", "Время, доверие и средства клиента уважаются."] },
+  { title: ["Milliy ildiz", "Национальные корни"], desc: ["Biz zamonaviy qurilishni O'zbekistonning me'moriy xotirasi va bunyodkorlik ruhidan uzmaymiz.", "Мы не отрываем современное строительство от архитектурной памяти и созидательного духа Узбекистана."] },
+];
+
+const team = [
+  { role: ["Loyiha rahbari", "Руководитель проекта"], desc: ["Jarayonning umumiy ritmi, muddat va mas'uliyatni nazorat qiladi.", "Контролирует общий ритм процесса, сроки и ответственность."] },
+  { role: ["Texnik nazorat", "Технический надзор"], desc: ["Ish sifatini ko'z bilan emas, mezon bilan tekshiradi.", "Проверяет качество работ не на глаз, а по критериям."] },
+  { role: ["Prorab", "Прораб"], desc: ["Maydondagi kunlik harakat, brigadalar va vazifalarni boshqaradi.", "Управляет ежедневной работой на площадке, бригадами и задачами."] },
+  { role: ["Muhandis", "Инженер"], desc: ["Ko'rinmaydigan tizimlar xavfsiz va to'g'ri ishlashini ta'minlaydi.", "Обеспечивает безопасную и правильную работу скрытых систем."] },
+  { role: ["Ta'minot", "Снабжение"], desc: ["Material o'z vaqtida kelmasa, grafik buziladi. Shu sabab ta'minot muhim.", "Если материал не приходит вовремя, график рушится. Поэтому снабжение важно."] },
+  { role: ["Marketing / aloqa", "Маркетинг / коммуникация"], desc: ["Mijozga kompaniya madaniyati, jarayon va natija to'g'ri yetkaziladi.", "Клиенту правильно доносятся культура компании, процесс и результат."] },
+];
+
+const reasons = [
+  { num: "01", title: ["Chunki biz jarayonni ko'ramiz", "Потому что мы видим процесс"], desc: ["Ko'pchilik natijani oxirida ko'radi. Biz esa natijani boshidan rejalashtiramiz.", "Большинство видит результат в конце. А мы планируем результат с самого начала."] },
+  { num: "02", title: ["Chunki biz xarajatni nazorat qilamiz", "Потому что мы контролируем расходы"], desc: ["Ortiqcha xarajat ko'pincha qimmat materialdan emas, noto'g'ri qarordan boshlanadi.", "Лишние расходы чаще начинаются не с дорогого материала, а с неверного решения."] },
+  { num: "03", title: ["Chunki biz sifatni har kuni tekshiramiz", "Потому что мы проверяем качество каждый день"], desc: ["Sifat yakunda \"to'g'rilanadigan\" narsa emas. Sifat har bosqichda quriladi.", "Качество — не то, что «исправляют» в конце. Качество создаётся на каждом этапе."] },
+  { num: "04", title: ["Chunki biz investor vaqtini qadrlaymiz", "Потому что мы ценим время инвестора"], desc: ["Investor obyekt ortidan yugurmasligi kerak. U qaror qabul qilishi kerak. Jarayon esa tizim bilan boshqarilishi kerak.", "Инвестор не должен бегать за объектом. Он должен принимать решения. А процессом должна управлять система."] },
+  { num: "05", title: ["Chunki biz javobgarlikni bo'lib tashlamaymiz", "Потому что мы не перекладываем ответственность"], desc: ["Obyektda muammo bo'lsa, bahona emas, yechim kerak. BARPO mas'uliyatni jarayonning markaziga qo'yadi.", "Если на объекте проблема — нужно решение, а не оправдание. Мы ставим ответственность в центр процесса."] },
+];
+
+const trust = [
+  { title: ["Tajriba", "Опыт"], text: ["O'zbekistonda katta va murakkab loyihalarni boshqarish tajribasiga ega.", "Имеет опыт управления крупными и сложными проектами в Узбекистане."] },
+  { title: ["Tizim", "Система"], text: ["Qurilishni tartibsizlikdan tizimga o'zgartiradigan boshqaruvga ega kompaniya.", "Компания с управлением, превращающим строительство из хаоса в систему."] },
+  { title: ["Javobgarlik", "Ответственность"], text: ["Har bir qaror va har bir ish uchun aniq javobgarlik olamiz.", "Берём чёткую ответственность за каждое решение и каждую работу."] },
+  { title: ["Sifat", "Качество"], text: ["Sifatni faqat gap bilan emas, qabul mezonlari bilan ta'minlaymiz.", "Обеспечиваем качество не словами, а критериями приёмки."] },
+  { title: ["Mijoz fokusi", "Фокус на клиенте"], text: ["Mijozning xotirjamligi va ishonchi — bizning asosiy maqsadimiz.", "Спокойствие и доверие клиента — наша главная цель."] },
+];
+
 export function AboutPage() {
   const t = useT();
-  const values = [
-    { title: ["Tizim", "Система"], desc: ["Har qanday katta natija boshqariladigan jarayondan boshlanadi.", "Любой большой результат начинается с управляемого процесса."] },
-    { title: ["Sifat", "Качество"], desc: ["Sifat — ko'rinish emas, qabul mezoni.", "Качество — не внешний вид, а критерий приёмки."] },
-    { title: ["Mas'uliyat", "Ответственность"], desc: ["Ishni olish — natija uchun javob berish degani.", "Взять работу — значит отвечать за результат."] },
-    { title: ["Tozalik", "Чистота"], desc: ["Toza obyekt — tartibli fikrning belgisi.", "Чистый объект — признак упорядоченного мышления."] },
-    { title: ["Hurmat", "Уважение"], desc: ["Mijozning vaqti, ishonchi va mablag'i hurmat qilinadi.", "Время, доверие и средства клиента уважаются."] },
-    { title: ["Milliy ildiz", "Национальные корни"], desc: ["Biz zamonaviy qurilishni O'zbekistonning me'moriy xotirasi va bunyodkorlik ruhidan uzmaymiz.", "Мы не отрываем современное строительство от архитектурной памяти и созидательного духа Узбекистана."] },
-  ];
-
-  const team = [
-    { role: ["Loyiha rahbari", "Руководитель проекта"], desc: ["Jarayonning umumiy ritmi, muddat va mas'uliyatni nazorat qiladi.", "Контролирует общий ритм процесса, сроки и ответственность."] },
-    { role: ["Texnik nazorat", "Технический надзор"], desc: ["Ish sifatini ko'z bilan emas, mezon bilan tekshiradi.", "Проверяет качество работ не на глаз, а по критериям."] },
-    { role: ["Prorab", "Прораб"], desc: ["Maydondagi kunlik harakat, brigadalar va vazifalarni boshqaradi.", "Управляет ежедневной работой на площадке, бригадами и задачами."] },
-    { role: ["Muhandis", "Инженер"], desc: ["Ko'rinmaydigan tizimlar xavfsiz va to'g'ri ishlashini ta'minlaydi.", "Обеспечивает безопасную и правильную работу скрытых систем."] },
-    { role: ["Ta'minot", "Снабжение"], desc: ["Material o'z vaqtida kelmasa, grafik buziladi. Shu sabab ta'minot muhim.", "Если материал не приходит вовремя, график рушится. Поэтому снабжение важно."] },
-    { role: ["Marketing / aloqa", "Маркетинг / коммуникация"], desc: ["Mijozga kompaniya madaniyati, jarayon va natija to'g'ri yetkaziladi.", "Клиенту правильно доносятся культура компании, процесс и результат."] },
-  ];
-
-  const reasons = [
-    { num: "01", title: ["Chunki biz jarayonni ko'ramiz", "Потому что мы видим процесс"], desc: ["Ko'pchilik natijani oxirida ko'radi. Biz esa natijani boshidan rejalashtiramiz.", "Большинство видит результат в конце. А мы планируем результат с самого начала."] },
-    { num: "02", title: ["Chunki biz xarajatni nazorat qilamiz", "Потому что мы контролируем расходы"], desc: ["Ortiqcha xarajat ko'pincha qimmat materialdan emas, noto'g'ri qarordan boshlanadi.", "Лишние расходы чаще начинаются не с дорогого материала, а с неверного решения."] },
-    { num: "03", title: ["Chunki biz sifatni har kuni tekshiramiz", "Потому что мы проверяем качество каждый день"], desc: ["Sifat yakunda \"to'g'rilanadigan\" narsa emas. Sifat har bosqichda quriladi.", "Качество — не то, что «исправляют» в конце. Качество создаётся на каждом этапе."] },
-    { num: "04", title: ["Chunki biz investor vaqtini qadrlaymiz", "Потому что мы ценим время инвестора"], desc: ["Investor obyekt ortidan yugurmasligi kerak. U qaror qabul qilishi kerak. Jarayon esa tizim bilan boshqarilishi kerak.", "Инвестор не должен бегать за объектом. Он должен принимать решения. А процессом должна управлять система."] },
-    { num: "05", title: ["Chunki biz javobgarlikni bo'lib tashlamaymiz", "Потому что мы не перекладываем ответственность"], desc: ["Obyektda muammo bo'lsa, bahona emas, yechim kerak. BARPO mas'uliyatni jarayonning markaziga qo'yadi.", "Если на объекте проблема — нужно решение, а не оправдание. Мы ставим ответственность в центр процесса."] },
-  ];
-
-  const trust = [
-    { title: ["Tajriba", "Опыт"], text: ["O'zbekistonda katta va murakkab loyihalarni boshqarish tajribasiga ega.", "Имеет опыт управления крупными и сложными проектами в Узбекистане."] },
-    { title: ["Tizim", "Система"], text: ["Qurilishni tartibsizlikdan tizimga o'zgartiradigan boshqaruvga ega kompaniya.", "Компания с управлением, превращающим строительство из хаоса в систему."] },
-    { title: ["Javobgarlik", "Ответственность"], text: ["Har bir qaror va har bir ish uchun aniq javobgarlik olamiz.", "Берём чёткую ответственность за каждое решение и каждую работу."] },
-    { title: ["Sifat", "Качество"], text: ["Sifatni faqat gap bilan emas, qabul mezonlari bilan ta'minlaymiz.", "Обеспечиваем качество не словами, а критериями приёмки."] },
-    { title: ["Mijoz fokusi", "Фокус на клиенте"], text: ["Mijozning xotirjamligi va ishonchi — bizning asosiy maqsadimiz.", "Спокойствие и доверие клиента — наша главная цель."] },
-  ];
 
   return (
     <div className="relative bg-white pt-20 md:pt-32">
@@ -159,7 +160,7 @@ export function AboutPage() {
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} transition={{ duration: 0.8, delay: 0.2 }}
             style={{ fontFamily: 'var(--font-body)' }} className="space-y-4 text-[#060920]/70 leading-relaxed text-lg">
             <p>
-              {barpo(t("BARPO asoschisi Farruxon Shohdiyorxon Umidxon o'g'li qurilishga tasodifan kelmagan. Uning arxitektura va dizayn bo'yicha ta'limi, davlat tizimidagi tajribasi, ishlab chiqarish va biznesdagi amaliyoti bir fikrga olib kelgan: O'zbekistonda sifatli qurilish faqat yaxshi ustalar bilan emas, kuchli boshqaruv madaniyati bilan rivojlanadi.", "Основатель компании Фаррухон Шохдиёрхон Умидхон ўғли пришёл в строительство не случайно. Его образование в области архитектуры и дизайна, опыт в государственной системе, практика в производстве и бизнесе привели к одной мысли: качественное строительство в Узбекистане развивается не только хорошими мастерами, но и сильной культурой управления."))}
+              {barpo(t("BARPO asoschisi Farruxon Shohdiyorxon Umidxon o'g'li qurilishga tasodifan kelmagan. Uning arxitektura va dizayn bo'yicha ta'limi, davlat tizimidagi tajribasi, ishlab chiqarish va biznesdagi amaliyoti bir fikrga olib kelgan: O'zbekistonda sifatli qurilish faqat yaxshi ustalar bilan emas, kuchli boshqaruv madaniyati bilan rivojlanadi.", "Основатель компании — сын Умидхона, Фаррухон Шохдиёрхон, пришёл в строительство не случайно. Его образование в области архитектуры и дизайна, опыт в государственной системе, практика в производстве и бизнесе привели к одной мысли: качественное строительство в Узбекистане развивается не только хорошими мастерами, но и сильной культурой управления."))}
             </p>
             <p>
               {barpo(t("BARPO ana shu qarashning natijasi. Kompaniya har bir obyektga shunchaki pudratchi sifatida emas, mijoz kapitali, vaqti va ishonchini himoya qiladigan mas'ul tizim sifatida kiradi.", "Компания — результат именно этого взгляда. К каждому объекту она подходит не просто как подрядчик, а как ответственная система, защищающая капитал, время и доверие клиента."))}
@@ -220,7 +221,7 @@ export function AboutPage() {
               {t("\"Qurilishning barakasi — obyektning \"taqir-tuqur\" etib, ish bilan jaranglab turishidadir\"", "«Благодать строительства — в том, чтобы объект кипел работой и звенел делом»")}
             </p>
             <p style={{ fontFamily: 'var(--font-body)' }} className="mt-4 text-sm md:text-base italic text-[#060920]/70 text-right">
-              Shoxdiyorxon Farruxon
+              Farruxon Shohdiyorxon Umidxon o'g'li
             </p>
           </motion.div>
         </div>

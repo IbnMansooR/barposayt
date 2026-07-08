@@ -43,6 +43,7 @@ export function AppRouter() {
   const [isGlobalMenuOpen, setIsGlobalMenuOpen] = useState(false);
   const { lang, setLang } = useLang();
   const t = useT();
+  const firstNavLinkRef = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -77,6 +78,13 @@ export function AppRouter() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
+
+  // Menu ochilganda fokusni birinchi nav linkka ko'chirish (klaviatura uchun focus trap)
+  useEffect(() => {
+    if (isGlobalMenuOpen) {
+      firstNavLinkRef.current?.focus();
+    }
+  }, [isGlobalMenuOpen]);
 
   // Bosh sahifa ochilgach, eng ko'p bosiladigan sahifa chunklarini fon rejimida
   // (browser bo'sh bo'lganda) oldindan yuklaymiz — birinchi navigatsiya tez bo'ladi.
@@ -151,7 +159,7 @@ export function AppRouter() {
       case "hr":
         return <HRPage />;
       case "takliflar":
-        return <PageReveal dir="right"><TakliflarPage /></PageReveal>;
+        return <TakliflarPage />;
       case "jarayon":
         return <JarayonPage />;
       case "foyda":
@@ -176,7 +184,7 @@ export function AppRouter() {
 
   // Admin sahifasida va bosh sahifada asosiy navigatsiya ko'rsatilmaydi
   // (bosh sahifa o'zining navigatsiyasiga ega)
-  const showNav = currentPage !== "home" && currentPage !== "boshqaruv" && currentPage !== "projects" && currentPage !== "takliflar";
+  const showNav = currentPage !== "home" && currentPage !== "boshqaruv" && currentPage !== "projects";
 
   return (
     <>
@@ -203,33 +211,37 @@ export function AppRouter() {
       )}
 
       {/* ─── Tezkor linklar + til almashtirgich — menu tugmasi yonida ─── */}
-      {currentPage !== "boshqaruv" && currentPage !== "projects" && currentPage !== "takliflar" && (
+      {/* Projects sahifasida to'liq ekran layout uchun tezkor linklar yashiriladi,
+          lekin til almashtirgich barcha sahifalarda, jumladan projects'da ham ko'rinishi kerak. */}
+      {currentPage !== "boshqaruv" && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.1 }}
           className="fixed top-[14px] md:top-6 right-[5.5rem] z-[60] h-11 flex items-center gap-4 md:gap-6"
         >
-          <div className="hidden md:flex items-center gap-6">
-            {[
-              { label: t("Xizmatlar", "Услуги"), href: "#services" },
-              { label: t("HR", "HR"), href: "#hr" },
-              { label: t("Aloqa", "Контакты"), href: "#contact" },
-            ].map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                style={{ fontFamily: 'var(--font-body)', textDecoration: 'none' }}
-                className={`tracking-[0.15em] uppercase text-xs transition-colors whitespace-nowrap ${
-                  currentPage === item.href.slice(1)
-                    ? 'text-[#060920] font-medium'
-                    : 'text-[#060920]/60 hover:text-[#060920]'
-                }`}
-              >
-                {item.label}
-              </a>
-            ))}
-          </div>
+          {currentPage !== "projects" && (
+            <div className="hidden md:flex items-center gap-6">
+              {[
+                { label: t("Xizmatlar", "Услуги"), href: "#services" },
+                { label: t("HR", "HR"), href: "#hr" },
+                { label: t("Aloqa", "Контакты"), href: "#contact" },
+              ].map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  style={{ fontFamily: 'var(--font-body)', textDecoration: 'none' }}
+                  className={`tracking-[0.15em] uppercase text-xs transition-colors whitespace-nowrap ${
+                    currentPage === item.href.slice(1)
+                      ? 'text-[#060920] font-medium'
+                      : 'text-[#060920]/60 hover:text-[#060920]'
+                  }`}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          )}
 
           {/* UZ / RU til almashtirgich */}
           <div
@@ -238,12 +250,14 @@ export function AppRouter() {
           >
             <button
               onClick={() => setLang("uz")}
+              aria-pressed={lang === "uz"}
               className={`px-2.5 py-1 text-xs tracking-[0.1em] transition-colors ${lang === "uz" ? "bg-[#060920] text-white" : "text-[#060920]/55 hover:text-[#060920]"}`}
             >
               UZ
             </button>
             <button
               onClick={() => setLang("ru")}
+              aria-pressed={lang === "ru"}
               className={`px-2.5 py-1 text-xs tracking-[0.1em] transition-colors ${lang === "ru" ? "bg-[#060920] text-white" : "text-[#060920]/55 hover:text-[#060920]"}`}
             >
               RU
@@ -253,7 +267,7 @@ export function AppRouter() {
       )}
 
       {/* ─── Global fixed menu button — always visible, top-right ─── */}
-      {currentPage !== "boshqaruv" && currentPage !== "projects" && currentPage !== "takliflar" && (
+      {currentPage !== "boshqaruv" && currentPage !== "projects" && (
         <motion.button
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -261,7 +275,7 @@ export function AppRouter() {
           whileHover={{ scale: 1.08 }}
           whileTap={{ scale: 0.92 }}
           onClick={() => setIsGlobalMenuOpen((v) => !v)}
-          aria-label="Navigatsiya menyusi"
+          aria-label={t("Navigatsiya menyusi", "Меню навигации")}
           className="fixed top-[14px] md:top-6 right-6 z-[60] flex flex-col items-center justify-center gap-[5px] w-11 h-11 rounded-full bg-[#060920] shadow-[0_4px_20px_-4px_rgba(6,9,32,0.45)] transition-shadow hover:shadow-[0_8px_28px_-4px_rgba(6,9,32,0.55)]"
         >
           <AnimatePresence mode="wait">
@@ -337,6 +351,7 @@ export function AppRouter() {
                   return (
                     <motion.a
                       key={item.label}
+                      ref={i === 0 ? firstNavLinkRef : undefined}
                       href={item.href}
                       initial={{ opacity: 0, x: 16 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -379,7 +394,7 @@ export function AppRouter() {
       </Suspense>
 
       {/* Footer — bosh sahifa (o'zi ko'rsatadi) va admin'dan tashqari barcha sahifalarda */}
-      {currentPage !== "home" && currentPage !== "boshqaruv" && currentPage !== "projects" && currentPage !== "takliflar" && <Footer />}
+      {currentPage !== "home" && currentPage !== "boshqaruv" && currentPage !== "projects" && <Footer />}
     </>
   );
 }

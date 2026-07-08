@@ -58,6 +58,7 @@ export function NazoratPage() {
                 <button
                   key={c.p[0]}
                   onClick={() => setActive(i)}
+                  aria-pressed={active === i}
                   style={{ fontFamily: "var(--font-body)" }}
                   className={`text-left px-5 py-4 rounded-2xl border transition-all ${
                     active === i
@@ -71,7 +72,7 @@ export function NazoratPage() {
             </div>
 
             {/* Yechim */}
-            <div className="md:sticky md:top-28">
+            <div className="md:sticky md:top-28" aria-live="polite">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={active}

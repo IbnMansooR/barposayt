@@ -10,7 +10,6 @@ interface FloorSectionProps {
   description: string;
   children?: ReactNode;
   alignment?: "left" | "right" | "center";
-  showFloorNumber?: boolean;
   image?: string;
 }
 

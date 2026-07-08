@@ -11,21 +11,36 @@ interface Article {
   content: string;
   hasImage?: boolean;
   publishedAt?: string | null;
+  titleRu?: string;
+  rubricRu?: string;
+  contentRu?: string;
 }
 
 export function BlogDetailPage({ id }: { id: string }) {
   const t = useT();
+  const bi = (uz: string, ru?: string) => t(uz, ru || uz);
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
     setLoading(true);
     window.scrollTo(0, 0);
     fetch(`/api/blog?id=${id}`)
       .then((r) => r.json())
-      .then((j) => setArticle(j.ok ? j.article : null))
-      .catch(() => setArticle(null))
-      .finally(() => setLoading(false));
+      .then((j) => {
+        if (cancelled) return;
+        setArticle(j.ok ? j.article : null);
+      })
+      .catch(() => {
+        if (!cancelled) setArticle(null);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [id]);
 
   if (loading) {
@@ -48,7 +63,7 @@ export function BlogDetailPage({ id }: { id: string }) {
     );
   }
 
-  const paras = (article.content || "").split("\n").map((s) => s.trim()).filter(Boolean);
+  const paras = bi(article.content || "", article.contentRu).split("\n").map((s) => s.trim()).filter(Boolean);
 
   return (
     <div className="relative bg-white pt-32 min-h-screen">
@@ -73,7 +88,7 @@ export function BlogDetailPage({ id }: { id: string }) {
             style={{ fontFamily: "var(--font-body)" }}
             className="text-xs tracking-[0.2em] uppercase text-[#060920]/50 mb-4"
           >
-            {barpo(article.rubric)}
+            {barpo(bi(article.rubric, article.rubricRu))}
           </motion.p>
         )}
 
@@ -85,7 +100,7 @@ export function BlogDetailPage({ id }: { id: string }) {
           style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.9rem, 4.5vw, 3rem)", color: "#060920" }}
           className="tracking-tight leading-[1.15] mb-6"
         >
-          {barpo(article.title)}
+          {barpo(bi(article.title, article.titleRu))}
         </motion.h1>
 
         <SoftDivider className="mb-10" />

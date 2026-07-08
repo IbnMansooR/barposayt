@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
 
 export type Lang = "uz" | "ru";
 
@@ -24,6 +24,11 @@ export function LangProvider({ children }: { children: ReactNode }) {
     try { localStorage.setItem("barpo_lang", l); } catch {}
     setLangState(l);
   }, []);
+  // <html lang> ni joriy saytga mos ushlab turamiz — bo'lmasa ekran o'quvchi va
+  // brauzer tarjimon/talaffuz funksiyalari sahifani doim inglizcha deb hisoblaydi.
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
   return <LangContext.Provider value={{ lang, setLang }}>{children}</LangContext.Provider>;
 }
 

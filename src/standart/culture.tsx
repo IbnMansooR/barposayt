@@ -4,6 +4,7 @@ import { BarpoWord, barpo } from "../app/components/Barpo";
 import { useT } from "../app/i18n";
 
 type CultureItem = {
+  id: string;
   title: string[];
   description: string[];
   details: string[];
@@ -12,6 +13,7 @@ type CultureItem = {
 
 const DEFAULT_CULTURE: CultureItem[] = [
     {
+      id: "1",
       title: ["Tartib", "Порядок"],
       description: ["Qurilish maydonida tartib bo'lmasa, sifat ham, tezlik ham, iqtisodiy foyda ham xavf ostida qoladi.", "Если на стройплощадке нет порядка, под угрозой и качество, и скорость, и экономическая выгода."],
       details: ["Har qanday katta loyihada tartib — tartibsizlik ichidagi tizim demakdir. Tartib yaratishda biz qoidalarga qat'iy amal qilamiz: maydon tozaligi, reja asosidagi to'g'ri harakatlar, har bir brigada va ishchining aniq o'rni.", "В любом крупном проекте порядок — это система внутри хаоса. Создавая порядок, мы строго следуем правилам: чистота площадки, верные действия по плану, чёткое место каждой бригады и рабочего."],
@@ -24,6 +26,7 @@ const DEFAULT_CULTURE: CultureItem[] = [
       ],
     },
     {
+      id: "2",
       title: ["Hisob", "Расчёт"],
       description: ["Har bir material, har bir ish hajmi, har bir kun va har bir qaror hisobda bo'lishi kerak.", "Каждый материал, каждый объём работ, каждый день и каждое решение должны быть учтены."],
       details: ["Xarajat, muddat, resurs — hammasi hisobga olingan sonlar. Taxmin va chamalab ish qilish katta loyihalarda o'rinsiz. Biz har bir so'm, har bir kub metr, har bir soat uchun javob beramiz.", "Расходы, сроки, ресурсы — всё это просчитанные цифры. Догадки и работа «на глаз» неуместны в крупных проектах. Мы отвечаем за каждый сум, каждый кубометр, каждый час."],
@@ -36,6 +39,7 @@ const DEFAULT_CULTURE: CultureItem[] = [
       ],
     },
     {
+      id: "3",
       title: ["Intizom", "Дисциплина"],
       description: ["Belgilangan grafik, texnik talab va qabul mezonlari ish jarayonining asosiy qoidasi bo'ladi.", "Установленный график, технические требования и критерии приёмки — основное правило рабочего процесса."],
       details: ["Intizom — jarayonning uzviyligi va har bir xodim o'z zimmasidagi vazifani aniq bilishi demakdir. Intizom bor joyda bosqichlar o'z vaqtida almashinadi va jarayon to'xtab qolmaydi.", "Дисциплина — это непрерывность процесса и чёткое понимание каждым сотрудником своей задачи. Там, где есть дисциплина, этапы сменяются вовремя и процесс не останавливается."],
@@ -48,6 +52,7 @@ const DEFAULT_CULTURE: CultureItem[] = [
       ],
     },
     {
+      id: "4",
       title: ["Hurmat", "Уважение"],
       description: ["Buyurtmachining vaqti, mablag'i va ishonchi hurmat qilinadi. Qurilish mijozni charchatadigan jarayon bo'lmasligi kerak.", "Время, средства и доверие заказчика уважаются. Строительство не должно быть процессом, утомляющим клиента."],
       details: ["BARPO falsafasida mijoz — bu hamkor. Uning vaqti, mablag'i va ishonchi — qimmatli manba. Biz mijozni noaniqlik bilan charchatmaymiz: darhol tushuntiramiz, maslahat beramiz va muammoning yechimini taklif etamiz.", "В нашей философии клиент — это партнёр. Его время, средства и доверие — ценный ресурс. Мы не утомляем клиента неопределённостью: сразу объясняем, советуем и предлагаем решение проблемы."],
@@ -60,6 +65,7 @@ const DEFAULT_CULTURE: CultureItem[] = [
       ],
     },
     {
+      id: "5",
       title: ["Meros", "Наследие"],
       description: ["O'zbekiston me'moriy merosi bizga shuni o'rgatadi: mustahkam inshoot faqat material bilan emas, fikr, o'lchov va tartib bilan barpo bo'ladi.", "Архитектурное наследие Узбекистана учит нас: прочное сооружение создаётся не только материалом, но и мыслью, расчётом и порядком."],
       details: ["Qadimiy o'zbek me'morchiligi — asrlar davomida to'plangan texnik bilim va badiiy tafakkur belgisidir. Girih naqshi, zanjira naqshi, turunj, koshin, gumbaz — bu detallarning har birida chuqur aql va hisob borligini ko'ramiz. BARPO shu merosga tayanadi:", "Древнее узбекское зодчество — знак технических знаний и художественного мышления, накопленных веками. Гирих, занджира, турундж, кошин, купол — в каждой из этих деталей мы видим глубокий ум и расчёт. Мы опираемся на это наследие:"],
@@ -83,7 +89,7 @@ export function CulturePage() {
       .catch(() => {});
   }, []);
 
-  type Ornament = { id: string; old: string; new: string; desc: string; history?: string; hasImage?: boolean };
+  type Ornament = { id: string; old: string; new: string; desc: string; history?: string; hasImage?: boolean; oldRu?: string; newRu?: string; descRu?: string; historyRu?: string };
   const [ornaments, setOrnaments] = useState<Ornament[]>([]);
   useEffect(() => {
     fetch("/api/ornaments")
@@ -98,7 +104,8 @@ export function CulturePage() {
       .then((r) => r.json())
       .then((j) => {
         if (j.ok && Array.isArray(j.cultureElements) && j.cultureElements.length > 0) {
-          setCultureElements(j.cultureElements.map((e: any) => ({
+          setCultureElements(j.cultureElements.map((e: any, idx: number) => ({
+            id: e.id ?? String(idx + 1),
             title: [e.titleUz, e.titleRu],
             description: [e.descUz, e.descRu],
             details: [e.detailsUz, e.detailsRu],
@@ -159,7 +166,7 @@ export function CulturePage() {
                     </motion.p>
                     <div className="space-y-2">
                       {element.principles.map((principle, i) => (
-                        <motion.div key={principle[0]} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: 0.25 + i * 0.05 }} className="flex items-start gap-3">
+                        <motion.div key={`${index}-${i}`} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: 0.25 + i * 0.05 }} className="flex items-start gap-3">
                           <div className="w-1.5 h-1.5 bg-[#060920]/60 rounded-full flex-shrink-0 mt-2" />
                           <span style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/60 text-sm">{t(principle[0], principle[1])}</span>
                         </motion.div>
@@ -170,16 +177,24 @@ export function CulturePage() {
                 <div className={index % 2 === 1 ? "md:order-1" : ""}>
                   <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.3 }}
                     className="relative h-80 md:h-96 flex items-center justify-center overflow-hidden rounded-3xl">
-                    {sectionImages[`culture-${index}`] ? (
-                      <img src={`/api/section-image?key=culture-${index}&v=${sectionImages[`culture-${index}`]}`} alt={t(element.title[0], element.title[1])} className="absolute inset-0 w-full h-full object-cover rounded-3xl" />
-                    ) : (
-                      <>
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#060920]/8 to-[#060920]/0 rounded-3xl" />
-                        <div className="relative z-10 text-center space-y-4">
-                          <p style={{ fontFamily: 'var(--font-display)' }} className="text-2xl text-[#060920]/30 font-light">{t(element.title[0], element.title[1])}</p>
-                        </div>
-                      </>
-                    )}
+                    {(() => {
+                      // Prefer the persistent id-keyed image slot; fall back to the legacy
+                      // index-keyed slot (culture-0, culture-1, ...) so existing uploads still show.
+                      const idKey = `culture-${element.id}`;
+                      const legacyKey = `culture-${index}`;
+                      const activeKey = sectionImages[idKey] ? idKey : legacyKey;
+                      const version = sectionImages[activeKey];
+                      return version ? (
+                        <img src={`/api/section-image?key=${activeKey}&v=${version}`} alt={t(element.title[0], element.title[1])} className="absolute inset-0 w-full h-full object-cover rounded-3xl" />
+                      ) : (
+                        <>
+                          <div className="absolute inset-0 bg-gradient-to-br from-[#060920]/8 to-[#060920]/0 rounded-3xl" />
+                          <div className="relative z-10 text-center space-y-4">
+                            <p style={{ fontFamily: 'var(--font-display)' }} className="text-2xl text-[#060920]/30 font-light">{t(element.title[0], element.title[1])}</p>
+                          </div>
+                        </>
+                      );
+                    })()}
                   </motion.div>
                 </div>
               </motion.div>
@@ -210,16 +225,16 @@ export function CulturePage() {
                 className="block cursor-pointer w-[88%] mx-auto md:w-auto md:mx-0 border border-[#060920]/15 rounded-2xl bg-white/50 hover:bg-white hover:shadow-[0_18px_44px_-12px_rgba(6,9,32,0.18)] transition-all overflow-hidden">
                 {item.hasImage && (
                   <div className="h-32 md:h-48 bg-[#060920]/5 overflow-hidden">
-                    <img src={`/api/ornament-image?id=${item.id}`} alt={item.old} className="w-full h-full object-cover" />
+                    <img src={`/api/ornament-image?id=${item.id}`} alt={t(item.old, item.oldRu || item.old)} className="w-full h-full object-cover" />
                   </div>
                 )}
                 <div className="p-5 md:p-8">
                   <div className="flex items-start justify-between">
-                    <p style={{ fontFamily: 'var(--font-display)' }} className="text-lg md:text-xl text-[#060920]">{item.old}</p>
+                    <p style={{ fontFamily: 'var(--font-display)' }} className="text-lg md:text-xl text-[#060920]">{t(item.old, item.oldRu || item.old)}</p>
                     <span className="text-xl text-[#060920]/30">→</span>
                   </div>
                   {item.desc && (
-                    <p style={{ fontFamily: 'var(--font-body)' }} className="text-xs md:text-sm text-[#060920]/50 mt-3 pt-3 md:mt-4 md:pt-4 border-t border-[#060920]/10 line-clamp-2">{item.desc}</p>
+                    <p style={{ fontFamily: 'var(--font-body)' }} className="text-xs md:text-sm text-[#060920]/50 mt-3 pt-3 md:mt-4 md:pt-4 border-t border-[#060920]/10 line-clamp-2">{t(item.desc, item.descRu || item.desc)}</p>
                   )}
                   <span style={{ fontFamily: 'var(--font-body)' }} className="inline-block mt-3 md:mt-4 text-xs tracking-[0.15em] uppercase text-[#060920]/60">
                     {t("Batafsil ko'rish", "Подробнее")} →

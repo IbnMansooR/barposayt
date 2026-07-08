@@ -43,13 +43,13 @@ export function RahbarPage() {
           >
             <div className="w-fit mb-5">
               <h2 style={{ fontFamily: "var(--font-display)" }} className="text-2xl text-[#060920]">
-                Farruxon Shohdiyorxon Umidxon o'g'li
+                {t("Farruxon Shohdiyorxon Umidxon o'g'li", "Фаррухон Шохдиёрхон, сын Умидхона")}
               </h2>
               <SoftDivider className="mt-3" />
             </div>
             <div style={{ fontFamily: "var(--font-body)" }} className="space-y-4 text-[#060920]/75 leading-relaxed text-lg">
               <p>
-<BarpoWord /> {t("asoschisi Farruxon Shohdiyorxon Umidxon o'g'li qurilishga tasodifan kelmagan. Uning arxitektura va dizayn bo'yicha ta'limi, davlat tizimidagi tajribasi, ishlab chiqarish va biznesdagi amaliyoti bir fikrga olib kelgan: O'zbekistonda sifatli qurilish faqat yaxshi ustalar bilan emas, kuchli boshqaruv madaniyati bilan rivojlanadi.", "Основатель компании Фаррухон Шохдиёрхон Умидхон ўғли пришёл в строительство не случайно. Его образование в области архитектуры и дизайна, опыт в государственной системе, практика в производстве и бизнесе привели к одной мысли: качественное строительство в Узбекистане развивается не только хорошими мастерами, но и сильной культурой управления.")}
+<BarpoWord /> {t("asoschisi Farruxon Shohdiyorxon Umidxon o'g'li qurilishga tasodifan kelmagan. Uning arxitektura va dizayn bo'yicha ta'limi, davlat tizimidagi tajribasi, ishlab chiqarish va biznesdagi amaliyoti bir fikrga olib kelgan: O'zbekistonda sifatli qurilish faqat yaxshi ustalar bilan emas, kuchli boshqaruv madaniyati bilan rivojlanadi.", "Основатель компании — сын Умидхона, Фаррухон Шохдиёрхон, пришёл в строительство не случайно. Его образование в области архитектуры и дизайна, опыт в государственной системе, практика в производстве и бизнесе привели к одной мысли: качественное строительство в Узбекистане развивается не только хорошими мастерами, но и сильной культурой управления.")}
               </p>
               <p>
 <BarpoWord /> {t("ana shu qarashning natijasi. Kompaniya har bir obyektga shunchaki pudratchi sifatida emas, mijoz kapitali, vaqti va ishonchini himoya qiladigan mas'ul tizim sifatida kiradi.", "Компания — результат именно этого взгляда. К каждому объекту она подходит не просто как подрядчик, а как ответственная система, защищающая капитал, время и доверие клиента.")}

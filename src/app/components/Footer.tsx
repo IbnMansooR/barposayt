@@ -18,10 +18,10 @@ export function Footer() {
   }, []);
 
   const socialIcons = [
-    { Icon: Facebook, href: socials.facebook },
-    { Icon: Instagram, href: socials.instagram },
-    { Icon: Youtube, href: socials.youtube },
-    { Icon: Send, href: socials.telegram },
+    { Icon: Facebook, href: socials.facebook || "https://facebook.com/barpo.uz" },
+    { Icon: Instagram, href: socials.instagram || "https://instagram.com/barpo.uz" },
+    { Icon: Youtube, href: socials.youtube || "https://youtube.com/@barpo.uz" },
+    { Icon: Send, href: socials.telegram || "https://t.me/barpo_uz" },
   ].filter((s) => s.href);
 
   return (

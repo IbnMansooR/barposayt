@@ -1,3 +1,4 @@
+// Bu sahifa hozircha routingdan ataylab uzilgan — sababi src/app/AppRouter.tsx dagi izohda tushuntirilgan.
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { SoftDivider } from "../app/components/SoftDivider";
@@ -189,7 +190,9 @@ export function KalkulyatorPage() {
                           : "bg-white text-[#060920]/65 border-[#060920]/15 hover:border-[#060920]/35"
                       }`}
                     >
-                      {barpo(tr(o, OPT_RU[o] || o))}
+                      {f.name === "material" && o === "BARPO"
+                        ? tr("BARPO o'zi", "Подрядчик BARPO")
+                        : barpo(tr(o, OPT_RU[o] || o))}
                     </button>
                   ))}
                 </div>

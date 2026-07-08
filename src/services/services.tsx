@@ -4,20 +4,8 @@ import { SoftDivider } from "../app/components/SoftDivider";
 import { BarpoWord, barpo } from "../app/components/Barpo";
 import { useT } from "../app/i18n";
 
-// Lokal rasmlar (zaxira variant)
-const serviceImageModules = import.meta.glob(
-  "../assets/*.{jpg,jpeg,png,webp}",
-  { eager: true, import: "default" }
-) as Record<string, string>;
-
-const serviceImageByName: Record<string, string> = {};
-for (const [filePath, url] of Object.entries(serviceImageModules)) {
-  const fileName = filePath.split("/").pop() ?? "";
-  const baseName = fileName.replace(/\.[^.]+$/, "");
-  serviceImageByName[baseName] = url;
-}
-
 type ServiceItem = {
+  id: string;
   number: string;
   title: string[];
   description: string[];
@@ -28,6 +16,7 @@ type ServiceItem = {
 
 const DEFAULT_SERVICES: ServiceItem[] = [
   {
+    id: "1",
     number: "1",
     title: ["Bosh pudratchi xizmatlari", "Услуги генподрядчика"],
     description: ["BARPO bosh pudratchi sifatida obyektning umumiy qurilish jarayonini boshqaradi: rejalashtirish, ishchi kuchi, materiallar, muhandislik tizimlari, pudratchilar, grafik va sifat nazorati.", "Как генподрядчик мы управляем общим строительным процессом объекта: планирование, рабочая сила, материалы, инженерные системы, подрядчики, график и контроль качества."],
@@ -44,6 +33,7 @@ const DEFAULT_SERVICES: ServiceItem[] = [
     highlight: ["Biz uchun bosh pudratchi — bu shunchaki ijrochi emas. Bu obyekt natijasi uchun javobgar markaz.", "Для нас генподрядчик — это не просто исполнитель. Это центр, ответственный за результат объекта."],
   },
   {
+    id: "2",
     number: "2",
     title: ["Qurilish-montaj ishlari", "Строительно-монтажные работы"],
     description: ["Qurilish-montaj ishlari har qanday obyektning asosiy poydevoridir. Bu bosqichda xato qilish keyingi barcha jarayonlarga ta'sir qiladi. BARPO konstruktiv yechimlar, montaj sifati, texnologik ketma-ketlik va xavfsizlik talablariga qat'iy amal qiladi.", "Строительно-монтажные работы — основа любого объекта. Ошибка на этом этапе влияет на все последующие процессы. Мы строго соблюдаем конструктивные решения, качество монтажа, технологическую последовательность и требования безопасности."],
@@ -51,6 +41,7 @@ const DEFAULT_SERVICES: ServiceItem[] = [
     highlight: ["Biz tezlikni shoshilish deb tushunmaymiz. Tezlik — bu oldindan tuzilgan reja va intizom natijasi.", "Мы не понимаем скорость как спешку. Скорость — результат заранее составленного плана и дисциплины."],
   },
   {
+    id: "3",
     number: "3",
     title: ["Fasad va tashqi ishlar", "Фасад и наружные работы"],
     description: ["Fasad — obyektning birinchi taassuroti. Lekin u faqat ko'rinish emas. Fasad binoning himoyasi, energetik samaradorligi, arxitekturaviy xarakteri va uzoq muddatli qiymatiga ta'sir qiladi. BARPO fasad ishlarida estetika, texnik yechim va ekspluatatsion mustahkamlikni birlashtiradi.", "Фасад — первое впечатление об объекте. Но это не только внешний вид. Фасад влияет на защиту здания, энергоэффективность, архитектурный характер и долгосрочную ценность. В фасадных работах мы объединяем эстетику, техническое решение и эксплуатационную прочность."],
@@ -58,6 +49,7 @@ const DEFAULT_SERVICES: ServiceItem[] = [
     highlight: ["Biz uchun chiroyli fasad — bu bugun ko'rinadigan, ertaga esa o'z sifatini saqlaydigan yechim.", "Для нас красивый фасад — это решение, которое выглядит хорошо сегодня и сохраняет качество завтра."],
   },
   {
+    id: "4",
     number: "4",
     title: ["Pardozlash ishlari", "Отделочные работы"],
     description: ["Pardoz — obyektning yakuniy hissiyoti. Aynan shu bosqichda mijoz, ijarachi yoki foydalanuvchi sifatni ko'radi, his qiladi va baholaydi. BARPO pardozlash ishlarida detal, aniqlik, material tanlovi va ijro madaniyatiga e'tibor beradi.", "Отделка — финальное ощущение от объекта. Именно на этом этапе клиент, арендатор или пользователь видит, чувствует и оценивает качество. В отделочных работах мы уделяем внимание деталям, точности, выбору материалов и культуре исполнения."],
@@ -65,6 +57,7 @@ const DEFAULT_SERVICES: ServiceItem[] = [
     highlight: ["Chiroyli ko'rinish yetarli emas. To'g'ri bajarilgan pardoz uzoq xizmat qilishi kerak.", "Красивого вида недостаточно. Правильно выполненная отделка должна служить долго."],
   },
   {
+    id: "5",
     number: "5",
     title: ["Muhandislik tizimlari", "Инженерные системы"],
     description: ["Muhandislik tizimlari — obyektning ko'rinmaydigan, lekin eng muhim qismi. Elektr, ventilyatsiya, isitish, sovutish, suv, kanalizatsiya, yong'in xavfsizligi va zaif tok tizimlari binoning ishlash sifatini belgilaydi. BARPO muhandislik tizimlariga alohida e'tibor beradi, chunki obyektning haqiqiy qulayligi aynan shu yerda boshlanadi.", "Инженерные системы — невидимая, но самая важная часть объекта. Электрика, вентиляция, отопление, охлаждение, водоснабжение, канализация, пожарная безопасность и слаботочные системы определяют качество работы здания. Мы уделяем инженерным системам особое внимание, ведь реальный комфорт объекта начинается именно здесь."],
@@ -90,12 +83,13 @@ export function ServicesPage() {
       .then((j) => {
         if (j.ok && Array.isArray(j.services) && j.services.length > 0) {
           setServices(j.services.map((s: any, i: number) => ({
+            id: s.id ?? String(i + 1),
             number: String(i + 1),
-            title: [s.titleUz, s.titleRu],
-            description: [s.descUz, s.descRu],
+            title: [s.titleUz, s.titleRu || s.titleUz],
+            description: [s.descUz, s.descRu || s.descUz],
             detailsLabel: ["", ""],
             details: [],
-            highlight: [s.highlightUz, s.highlightRu],
+            highlight: [s.highlightUz, s.highlightRu || s.highlightUz],
           })));
         }
       })
@@ -167,16 +161,22 @@ export function ServicesPage() {
                 <div className={index % 2 === 1 ? "md:order-1" : ""}>
                   <motion.div initial={{ opacity: 0, scale: 0.5 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.3 }}
                     className="relative h-80 md:h-full min-h-80 flex items-center justify-center overflow-hidden rounded-3xl">
-                    {sectionImages[`service-${service.number}`] ? (
-                      <img src={`/api/section-image?key=service-${service.number}&v=${sectionImages[`service-${service.number}`]}`} alt={t(service.title[0], service.title[1])} className="absolute inset-0 w-full h-full object-cover rounded-3xl" />
-                    ) : serviceImageByName[service.number] ? (
-                      <img src={serviceImageByName[service.number]} alt={t(service.title[0], service.title[1])} className="absolute inset-0 w-full h-full object-cover rounded-3xl" />
-                    ) : (
-                      <>
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#060920]/5 to-[#060920]/0 rounded-3xl" />
-                        <div style={{ fontFamily: 'var(--font-display)' }} className="text-[15vw] md:text-[12rem] font-light text-[#060920]/10 select-none">{service.number}</div>
-                      </>
-                    )}
+                    {(() => {
+                      // Prefer the persistent id-keyed image slot; fall back to the legacy
+                      // index-keyed slot (service-1..service-5) so existing uploads still show.
+                      const idKey = `service-${service.id}`;
+                      const legacyKey = `service-${service.number}`;
+                      const activeKey = sectionImages[idKey] ? idKey : legacyKey;
+                      const version = sectionImages[activeKey];
+                      return version ? (
+                        <img src={`/api/section-image?key=${activeKey}&v=${version}`} alt={t(service.title[0], service.title[1])} className="absolute inset-0 w-full h-full object-cover rounded-3xl" />
+                      ) : (
+                        <>
+                          <div className="absolute inset-0 bg-gradient-to-br from-[#060920]/5 to-[#060920]/0 rounded-3xl" />
+                          <div style={{ fontFamily: 'var(--font-display)' }} className="text-[15vw] md:text-[12rem] font-light text-[#060920]/10 select-none">{service.number}</div>
+                        </>
+                      );
+                    })()}
                   </motion.div>
                 </div>
               </motion.div>

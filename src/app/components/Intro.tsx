@@ -114,16 +114,16 @@ export function Intro() {
         <img
           src={renderImg}
           alt=""
-          fetchPriority="high"
           decoding="async"
+          {...({ fetchpriority: "high" } as any)}
           className={"hidden md:block w-full h-full object-cover " + (phase >= 1 ? "barpo-pan" : "")}
           style={{ objectPosition: "center 0%" }}
         />
         <img
           src={renderMobImg}
           alt=""
-          fetchPriority="high"
           decoding="async"
+          {...({ fetchpriority: "high" } as any)}
           className={"md:hidden w-full h-full object-cover " + (phase >= 1 ? "barpo-pan" : "")}
           style={{ objectPosition: "center 0%" }}
         />

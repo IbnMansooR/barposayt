@@ -11,10 +11,15 @@ interface Article {
   content: string;
   hasImage?: boolean;
   publishedAt?: string | null;
+  titleRu?: string;
+  rubricRu?: string;
 }
+
+const OTHER_RUBRIC_KEY = "Boshqa";
 
 export function BlogPage() {
   const t = useT();
+  const bi = (uz: string, ru?: string) => t(uz, ru || uz);
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -27,11 +32,11 @@ export function BlogPage() {
   }, []);
 
   // Rubrika bo'yicha guruhlash (tartibni saqlab)
-  const rubrics: { title: string; items: Article[] }[] = [];
+  const rubrics: { title: string; titleRu?: string; isOther: boolean; items: Article[] }[] = [];
   for (const a of articles) {
-    const key = a.rubric || "Boshqa";
+    const key = a.rubric || OTHER_RUBRIC_KEY;
     let g = rubrics.find((x) => x.title === key);
-    if (!g) { g = { title: key, items: [] }; rubrics.push(g); }
+    if (!g) { g = { title: key, titleRu: a.rubric ? a.rubricRu : undefined, isOther: !a.rubric, items: [] }; rubrics.push(g); }
     g.items.push(a);
   }
 
@@ -83,7 +88,9 @@ export function BlogPage() {
                   transition={{ duration: 0.7, delay: ri * 0.05 }}
                 >
                   <div className="w-fit mb-6">
-                    <h2 style={{ fontFamily: "var(--font-display)" }} className="text-2xl md:text-3xl text-[#060920]">{barpo(rub.title)}</h2>
+                    <h2 style={{ fontFamily: "var(--font-display)" }} className="text-2xl md:text-3xl text-[#060920]">
+                      {barpo(rub.isOther ? t("Boshqa", "Другое") : bi(rub.title, rub.titleRu))}
+                    </h2>
                     <SoftDivider className="mt-3" />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -101,7 +108,7 @@ export function BlogPage() {
                         )}
                         <div className="p-6">
                           <h3 style={{ fontFamily: "var(--font-display)" }} className="text-lg text-[#060920] leading-snug group-hover:opacity-70 transition-opacity">
-                            {barpo(a.title)}
+                            {barpo(bi(a.title, a.titleRu))}
                           </h3>
                           <span style={{ fontFamily: "var(--font-body)" }} className="mt-3 inline-block text-xs tracking-[0.15em] uppercase text-[#060920]/50">
                             {t("O'qish", "Читать")} →

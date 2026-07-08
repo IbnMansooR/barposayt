@@ -7,22 +7,38 @@ import { useT } from "../app/i18n";
 interface Project {
   id: string;
   name: string;
+  nameRu?: string;
   direction?: string;
+  directionRu?: string;
   location: string;
+  locationRu?: string;
   area: string;
+  areaRu?: string;
   year: string;
   status: string;
+  statusRu?: string;
   workType?: string;
+  workTypeRu?: string;
   duration?: string;
+  durationRu?: string;
   role?: string;
+  roleRu?: string;
   task?: string;
+  taskRu?: string;
   problem?: string;
+  problemRu?: string;
   solution?: string;
+  solutionRu?: string;
   process?: string;
+  processRu?: string;
   result?: string;
+  resultRu?: string;
   description: string;
+  descriptionRu?: string;
   details: string;
+  detailsRu?: string;
   features: string;
+  featuresRu?: string;
   hasImage?: boolean;
 }
 
@@ -31,20 +47,36 @@ export function ProjectDetailPage({ id }: { id: string }) {
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [fetchFailed, setFetchFailed] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+  const [imgFailed, setImgFailed] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
     setLoading(true);
     setNotFound(false);
+    setFetchFailed(false);
+    setImgFailed(false);
     window.scrollTo(0, 0);
     fetch(`/api/projects?id=${id}`)
       .then((r) => r.json())
       .then((json) => {
+        if (cancelled) return;
         if (json.ok && json.project) setProject(json.project);
         else setNotFound(true);
       })
-      .catch(() => setNotFound(true))
-      .finally(() => setLoading(false));
-  }, [id]);
+      .catch(() => {
+        if (cancelled) return;
+        setFetchFailed(true);
+      })
+      .finally(() => {
+        if (cancelled) return;
+        setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [id, retryCount]);
 
   if (loading) {
     return (
@@ -52,6 +84,27 @@ export function ProjectDetailPage({ id }: { id: string }) {
         <div style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/40 tracking-wide animate-pulse">
           {t("Yuklanmoqda...", "Загрузка...")}
         </div>
+      </div>
+    );
+  }
+
+  if (fetchFailed) {
+    return (
+      <div className="pt-32 min-h-screen flex flex-col items-center justify-center px-8 text-center gap-6">
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', color: '#060920' }}>
+          {t("Serverga ulanib bo'lmadi", "Не удалось подключиться к серверу")}
+        </div>
+        <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/60 max-w-md">
+          {t("Internet aloqasini tekshiring va qayta urinib ko'ring.", "Проверьте подключение к интернету и попробуйте снова.")}
+        </p>
+        <button
+          type="button"
+          onClick={() => setRetryCount((c) => c + 1)}
+          style={{ fontFamily: 'var(--font-body)' }}
+          className="px-6 py-3 bg-[#060920] text-white tracking-[0.15em] uppercase text-sm rounded-2xl hover:shadow-lg transition-all"
+        >
+          {t("Qayta urinish", "Повторить")}
+        </button>
       </div>
     );
   }
@@ -73,27 +126,30 @@ export function ProjectDetailPage({ id }: { id: string }) {
     );
   }
 
+  // Uz/Ru juftlikdagi maydon: Ru bo'sh bo'lsa Uz qiymatga qaytadi
+  const bi = (uz?: string, ru?: string) => t(uz || "", ru || uz || "");
+
   const meta = [
-    { label: t("Yo'nalish", "Направление"), value: project.direction },
-    { label: t("Hudud", "Регион"), value: project.location },
-    { label: t("Ish turi", "Тип работ"), value: project.workType },
-    { label: t("Maydon", "Площадь"), value: project.area },
-    { label: t("Muddat", "Срок"), value: project.duration },
-    { label: t("BARPO roli", "Наша роль"), value: project.role },
-    { label: t("Yil", "Год"), value: project.year },
-    { label: t("Holati", "Статус"), value: project.status },
+    { id: "direction", label: t("Yo'nalish", "Направление"), value: bi(project.direction, project.directionRu) },
+    { id: "location", label: t("Hudud", "Регион"), value: bi(project.location, project.locationRu) },
+    { id: "workType", label: t("Ish turi", "Тип работ"), value: bi(project.workType, project.workTypeRu) },
+    { id: "area", label: t("Maydon", "Площадь"), value: bi(project.area, project.areaRu) },
+    { id: "duration", label: t("Muddat", "Срок"), value: bi(project.duration, project.durationRu) },
+    { id: "role", label: t("BARPO roli", "Наша роль"), value: bi(project.role, project.roleRu) },
+    { id: "year", label: t("Yil", "Год"), value: project.year },
+    { id: "status", label: t("Holati", "Статус"), value: bi(project.status, project.statusRu) },
   ].filter((m) => m.value);
 
   const tsr = [
-    { label: t("Vazifa", "Задача"), value: project.task },
-    { label: t("Murakkablik", "Сложность"), value: project.problem },
-    { label: t("BARPO yechimi", "Наше решение"), value: project.solution },
-    { label: t("Jarayon", "Процесс"), value: project.process },
-    { label: t("Natija", "Результат"), value: project.result },
+    { id: "task", label: t("Vazifa", "Задача"), value: bi(project.task, project.taskRu) },
+    { id: "problem", label: t("Murakkablik", "Сложность"), value: bi(project.problem, project.problemRu) },
+    { id: "solution", label: t("BARPO yechimi", "Наше решение"), value: bi(project.solution, project.solutionRu) },
+    { id: "process", label: t("Jarayon", "Процесс"), value: bi(project.process, project.processRu) },
+    { id: "result", label: t("Natija", "Результат"), value: bi(project.result, project.resultRu) },
   ].filter((m) => m.value);
 
-  const detailParas = (project.details || "").split("\n").map((s) => s.trim()).filter(Boolean);
-  const featureList = (project.features || "").split("\n").map((s) => s.trim()).filter(Boolean);
+  const detailParas = (bi(project.details, project.detailsRu) || "").split("\n").map((s) => s.trim()).filter(Boolean);
+  const featureList = (bi(project.features, project.featuresRu) || "").split("\n").map((s) => s.trim()).filter(Boolean);
 
   return (
     <div className="relative bg-white pt-32 min-h-screen">
@@ -117,11 +173,11 @@ export function ProjectDetailPage({ id }: { id: string }) {
           className="space-y-4 mb-10"
         >
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 5vw, 3.5rem)', color: '#060920' }} className="tracking-tight leading-[1.1]">
-            {barpo(project.name)}
+            {barpo(bi(project.name, project.nameRu))}
           </h1>
           {project.description && (
             <p style={{ fontFamily: 'var(--font-body)' }} className="text-lg text-[#060920]/70 leading-relaxed max-w-2xl">
-              {barpo(project.description)}
+              {barpo(bi(project.description, project.descriptionRu))}
             </p>
           )}
         </motion.div>
@@ -134,7 +190,20 @@ export function ProjectDetailPage({ id }: { id: string }) {
             transition={{ duration: 0.7, delay: 0.1 }}
             className="rounded-2xl overflow-hidden mb-12 border border-[#060920]/10"
           >
-            <img src={`/api/project-image?id=${project.id}`} alt={project.name} className="w-full object-cover" />
+            {imgFailed ? (
+              <div className="w-full aspect-video flex items-center justify-center bg-[#060920]/[0.05]">
+                <span style={{ fontFamily: 'var(--font-display)' }} className="text-[#060920]/12 text-7xl md:text-8xl tracking-wider">
+                  BARPO
+                </span>
+              </div>
+            ) : (
+              <img
+                src={`/api/project-image?id=${project.id}`}
+                alt={bi(project.name, project.nameRu)}
+                className="w-full object-cover"
+                onError={() => setImgFailed(true)}
+              />
+            )}
           </motion.div>
         )}
 
@@ -147,7 +216,7 @@ export function ProjectDetailPage({ id }: { id: string }) {
             className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[#060920]/10 border border-[#060920]/10 rounded-2xl overflow-hidden mb-12"
           >
             {meta.map((m) => (
-              <div key={m.label} className="bg-white p-5">
+              <div key={m.id} className="bg-white p-5">
                 <div style={{ fontFamily: 'var(--font-body)' }} className="text-xs tracking-[0.15em] uppercase text-[#060920]/40 mb-1">
                   {barpo(m.label)}
                 </div>
@@ -168,7 +237,7 @@ export function ProjectDetailPage({ id }: { id: string }) {
             className="space-y-8 mb-12"
           >
             {tsr.map((m) => (
-              <div key={m.label}>
+              <div key={m.id}>
                 <div className="w-fit mb-3">
                   <h2 style={{ fontFamily: 'var(--font-display)' }} className="text-xl text-[#060920] mb-3">
                     {barpo(m.label)}

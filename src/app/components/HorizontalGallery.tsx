@@ -1,4 +1,4 @@
-import { useRef, useEffect, ReactNode, Children } from "react";
+import { useRef, useEffect, ReactNode } from "react";
 import { useT } from "../i18n";
 
 /**
@@ -8,19 +8,14 @@ import { useT } from "../i18n";
  * - to'liq ekran; global vertikal Lenis to'xtatiladi (Sheron home.js: window.lenis.stop())
  * - yopish (×) -> #home
  *
- * reverse=true -> QARAMA-QARSHI yo'nalish: slaydlar o'ngdan boshlanadi, scroll chapga
- * progress qiladi (loyihalar=normal, takliflar=reverse).
- *
  * Manba: Sheron klon assets/js/home.js (.side-overlay + horizontal Lenis).
  */
 export function HorizontalGallery({
   count,
   children,
-  reverse = false,
 }: {
   count: number;
   children: ReactNode;
-  reverse?: boolean;
 }) {
   const t = useT();
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -40,15 +35,8 @@ export function HorizontalGallery({
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    let inited = false;
     const recalc = () => {
       max.current = Math.max(0, strip.scrollWidth - window.innerWidth);
-      // reverse: o'ng chetdan boshlanadi (birinchi mantiqiy slayd = o'ngda)
-      if (reverse && !inited && max.current > 0) {
-        current.current = max.current;
-        target.current = max.current;
-        inited = true;
-      }
     };
     recalc();
     const settle = setTimeout(recalc, 250);
@@ -60,7 +48,7 @@ export function HorizontalGallery({
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
       const d = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
-      target.current = clamp(target.current + (reverse ? -d : d));
+      target.current = clamp(target.current + d);
     };
     wrap.addEventListener("wheel", onWheel, { passive: false });
 
@@ -69,7 +57,7 @@ export function HorizontalGallery({
     const onTM = (e: TouchEvent) => {
       const x = e.touches[0].clientX;
       const dd = (tx - x) * 1.6;
-      target.current = clamp(target.current + (reverse ? -dd : dd));
+      target.current = clamp(target.current + dd);
       tx = x;
     };
     wrap.addEventListener("touchstart", onTS, { passive: true });
@@ -105,14 +93,12 @@ export function HorizontalGallery({
       document.body.style.overflow = prevOverflow;
       if (lenis && lenis.start) lenis.start();
     };
-  }, [count, reverse]);
-
-  const ordered = reverse ? Children.toArray(children).reverse() : children;
+  }, [count]);
 
   return (
     <div ref={wrapRef} className="relative w-full h-[100dvh] overflow-hidden bg-white" style={{ touchAction: "none" }}>
       <div ref={stripRef} className="flex h-full will-change-transform" style={{ width: "max-content" }}>
-        {ordered}
+        {children}
       </div>
 
       {/* Yopish */}

@@ -6,19 +6,32 @@ import { HorizontalGallery } from "../app/components/HorizontalGallery";
 interface Project {
   id: string;
   name: string;
+  nameRu?: string;
   direction?: string;
+  directionRu?: string;
   location: string;
+  locationRu?: string;
   area: string;
+  areaRu?: string;
   year: string;
   status: string;
+  statusRu?: string;
   workType?: string;
+  workTypeRu?: string;
   duration?: string;
+  durationRu?: string;
   role?: string;
+  roleRu?: string;
   task?: string;
+  taskRu?: string;
   problem?: string;
+  problemRu?: string;
   solution?: string;
+  solutionRu?: string;
   result?: string;
+  resultRu?: string;
   description: string;
+  descriptionRu?: string;
   hasImage?: boolean;
 }
 
@@ -29,10 +42,20 @@ const PANELS = [
   { bg: "#FFFFFF", fg: "#060920" }, // oq
 ];
 
+// Rus tilida sanoq so'zi songa qarab o'zgaradi (проект/проекта/проектов)
+function ruProject(n: number) {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return "проект";
+  if ([2, 3, 4].includes(mod10) && ![12, 13, 14].includes(mod100)) return "проекта";
+  return "проектов";
+}
+
 export function ProjectsPage() {
   const t = useT();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     fetch("/api/projects")
@@ -51,7 +74,7 @@ export function ProjectsPage() {
       <div className="relative w-full h-screen flex flex-col items-center justify-center bg-white">
         <a
           href="#home"
-          aria-label="Yopish"
+          aria-label={t("Yopish", "Закрыть")}
           className="absolute top-6 right-6 z-50 w-12 h-12 rounded-full bg-[#060920] text-white flex items-center justify-center hover:scale-110 transition-transform"
           style={{ fontFamily: "var(--font-display)", textDecoration: "none", fontSize: "1.4rem", lineHeight: 1 }}
         >
@@ -102,9 +125,7 @@ export function ProjectsPage() {
           <div style={{ fontFamily: "var(--font-body)" }} className="mt-8 text-[#060920]/40 text-xs tracking-[0.25em] uppercase">
             {loading
               ? t("Yuklanmoqda...", "Загрузка...")
-              : projects.length === 0
-                ? t("Hozircha loyihalar qo'shilmagan", "Пока проекты не добавлены")
-                : `→ ${projects.length} ${t("loyiha", "проект")}`}
+              : `→ ${projects.length} ${t("loyiha", ruProject(projects.length))}`}
           </div>
         </div>
       </div>
@@ -113,6 +134,7 @@ export function ProjectsPage() {
       {projects.map((p, i) => {
         const panel = PANELS[i % PANELS.length];
         const reverse = i % 2 === 1;
+        const imgFailed = imgErrors[p.id];
         return (
           <div
             key={p.id}
@@ -121,13 +143,14 @@ export function ProjectsPage() {
           >
             {/* Rasm tomoni */}
             <div className="relative h-full overflow-hidden shrink-0" style={{ width: "58vw" }}>
-              {p.hasImage ? (
+              {p.hasImage && !imgFailed ? (
                 <img
                   data-parallax
                   src={`/api/project-image?id=${p.id}`}
                   alt={p.name}
                   className="absolute inset-0 w-full h-full object-cover"
                   style={{ transform: "scale(1.16)" }}
+                  onError={() => setImgErrors((prev) => ({ ...prev, [p.id]: true }))}
                 />
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center bg-[#060920]/[0.05]">
@@ -157,7 +180,7 @@ export function ProjectsPage() {
               </p>
               {(p.location || p.area || p.year) && (
                 <div style={{ fontFamily: "var(--font-body)", opacity: 0.55 }} className="mt-4 text-sm tracking-wide">
-                  {[p.location, p.area, p.year].filter(Boolean).join("  ·  ")}
+                  {[p.location, p.area, p.year].filter(Boolean).join(" · ")}
                 </div>
               )}
               <a

@@ -6,13 +6,15 @@ import { useT } from "../app/i18n";
 
 export function StandardPage() {
   const t = useT();
-  type Standard = { id: string; title: string; desc: string };
+  type Standard = { id: string; title: string; desc: string; titleRu?: string; descRu?: string };
   const [standards, setStandards] = useState<Standard[]>([]);
+  const [standardsLoading, setStandardsLoading] = useState(true);
   useEffect(() => {
     fetch("/api/standards")
       .then((r) => r.json())
       .then((j) => { if (j.ok) setStandards(j.standards || []); })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setStandardsLoading(false));
   }, []);
 
   return (
@@ -91,7 +93,7 @@ export function StandardPage() {
       {/* Standards Grid */}
       <section className="relative py-20 px-8 md:px-16">
         <div className="max-w-7xl mx-auto">
-          {standards.length === 0 ? (
+          {!standardsLoading && standards.length === 0 ? (
             <p style={{ fontFamily: 'var(--font-body)' }} className="text-center text-[#060920]/40 tracking-wide py-8">
               {t("Standartlar admin paneldan qo'shiladi.", "Стандарты добавляются из админ-панели.")}
             </p>
@@ -108,12 +110,12 @@ export function StandardPage() {
                 >
                   <div className="w-fit">
                     <h3 style={{ fontFamily: 'var(--font-display)' }} className="text-2xl text-[#060920]">
-                      {item.title}
+                      {t(item.title, item.titleRu || item.title)}
                     </h3>
                     <SoftDivider className="mt-3" />
                   </div>
                   <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/60 leading-relaxed">
-                    {item.desc}
+                    {t(item.desc, item.descRu || item.desc)}
                   </p>
                 </motion.div>
               ))}

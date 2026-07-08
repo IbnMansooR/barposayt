@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { motion, useScroll } from "motion/react";
+import { motion } from "motion/react";
 import logo from '../assets/logo.png';
 import logoHero from '../assets/logo-dark.png';
 import { FloorSection } from "./components/FloorSection";
@@ -15,7 +15,6 @@ export default function App() {
   const containerRef = useRef<HTMLDivElement>(null);
   const t = useT();
   const { lang } = useLang();
-  const [currentFloor, setCurrentFloor] = useState(0);
   const [contactStatus, setContactStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [contactError, setContactError] = useState("");
   const [homeProjects, setHomeProjects] = useState<
@@ -62,22 +61,6 @@ export default function App() {
     }
   };
 
-  // Butun sahifa scroll progressi (qavat raqamini kuzatish uchun)
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"],
-  });
-
-  // Floor number tracking
-  useEffect(() => {
-    const unsubscribe = scrollYProgress.on("change", (latest) => {
-      const floor = Math.floor(latest * 6);
-      setCurrentFloor(Math.min(floor, 5));
-    });
-
-    return () => unsubscribe();
-  }, [scrollYProgress]);
-
   return (
     <SectionImagesContext.Provider value={sectionImages}>
     <div ref={containerRef} className="relative">
@@ -97,12 +80,14 @@ export default function App() {
         className="fixed top-0 left-0 right-0 z-40 px-5 md:px-16 py-4 md:py-8 bg-white/95 border-b border-[#060920]/10"
       >
         <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <img
-            src={logo}
-            alt="BARPO Logo"
-            decoding="async"
-            className="h-8 cursor-pointer hover:opacity-80 transition-opacity"
-          />
+          <a href="#home">
+            <img
+              src={logo}
+              alt="BARPO Logo"
+              decoding="async"
+              className="h-8 cursor-pointer hover:opacity-80 transition-opacity"
+            />
+          </a>
 
           {/* Nav links olib tashlandi — global menu tugmasi orqali boshqariladi */}
         </div>
@@ -323,7 +308,7 @@ export default function App() {
         </div>
       </FloorSection>
 
-      {/* Floor 3 - BARPO STANDARTI */}
+      {/* Floor 6 - BARPO STANDARTI */}
       <FloorSection
         floorNumber={6}
         subtitle={t("BARPO STANDARTI", "НАШ СТАНДАРТ")}
@@ -350,7 +335,7 @@ export default function App() {
         </motion.div>
       </FloorSection>
 
-      {/* Floor 4 - QANDAY ISHLAYMIZ? */}
+      {/* Floor 7 - QANDAY ISHLAYMIZ? */}
       <FloorSection
         floorNumber={7}
         subtitle={t("QANDAY ISHLAYMIZ?", "КАК МЫ РАБОТАЕМ?")}
@@ -393,7 +378,7 @@ export default function App() {
         </div>
       </FloorSection>
 
-      {/* Floor 5 - LOYIHALAR */}
+      {/* Floor 8 - LOYIHALAR */}
       <FloorSection
         floorNumber={8}
         subtitle={t("LOYIHALAR", "ПРОЕКТЫ")}
@@ -454,7 +439,7 @@ export default function App() {
         )}
       </FloorSection>
 
-      {/* Floor 6 - HISOBOT VA NAZORAT */}
+      {/* Floor 9 - HISOBOT VA NAZORAT */}
       <FloorSection
         floorNumber={9}
         subtitle={t("HISOBOT VA NAZORAT", "ОТЧЁТНОСТЬ И КОНТРОЛЬ")}
@@ -474,7 +459,7 @@ export default function App() {
               { label: ["Material holati", "Состояние материалов"], desc: ["Zaxira va sarflanish real vaqtda", "Запас и расход в реальном времени"] },
             ].map((item, i) => (
               <motion.div
-                key={item.label}
+                key={item.label[0]}
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -511,7 +496,7 @@ export default function App() {
         </div>
       </FloorSection>
 
-      {/* Floor 7 - IQTISODIY FOYDA */}
+      {/* Floor 10 - IQTISODIY FOYDA */}
       <FloorSection
         floorNumber={10}
         subtitle={t("IQTISODIY FOYDA", "ЭКОНОМИЧЕСКАЯ ВЫГОДА")}
@@ -559,7 +544,7 @@ export default function App() {
         </div>
       </FloorSection>
 
-      {/* Floor 8 - MILLIY IDENTITET */}
+      {/* Floor 11 - MILLIY IDENTITET */}
       <FloorSection
         floorNumber={11}
         subtitle={t("MILLIY IDENTITET", "НАЦИОНАЛЬНАЯ ИДЕНТИЧНОСТЬ")}
@@ -598,7 +583,7 @@ export default function App() {
         </div>
       </FloorSection>
 
-      {/* Floor 9 - ALOQA */}
+      {/* Floor 12 - ALOQA */}
       <FloorSection
         floorNumber={12}
         subtitle={t("ALOQA", "КОНТАКТЫ")}
@@ -686,13 +671,13 @@ export default function App() {
 
           <div className="pt-6 border-t border-[#060920]/10 space-y-4">
             <div className="flex gap-3 items-baseline">
-              <span style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/40 text-xs tracking-[0.15em] uppercase w-16 flex-shrink-0">Tel</span>
+              <span style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/40 text-xs tracking-[0.15em] uppercase w-16 flex-shrink-0">{t("Tel", "Тел")}</span>
               <div style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/70 tracking-wide">
                 {contactInfo.phone || "+998 (90) 123-45-67"}
               </div>
             </div>
             <div className="flex gap-3 items-baseline">
-              <span style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/40 text-xs tracking-[0.15em] uppercase w-16 flex-shrink-0">Email</span>
+              <span style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/40 text-xs tracking-[0.15em] uppercase w-16 flex-shrink-0">{t("Email", "Email")}</span>
               <div style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/70 tracking-wide">
                 {contactInfo.email || "info@barpo.uz"}
               </div>

@@ -9,25 +9,41 @@ type Ornament = {
   desc: string;
   history?: string;
   hasImage?: boolean;
+  oldRu?: string;
+  newRu?: string;
+  descRu?: string;
+  historyRu?: string;
 };
 
 export function OrnamentDetailPage({ id }: { id: string }) {
   const t = useT();
+  const bi = (uz: string, ru?: string) => t(uz, ru || uz);
   const [ornament, setOrnament] = useState<Ornament | null>(null);
   const [loading, setLoading] = useState(true);
+  const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
     setLoading(true);
+    setImgError(false);
     fetch("/api/ornaments")
       .then((r) => r.json())
       .then((j) => {
+        if (cancelled) return;
         if (j.ok) {
           const found = (j.ornaments || []).find((o: Ornament) => o.id === id);
           setOrnament(found || null);
         }
       })
-      .catch(() => setOrnament(null))
-      .finally(() => setLoading(false));
+      .catch(() => {
+        if (!cancelled) setOrnament(null);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [id]);
 
   if (loading) {
@@ -97,11 +113,11 @@ export function OrnamentDetailPage({ id }: { id: string }) {
           }}
           className="tracking-tight mb-12"
         >
-          {ornament.old}
+          {bi(ornament.old, ornament.oldRu)}
         </motion.h1>
 
         {/* Full image — butun ko'rinishda */}
-        {ornament.hasImage && (
+        {ornament.hasImage && !imgError && (
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -110,8 +126,9 @@ export function OrnamentDetailPage({ id }: { id: string }) {
           >
             <img
               src={`/api/ornament-image?id=${ornament.id}`}
-              alt={ornament.old}
+              alt={bi(ornament.old, ornament.oldRu)}
               className="w-full h-auto object-contain"
+              onError={() => setImgError(true)}
             />
           </motion.div>
         )}
@@ -131,7 +148,7 @@ export function OrnamentDetailPage({ id }: { id: string }) {
               <div className="mt-3 h-[1px] w-full bg-[#060920]/20" />
             </div>
             <p style={{ fontFamily: "var(--font-body)" }} className="text-lg text-[#060920]/65 leading-relaxed max-w-3xl">
-              {ornament.desc}
+              {bi(ornament.desc, ornament.descRu)}
             </p>
           </motion.div>
         )}
@@ -151,7 +168,7 @@ export function OrnamentDetailPage({ id }: { id: string }) {
               <div className="mt-3 h-[1px] w-full bg-[#060920]/20" />
             </div>
             <p style={{ fontFamily: "var(--font-body)" }} className="text-lg text-[#060920]/65 leading-relaxed max-w-3xl whitespace-pre-line">
-              {ornament.history}
+              {bi(ornament.history, ornament.historyRu)}
             </p>
           </motion.div>
         )}
