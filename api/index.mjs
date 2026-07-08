@@ -5,9 +5,18 @@ import { parseMultipart } from '../server/multipart.mjs'
 
 function readRawJson(req) {
   return new Promise((resolve) => {
-    let data = ''
-    req.on('data', (c) => (data += c))
-    req.on('end', () => { try { resolve(data ? JSON.parse(data) : {}) } catch { resolve({}) } })
+    // Chunk'larni Buffer sifatida yig'amiz va OXIRIDA bitta marta UTF-8'ga
+    // aylantiramiz — chunk chegarasida bo'linib qolgan ko'p-baytli (masalan
+    // kirill) belgi buzilib qolmasligi uchun (avval har chunk alohida
+    // stringga aylantirilardi, bu esa mojibake keltirib chiqarardi).
+    const chunks = []
+    req.on('data', (c) => chunks.push(Buffer.isBuffer(c) ? c : Buffer.from(c)))
+    req.on('end', () => {
+      try {
+        const data = Buffer.concat(chunks).toString('utf8')
+        resolve(data ? JSON.parse(data) : {})
+      } catch { resolve({}) }
+    })
     req.on('error', () => resolve({}))
   })
 }
