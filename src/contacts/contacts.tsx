@@ -4,6 +4,7 @@ import { SoftDivider } from "../app/components/SoftDivider";
 import { BarpoWord } from "../app/components/Barpo";
 import { Instagram, Facebook, Youtube, Send } from "lucide-react";
 import { useT } from "../app/i18n";
+import { isValidPhone } from "../app/validation";
 
 export function ContactPage() {
   const t = useT();
@@ -18,11 +19,22 @@ export function ContactPage() {
   const [formStatus, setFormStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [formError, setFormError] = useState("");
 
+  // Brauzer standart validatsiya popup'ini (odatda ingliz tilida) UZ/RU bilan almashtiramiz.
+  const onInvalidLocalized = (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    e.currentTarget.setCustomValidity(t("Bu maydonni to'ldiring", "Заполните это поле"));
+  };
+  const clearValidity = (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    e.currentTarget.setCustomValidity("");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormStatus("sending");
     setFormError("");
     try {
+      if (!isValidPhone(formData.phone)) {
+        throw new Error(t("Telefon raqamni to'g'ri kiriting", "Введите корректный номер телефона"));
+      }
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -231,6 +243,8 @@ export function ContactPage() {
                       placeholder={t("Sizning ismingiz *", "Ваше имя *")}
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onInvalid={onInvalidLocalized}
+                      onInput={clearValidity}
                       style={{ fontFamily: 'var(--font-body)' }}
                       className="px-4 py-4 bg-white/80 border border-[#060920]/10 text-[#060920] placeholder-[#060920]/40 focus:outline-none focus:bg-white focus:border-[#060920]/30 transition-colors rounded-xl"
                       required
@@ -240,6 +254,8 @@ export function ContactPage() {
                       placeholder={t("Email manzilingiz *", "Ваш email *")}
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onInvalid={onInvalidLocalized}
+                      onInput={clearValidity}
                       style={{ fontFamily: 'var(--font-body)' }}
                       className="px-4 py-4 bg-white/80 border border-[#060920]/10 text-[#060920] placeholder-[#060920]/40 focus:outline-none focus:bg-white focus:border-[#060920]/30 transition-colors rounded-xl"
                       required
@@ -253,6 +269,8 @@ export function ContactPage() {
                       value={formData.phone}
                       inputMode="tel"
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/[^\d+()\-\s]/g, "") })}
+                      onInvalid={onInvalidLocalized}
+                      onInput={clearValidity}
                       style={{ fontFamily: 'var(--font-body)' }}
                       className="px-4 py-4 bg-white/80 border border-[#060920]/10 text-[#060920] placeholder-[#060920]/40 focus:outline-none focus:bg-white focus:border-[#060920]/30 transition-colors rounded-xl"
                       required
@@ -272,6 +290,8 @@ export function ContactPage() {
                     rows={6}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    onInvalid={onInvalidLocalized}
+                    onInput={clearValidity}
                     style={{ fontFamily: 'var(--font-body)' }}
                     className="w-full px-4 py-4 bg-white/80 border border-[#060920]/10 text-[#060920] placeholder-[#060920]/40 focus:outline-none focus:bg-white focus:border-[#060920]/30 transition-colors resize-none rounded-xl"
                     required
@@ -445,6 +465,13 @@ export function ContactPage() {
           </motion.div>
           <motion.a
             href="#tezkor-aloqa"
+            onClick={(e) => {
+              // AppRouter global hash-marshrutchisi "#tezkor-aloqa" degan sahifani
+              // tanimaydi (bu shu sahifa ICHIDAGI forma bo'limi, alohida sahifa emas)
+              // — shuning uchun hash o'zgarishini bloklab, o'zimiz formaga scroll qilamiz.
+              e.preventDefault();
+              document.getElementById("tezkor-aloqa")?.scrollIntoView({ behavior: "smooth" });
+            }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             style={{ fontFamily: 'var(--font-body)', textDecoration: 'none' }}

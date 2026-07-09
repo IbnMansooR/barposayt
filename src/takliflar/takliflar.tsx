@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { barpo } from "../app/components/Barpo";
 import { SoftDivider } from "../app/components/SoftDivider";
 import { useT } from "../app/i18n";
+import { isValidPhone } from "../app/validation";
 
 type Status = "idle" | "sending" | "success" | "error";
 
@@ -50,6 +51,14 @@ export function TakliflarPage() {
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
+  // Brauzer standart validatsiya popup'ini (odatda ingliz tilida) UZ/RU bilan almashtiramiz.
+  const onInvalidLocalized = (e: React.FormEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    e.currentTarget.setCustomValidity(t("Bu maydonni to'ldiring", "Заполните это поле"));
+  };
+  const clearValidity = (e: React.FormEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    e.currentTarget.setCustomValidity("");
+  };
+
   const inputClass =
     "w-full px-4 py-3 bg-white/70 border border-[#060920]/15 text-[#060920] placeholder-[#060920]/40 focus:outline-none focus:border-[#060920]/40 transition-colors rounded-lg";
 
@@ -83,6 +92,9 @@ export function TakliflarPage() {
     try {
       const data = new FormData(formEl);
       const body = Object.fromEntries(data.entries());
+      if (body.phone && !isValidPhone(String(body.phone))) {
+        throw new Error(t("Telefon raqamni to'g'ri kiriting", "Введите корректный номер телефона"));
+      }
       const res = await fetch("/api/suggestions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -233,14 +245,14 @@ export function TakliflarPage() {
                     style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
                 </div>
                 <label htmlFor="taklif-category" className="sr-only">{t("Taklif yo'nalishi *", "Направление *")}</label>
-                <select id="taklif-category" name="category" required defaultValue="" style={{ fontFamily: "var(--font-body)" }} className={inputClass}>
+                <select id="taklif-category" name="category" required defaultValue="" onInvalid={onInvalidLocalized} onInput={clearValidity} style={{ fontFamily: "var(--font-body)" }} className={inputClass}>
                   <option value="" disabled>{t("Taklif yo'nalishi *", "Направление *")}</option>
                   {CATEGORIES.map((c) => <option key={c[0]} value={c[0]}>{t(c[0], c[1])}</option>)}
                 </select>
                 <label htmlFor="taklif-subject" className="sr-only">{t("Taklif mavzusi *", "Тема предложения *")}</label>
-                <input id="taklif-subject" type="text" name="subject" required placeholder={t("Taklif mavzusi *", "Тема предложения *")} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
+                <input id="taklif-subject" type="text" name="subject" required placeholder={t("Taklif mavzusi *", "Тема предложения *")} onInvalid={onInvalidLocalized} onInput={clearValidity} style={{ fontFamily: "var(--font-body)" }} className={inputClass} />
                 <label htmlFor="taklif-message" className="sr-only">{t("Taklifingizni batafsil yozing *", "Опишите предложение *")}</label>
-                <textarea id="taklif-message" name="message" required rows={4} placeholder={t("Taklifingizni batafsil yozing *", "Опишите предложение *")} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
+                <textarea id="taklif-message" name="message" required rows={4} placeholder={t("Taklifingizni batafsil yozing *", "Опишите предложение *")} onInvalid={onInvalidLocalized} onInput={clearValidity} style={{ fontFamily: "var(--font-body)" }} className={`${inputClass} resize-none`} />
                 {status === "error" && <p style={{ fontFamily: "var(--font-body)" }} className="text-sm text-[#060920]">{errorMsg}</p>}
                 <button type="submit" disabled={status === "sending"} style={{ fontFamily: "var(--font-body)" }}
                   className="w-full px-8 py-3.5 bg-[#060920] text-white tracking-[0.15em] uppercase font-medium rounded-2xl transition-all hover:shadow-xl disabled:opacity-70">

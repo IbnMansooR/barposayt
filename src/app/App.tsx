@@ -10,15 +10,17 @@ import { useT, useLang } from "./i18n";
 import { Preloader } from "./components/Preloader";
 import { Intro } from "./components/Intro";
 import { SectionImagesContext } from "./sectionImages";
+import { isValidPhone } from "./validation";
 
 export default function App() {
   const containerRef = useRef<HTMLDivElement>(null);
   const t = useT();
+  const bi = (uz?: string, ru?: string) => t(uz || "", ru || uz || "");
   const { lang } = useLang();
   const [contactStatus, setContactStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [contactError, setContactError] = useState("");
   const [homeProjects, setHomeProjects] = useState<
-    { id: string; name: string; location: string; area: string; description?: string; hasImage?: boolean }[]
+    { id: string; name: string; nameRu?: string; location: string; locationRu?: string; area: string; areaRu?: string; description?: string; descriptionRu?: string; hasImage?: boolean }[]
   >([]);
   const [contactInfo, setContactInfo] = useState<{ phone?: string; email?: string; address?: string }>({});
   const [sectionImages, setSectionImages] = useState<Record<string, number>>({});
@@ -38,6 +40,14 @@ export default function App() {
       .catch(() => {});
   }, []);
 
+  // Brauzer standart validatsiya popup'ini (odatda ingliz tilida) UZ/RU bilan almashtiramiz.
+  const onInvalidLocalized = (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    e.currentTarget.setCustomValidity(t("Bu maydonni to'ldiring", "Заполните это поле"));
+  };
+  const clearValidity = (e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    e.currentTarget.setCustomValidity("");
+  };
+
   const handleContactSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formEl = e.currentTarget;
@@ -46,18 +56,21 @@ export default function App() {
     try {
       const fd = new FormData(formEl);
       const body = Object.fromEntries(fd.entries());
+      if (!isValidPhone(String(body.phone || ""))) {
+        throw new Error(t("Telefon raqamni to'g'ri kiriting", "Введите корректный номер телефона"));
+      }
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
       const json = await res.json().catch(() => ({}));
-      if (!res.ok || !json.ok) throw new Error(json.error || "Yuborishda xatolik yuz berdi");
+      if (!res.ok || !json.ok) throw new Error(json.error || t("Yuborishda xatolik yuz berdi", "Произошла ошибка при отправке"));
       setContactStatus("success");
       formEl.reset();
     } catch (err) {
       setContactStatus("error");
-      setContactError(err instanceof Error ? err.message : "Yuborishda xatolik yuz berdi");
+      setContactError(err instanceof Error ? err.message : t("Yuborishda xatolik yuz berdi", "Произошла ошибка при отправке"));
     }
   };
 
@@ -113,7 +126,11 @@ export default function App() {
             >
               {t("Biz qurmaymiz.", "Мы не строим.")}<br />
               <span className="inline-flex items-baseline justify-center gap-3 flex-wrap">
-                {t("Biz", "Мы")}
+                {/* Har bir so'z alohida <span>ga o'ralgan — shunda logotip rasmi
+                    ko'rinmasa ham (masalan RU tilida) ikkala so'z alohida flex-element
+                    bo'lib qoladi va gap-3 doim qo'llanadi (aks holda ikkala matn bitta
+                    uzluksiz matn qatoriga birlashib, orasidagi bo'shliq yo'qolardi). */}
+                <span>{t("Biz", "Мы")}</span>
                 {lang === "uz" && (
                   <img
                     src={logoHero}
@@ -122,7 +139,7 @@ export default function App() {
                     style={{ height: '1em', display: 'inline-block', transform: 'translateY(0.05em)' }}
                   />
                 )}
-                {t("etamiz.", "созидаем.")}
+                <span>{t("etamiz.", "созидаем.")}</span>
               </span>
             </motion.h1>
 
@@ -411,14 +428,13 @@ export default function App() {
                 >
                   <div className="w-fit">
                     <div style={{ fontFamily: 'var(--font-display)' }} className="text-2xl text-[#060920]">
-                      {project.name}
+                      {bi(project.name, project.nameRu)}
                     </div>
                     <SoftDivider className="mt-3" />
                   </div>
                   <p style={{ fontFamily: 'var(--font-body)' }} className="text-[#060920]/65 leading-relaxed mt-4">
-                    {project.description
-                      ? project.description
-                      : [project.location, project.area].filter(Boolean).join(" · ")}
+                    {bi(project.description, project.descriptionRu) ||
+                      [bi(project.location, project.locationRu), bi(project.area, project.areaRu)].filter(Boolean).join(" · ")}
                   </p>
                   <SoftDivider className="mt-5 mb-4 max-w-none" />
                   <span style={{ fontFamily: 'var(--font-display)' }} className="text-lg text-[#060920]">
@@ -624,6 +640,8 @@ export default function App() {
                 name="fullName"
                 required
                 placeholder={t("Sizning ismingiz *", "Ваше имя *")}
+                onInvalid={onInvalidLocalized}
+                onInput={clearValidity}
                 style={{ fontFamily: 'var(--font-body)' }}
                 className="px-4 py-3 bg-white/50 border border-[#060920]/15 text-[#060920] placeholder-[#060920]/40 focus:outline-none focus:border-[#060920]/40 transition-colors rounded-lg"
               />
@@ -633,7 +651,8 @@ export default function App() {
                 required
                 placeholder={t("Telefon raqam *", "Телефон *")}
                 inputMode="tel"
-                onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/[^\d+()\-\s]/g, ""); }}
+                onInvalid={onInvalidLocalized}
+                onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/[^\d+()\-\s]/g, ""); e.currentTarget.setCustomValidity(""); }}
                 style={{ fontFamily: 'var(--font-body)' }}
                 className="px-4 py-3 bg-white/50 border border-[#060920]/15 text-[#060920] placeholder-[#060920]/40 focus:outline-none focus:border-[#060920]/40 transition-colors rounded-lg"
               />

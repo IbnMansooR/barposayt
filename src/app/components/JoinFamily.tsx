@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { useT } from "../i18n";
+import { isValidPhone } from "../validation";
 
 // Yo'nalishga qarab sohalar ro'yxati — [uz, ru], saqlanadigan qiymat uz bo'lib qoladi
 const FIELDS_BY_DIRECTION: Record<string, [string, string][]> = {
@@ -42,6 +43,14 @@ export function JoinFamily() {
   const [fileError, setFileError] = useState("");
   const [direction, setDirection] = useState("");
 
+  // Brauzer standart validatsiya popup'ini (odatda ingliz tilida) UZ/RU bilan almashtiramiz.
+  const onInvalidLocalized = (e: React.FormEvent<HTMLInputElement | HTMLSelectElement>) => {
+    e.currentTarget.setCustomValidity(t("Bu maydonni to'ldiring", "Заполните это поле"));
+  };
+  const clearValidity = (e: React.FormEvent<HTMLInputElement | HTMLSelectElement>) => {
+    e.currentTarget.setCustomValidity("");
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (fileError) return;
@@ -50,6 +59,9 @@ export function JoinFamily() {
     setErrorMsg("");
     try {
       const data = new FormData(formEl);
+      if (!isValidPhone(String(data.get("phone") || ""))) {
+        throw new Error(t("Telefon raqamni to'g'ri kiriting", "Введите корректный номер телефона"));
+      }
       const res = await fetch("/api/apply", { method: "POST", body: data });
       const json = await res.json().catch(() => ({}));
       if (!res.ok || !json.ok) throw new Error(json.error || t("Yuborishda xatolik yuz berdi", "Произошла ошибка при отправке"));
@@ -168,6 +180,8 @@ export function JoinFamily() {
                   name="fullName"
                   required
                   placeholder={t("Ism-sharif *", "Ф.И.О. *")}
+                  onInvalid={onInvalidLocalized}
+                  onInput={clearValidity}
                   style={{ fontFamily: "var(--font-body)" }}
                   className={inputClass}
                 />
@@ -183,12 +197,14 @@ export function JoinFamily() {
                   required
                   placeholder={t("Telefon raqam *", "Телефон *")}
                   inputMode="tel"
+                  onInvalid={onInvalidLocalized}
                   onInput={(e) => {
                     const el = e.currentTarget;
                     const caret = el.selectionStart ?? el.value.length;
                     const prefix = el.value.slice(0, caret).replace(/[^\d+()\-\s]/g, "");
                     el.value = el.value.replace(/[^\d+()\-\s]/g, "");
                     el.setSelectionRange(prefix.length, prefix.length);
+                    el.setCustomValidity("");
                   }}
                   style={{ fontFamily: "var(--font-body)" }}
                   className={inputClass}
@@ -207,6 +223,8 @@ export function JoinFamily() {
                   required
                   value={direction}
                   onChange={(e) => setDirection(e.target.value)}
+                  onInvalid={onInvalidLocalized}
+                  onInput={clearValidity}
                   style={{ fontFamily: "var(--font-body)" }}
                   className={inputClass}
                 >
@@ -228,6 +246,8 @@ export function JoinFamily() {
                   defaultValue=""
                   disabled={!direction}
                   key={direction}
+                  onInvalid={onInvalidLocalized}
+                  onInput={clearValidity}
                   style={{ fontFamily: "var(--font-body)" }}
                   className={`${inputClass} disabled:opacity-50`}
                 >
