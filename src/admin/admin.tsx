@@ -1,10 +1,50 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, Component, type ReactNode } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { BarpoWord } from "../app/components/Barpo";
 import { useT } from "../app/i18n";
 import { Eye, EyeOff } from "lucide-react";
 
 const CREDS_KEY = "barpo_admin_creds";
+
+// Boshqaruv panelida kutilmagan render-vaqti xatosi (masalan, cheklangan
+// ruxsatli admin uchun serverdan kelmagan maydonga murojaat) butun ilovani
+// bo'sh oq ekranga aylantirmasligi uchun himoya qatlami.
+class AdminErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error: unknown, info: unknown) {
+    console.error("[AdminPage] kutilmagan xato:", error, info);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="pt-24 min-h-screen flex items-center justify-center px-8 text-center">
+          <div className="max-w-md space-y-4">
+            <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">
+              Boshqaruv panelida kutilmagan xato yuz berdi
+            </h2>
+            <p style={{ fontFamily: "var(--font-body)" }} className="text-[#060920]/60 text-sm">
+              Iltimos, sahifani qayta yuklang. Muammo davom etsa, superadminga murojaat qiling.
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              style={{ fontFamily: "var(--font-body)" }}
+              className="px-6 py-3 bg-[#060920] text-white rounded-2xl text-sm tracking-wide hover:opacity-90 transition-opacity"
+            >
+              Qayta yuklash
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 // DIQQAT: parol bu yerda HECH QACHON saqlanmaydi — faqat login paytida
 // bir martalik almashinuvda ishlatiladi. Keyingi barcha so'rovlar server
@@ -198,6 +238,14 @@ function formatDate(iso: string) {
 }
 
 export function AdminPage() {
+  return (
+    <AdminErrorBoundary>
+      <AdminPageInner />
+    </AdminErrorBoundary>
+  );
+}
+
+function AdminPageInner() {
   const t = useT();
   const [creds, setCreds] = useState<Creds | null>(() => loadCreds());
   const [username, setUsername] = useState("");
@@ -739,21 +787,23 @@ export function AdminPage() {
 
   const me = data?.me;
   const isSuper = me?.role === "superadmin";
-  const hasPerm = (key: string) => isSuper || !me || me.perms?.[key] !== false;
+  // `data` hali kelmagan bo'lsa (yuklanish jarayonida) HAMMA ruxsatni yashiramiz —
+  // aks holda `!me` shartidan kelib chiqib ruxsatsiz bo'limlar bir zumga ko'rinib qolardi.
+  const hasPerm = (key: string) => !!data && (isSuper || !me || me.perms?.[key] !== false);
   const assignableAdmins = (data?.admins || []).filter((a) => a.username !== me?.username);
 
   const tabs = [
-    { id: "projects" as Tab, label: t("Loyihalar", "Проекты"), count: data?.projects.length ?? 0 },
+    { id: "projects" as Tab, label: t("Loyihalar", "Проекты"), count: data?.projects?.length ?? 0 },
     { id: "ornaments" as Tab, label: t("Naqshlar", "Орнаменты"), count: data?.ornaments?.length ?? 0 },
     { id: "standards" as Tab, label: t("Standartlar", "Стандарты"), count: data?.standards?.length ?? 0 },
     { id: "investors" as Tab, label: t("Investorlar", "Инвесторы"), count: data?.investors?.length ?? 0 },
     { id: "blog" as Tab, label: t("Bilim markazi", "Центр знаний"), count: data?.blog?.length ?? 0 },
-    { id: "offers" as Tab, label: t("Cheklangan takliflar", "Ограниченные предложения"), count: data?.offers.length ?? 0 },
+    { id: "offers" as Tab, label: t("Cheklangan takliflar", "Ограниченные предложения"), count: data?.offers?.length ?? 0 },
     { id: "sections" as Tab, label: t("Bo'lim rasmlari", "Изображения разделов"), count: Object.keys(sectionImages).length },
     { id: "stats" as Tab, label: t("Statistika", "Статистика"), count: stats.length },
-    { id: "suggestions" as Tab, label: t("Kelgan takliflar", "Поступившие предложения"), count: data?.suggestions.length ?? 0 },
-    { id: "hr" as Tab, label: t("HR Arizalari", "HR-заявки"), count: data?.hr.length ?? 0 },
-    { id: "contacts" as Tab, label: t("Aloqa So'rovlari", "Запросы на связь"), count: data?.contacts.length ?? 0 },
+    { id: "suggestions" as Tab, label: t("Kelgan takliflar", "Поступившие предложения"), count: data?.suggestions?.length ?? 0 },
+    { id: "hr" as Tab, label: t("HR Arizalari", "HR-заявки"), count: data?.hr?.length ?? 0 },
+    { id: "contacts" as Tab, label: t("Aloqa So'rovlari", "Запросы на связь"), count: data?.contacts?.length ?? 0 },
     { id: "settings" as Tab, label: t("Sozlamalar", "Настройки"), count: [settings.telegram, settings.telegramByType.hr, settings.telegramByType.suggestion, settings.telegramByType.contact].reduce((sum, cfg) => sum + (cfg?.chatIds || []).filter(Boolean).length, 0) },
     { id: "services" as Tab, label: t("Xizmatlar", "Услуги"), count: data?.services?.length ?? 0 },
     { id: "culture" as Tab, label: t("Madaniyat", "Культура"), count: data?.cultureElements?.length ?? 0 },
@@ -810,13 +860,13 @@ export function AdminPage() {
             {activeTab === "projects" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-2 flex-wrap gap-3">
-                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("Loyihalar", "Проекты")} ({data.projects.length})</h2>
+                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("Loyihalar", "Проекты")} ({data.projects?.length ?? 0})</h2>
                   <button onClick={() => { setEditingProject(null); setShowProjectModal(true); }} style={{ fontFamily: "var(--font-body)" }}
                     className="px-5 py-2.5 bg-[#060920] text-white rounded-xl text-sm tracking-wide hover:shadow-lg transition-all">
                     + {t("Yangi loyiha", "Новый проект")}
                   </button>
                 </div>
-                {data.projects.length === 0 ? <EmptyState text={t("Hozircha loyiha qo'shilmagan. '+ Yangi loyiha' tugmasini bosing.", "Пока проекты не добавлены. Нажмите кнопку «+ Новый проект».")} /> : data.projects.map((p, i) => (
+                {(data.projects?.length ?? 0) === 0 ? <EmptyState text={t("Hozircha loyiha qo'shilmagan. '+ Yangi loyiha' tugmasini bosing.", "Пока проекты не добавлены. Нажмите кнопку «+ Новый проект».")} /> : data.projects.map((p, i) => (
                   <motion.div key={p.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
                     className={`p-5 bg-white/60 border rounded-2xl flex gap-5 items-start ${p.active ? "border-[#060920]/10" : "border-[#060920]/10 opacity-60"}`}>
                     <div className="w-24 h-24 rounded-xl bg-[#060920]/5 overflow-hidden flex-shrink-0">
@@ -1108,13 +1158,13 @@ export function AdminPage() {
             {activeTab === "offers" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-2 flex-wrap gap-3">
-                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("Cheklangan takliflar", "Ограниченные предложения")} ({data.offers.length})</h2>
+                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("Cheklangan takliflar", "Ограниченные предложения")} ({data.offers?.length ?? 0})</h2>
                   <button onClick={() => { setEditingOffer(null); setShowOfferModal(true); }} style={{ fontFamily: "var(--font-body)" }}
                     className="px-5 py-2.5 bg-[#060920] text-white rounded-xl text-sm tracking-wide hover:shadow-lg transition-all">
                     + {t("Yangi taklif", "Новое предложение")}
                   </button>
                 </div>
-                {data.offers.length === 0 ? <EmptyState text={t("Hozircha taklif qo'shilmagan. '+ Yangi taklif' tugmasini bosing.", "Пока предложения не добавлены. Нажмите кнопку «+ Новое предложение».")} /> : data.offers.map((o, i) => (
+                {(data.offers?.length ?? 0) === 0 ? <EmptyState text={t("Hozircha taklif qo'shilmagan. '+ Yangi taklif' tugmasini bosing.", "Пока предложения не добавлены. Нажмите кнопку «+ Новое предложение».")} /> : data.offers.map((o, i) => (
                   <motion.div key={o.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
                     className={`p-6 bg-white/60 border rounded-2xl space-y-3 ${o.active ? "border-[#060920]/10" : "border-[#060920]/10 opacity-60"}`}>
                     <div className="flex items-start justify-between flex-wrap gap-3">
@@ -1203,10 +1253,10 @@ export function AdminPage() {
             {activeTab === "suggestions" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("Kelgan takliflar", "Поступившие предложения")} ({data.suggestions.length})</h2>
+                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("Kelgan takliflar", "Поступившие предложения")} ({data.suggestions?.length ?? 0})</h2>
                   <button onClick={() => exportCsv("suggestions")} className={btnGhost}>⤓ Excel / Sheets (CSV)</button>
                 </div>
-                {data.suggestions.length === 0 ? <EmptyState text={t("Hozircha kelgan taklif yo'q", "Пока нет поступивших предложений")} /> : data.suggestions.map((sg, i) => (
+                {(data.suggestions?.length ?? 0) === 0 ? <EmptyState text={t("Hozircha kelgan taklif yo'q", "Пока нет поступивших предложений")} /> : data.suggestions.map((sg, i) => (
                   <motion.div key={sg.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
                     className="p-6 bg-white/60 border border-[#060920]/10 rounded-2xl space-y-3">
                     <div className="flex items-start justify-between flex-wrap gap-3">
@@ -1235,10 +1285,10 @@ export function AdminPage() {
             {activeTab === "hr" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("HR Arizalari", "HR-заявки")} ({data.hr.length})</h2>
+                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("HR Arizalari", "HR-заявки")} ({data.hr?.length ?? 0})</h2>
                   <button onClick={() => exportCsv("hr")} className={btnGhost}>⤓ Excel / Sheets (CSV)</button>
                 </div>
-                {data.hr.length === 0 ? <EmptyState text={t("Hozircha HR arizasi yo'q", "Пока нет HR-заявок")} /> : [...data.hr]
+                {(data.hr?.length ?? 0) === 0 ? <EmptyState text={t("Hozircha HR arizasi yo'q", "Пока нет HR-заявок")} /> : [...data.hr]
                   .sort((a, b) => {
                     // Rad etilganlar ro'yxat oxiriga tushadi, qolganlar yangilik tartibida
                     const aRej = (a.status || "pending") === "rejected" ? 1 : 0;
@@ -1305,10 +1355,10 @@ export function AdminPage() {
             {activeTab === "contacts" && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("Aloqa So'rovlari", "Запросы на связь")} ({data.contacts.length})</h2>
+                  <h2 style={{ fontFamily: "var(--font-display)" }} className="text-xl text-[#060920]">{t("Aloqa So'rovlari", "Запросы на связь")} ({data.contacts?.length ?? 0})</h2>
                   <button onClick={() => exportCsv("contacts")} className={btnGhost}>⤓ Excel / Sheets (CSV)</button>
                 </div>
-                {data.contacts.length === 0 ? <EmptyState text={t("Hozircha aloqa so'rovi yo'q", "Пока нет запросов на связь")} /> : data.contacts.map((a, i) => (
+                {(data.contacts?.length ?? 0) === 0 ? <EmptyState text={t("Hozircha aloqa so'rovi yo'q", "Пока нет запросов на связь")} /> : data.contacts.map((a, i) => (
                   <motion.div key={a.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
                     className="p-6 bg-white/60 border border-[#060920]/10 rounded-2xl space-y-3">
                     <div className="flex items-start justify-between flex-wrap gap-3">
