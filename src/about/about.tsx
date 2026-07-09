@@ -221,7 +221,7 @@ export function AboutPage() {
               {t("\"Qurilishning barakasi — obyektning \"taqir-tuqur\" etib, ish bilan jaranglab turishidadir\"", "«Благодать строительства — в том, чтобы объект кипел работой и звенел делом»")}
             </p>
             <p style={{ fontFamily: 'var(--font-body)' }} className="mt-4 text-sm md:text-base italic text-[#060920]/70 text-right">
-              Farruxon Shohdiyorxon Umidxon o'g'li
+              {t("Farruxon Shohdiyorxon Umidxon o'g'li", "Фаррухон Шохдиёрхон Умидхон угли")}
             </p>
           </motion.div>
         </div>

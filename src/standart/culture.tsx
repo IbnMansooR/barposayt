@@ -106,10 +106,10 @@ export function CulturePage() {
         if (j.ok && Array.isArray(j.cultureElements) && j.cultureElements.length > 0) {
           setCultureElements(j.cultureElements.map((e: any, idx: number) => ({
             id: e.id ?? String(idx + 1),
-            title: [e.titleUz, e.titleRu],
-            description: [e.descUz, e.descRu],
-            details: [e.detailsUz, e.detailsRu],
-            principles: (e.principlesUz || []).map((p: string, i: number) => [p, (e.principlesRu || [])[i] || '']),
+            title: [e.titleUz, e.titleRu || e.titleUz],
+            description: [e.descUz, e.descRu || e.descUz],
+            details: [e.detailsUz, e.detailsRu || e.detailsUz],
+            principles: (e.principlesUz || []).map((p: string, i: number) => [p, (e.principlesRu || [])[i] || p]),
           })));
         }
       })

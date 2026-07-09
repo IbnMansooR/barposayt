@@ -5,17 +5,35 @@ import { useT } from "../i18n";
 
 type Socials = { telegram?: string; instagram?: string; facebook?: string; youtube?: string };
 type ContactInfo = { phone?: string; email?: string; address?: string };
+type FooterService = { id: string; titleUz: string; titleRu: string };
+
+// Admin panelda xizmat qo'shilmagan/yuklanmagan holatdagi zaxira ro'yxat.
+const FALLBACK_SERVICES: FooterService[] = [
+  { id: "fallback-1", titleUz: "Bosh pudratchi", titleRu: "Генподряд" },
+  { id: "fallback-2", titleUz: "Qurilish ishlari", titleRu: "Строительные работы" },
+  { id: "fallback-3", titleUz: "Pardoz", titleRu: "Отделка" },
+  { id: "fallback-4", titleUz: "Muhandislik", titleRu: "Инженерия" },
+  { id: "fallback-5", titleUz: "Fasad", titleRu: "Фасад" },
+];
 
 export function Footer() {
   const t = useT();
   const [socials, setSocials] = useState<Socials>({});
   const [contact, setContact] = useState<ContactInfo>({});
+  const [services, setServices] = useState<FooterService[]>([]);
   useEffect(() => {
     fetch("/api/socials")
       .then((r) => r.json())
       .then((j) => { if (j.ok) { setSocials(j.socials || {}); setContact(j.contact || {}); } })
       .catch(() => {});
+    // Xizmatlar ro'yxati admin paneldan boshqariladi — qattiq kodlangan ro'yxat
+    // eskirib qolmasligi uchun /api/services'dan real ma'lumot olamiz.
+    fetch("/api/services")
+      .then((r) => r.json())
+      .then((j) => { if (j.ok && Array.isArray(j.services) && j.services.length > 0) setServices(j.services); })
+      .catch(() => {});
   }, []);
+  const footerServices = services.length > 0 ? services : FALLBACK_SERVICES;
 
   const socialIcons = [
     { Icon: Facebook, href: socials.facebook || "https://facebook.com/barpo.uz" },
@@ -67,15 +85,9 @@ export function Footer() {
               <div style={{ fontFamily: 'var(--font-display)' }} className="text-sm text-white/60 mb-4 tracking-wide">
                 {t("XIZMATLAR", "УСЛУГИ")}
               </div>
-              {[
-                { uz: "Bosh pudratchi", ru: "Генподряд" },
-                { uz: "Qurilish ishlari", ru: "Строительные работы" },
-                { uz: "Pardoz", ru: "Отделка" },
-                { uz: "Muhandislik", ru: "Инженерия" },
-                { uz: "Fasad", ru: "Фасад" },
-              ].map((service) => (
-                <a key={service.uz} href="#services" style={{ fontFamily: 'var(--font-body)' }} className="block text-sm text-white/50 hover:text-white cursor-pointer mb-2 transition-colors">
-                  {t(service.uz, service.ru)}
+              {footerServices.map((service) => (
+                <a key={service.id} href="#services" style={{ fontFamily: 'var(--font-body)' }} className="block text-sm text-white/50 hover:text-white cursor-pointer mb-2 transition-colors">
+                  {t(service.titleUz, service.titleRu || service.titleUz)}
                 </a>
               ))}
             </div>

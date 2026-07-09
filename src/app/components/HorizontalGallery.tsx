@@ -104,7 +104,7 @@ export function HorizontalGallery({
       {/* Yopish */}
       <a
         href="#home"
-        aria-label="Yopish"
+        aria-label={t("Yopish", "Закрыть")}
         className="absolute top-6 right-6 z-50 w-12 h-12 rounded-full bg-[#060920] text-white flex items-center justify-center shadow-[0_6px_24px_-6px_rgba(6,9,32,0.6)] hover:scale-110 transition-transform"
         style={{ fontFamily: "var(--font-display)", textDecoration: "none", fontSize: "1.4rem", lineHeight: 1 }}
       >

@@ -53,6 +53,7 @@ function ruProject(n: number) {
 
 export function ProjectsPage() {
   const t = useT();
+  const bi = (uz: string, ru?: string) => t(uz || "", ru || uz || "");
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
@@ -168,19 +169,19 @@ export function ProjectsPage() {
             >
               {p.direction && (
                 <div style={{ fontFamily: "var(--font-body)" }} className="text-xs tracking-[0.25em] uppercase opacity-60">
-                  {p.direction}
+                  {bi(p.direction, p.directionRu)}
                 </div>
               )}
               <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.75rem, 2.8vw, 3rem)" }} className="mt-3 leading-tight">
-                {barpo(p.name)}
+                {barpo(bi(p.name, p.nameRu))}
               </h2>
               <div className="mt-5 h-px w-16" style={{ background: panel.fg, opacity: 0.35 }} />
               <p style={{ fontFamily: "var(--font-body)", opacity: 0.82 }} className="mt-6 leading-relaxed max-w-md">
-                {barpo(p.description || [p.location, p.area, p.year].filter(Boolean).join(" · "))}
+                {barpo(bi(p.description, p.descriptionRu) || [bi(p.location, p.locationRu), bi(p.area, p.areaRu), p.year].filter(Boolean).join(" · "))}
               </p>
               {(p.location || p.area || p.year) && (
                 <div style={{ fontFamily: "var(--font-body)", opacity: 0.55 }} className="mt-4 text-sm tracking-wide">
-                  {[p.location, p.area, p.year].filter(Boolean).join(" · ")}
+                  {[bi(p.location, p.locationRu), bi(p.area, p.areaRu), p.year].filter(Boolean).join(" · ")}
                 </div>
               )}
               <a
