@@ -161,6 +161,13 @@ export async function deleteFiles(kind, pathKeys) {
 // bu yerda amalga oshirilmadi. Quyidagi ichki-jarayon qulfi (bitta issiq
 // Vercel funksiyasi/lokal dev-server doirasida) real amaliy foydalanish
 // hajmi uchun poyga oynasini sezilarli qisqartiradi.
+// Agar navbatdagi (oldingi) chaqiruv shuncha vaqt ichida tugamasa, navbatni
+// baribir bo'shatamiz — aks holda bitta sekinlashgan Supabase so'rovi shu
+// kalitga tegishli BARCHA keyingi so'rovlarni abadiy "osilib qolishga"
+// majbur qilar edi (foydalanuvchiga hech qanday javob — na muvaffaqiyat,
+// na xato — qaytmasdan). Sekin chaqiruvning o'zi baribir davom etadi va
+// o'z natijasini chaqiruvchisiga qaytaradi — faqat NAVBAT band qilinmaydi.
+const LOCK_TIMEOUT_MS = 8000
 const _rlLocks = new Map()
 async function withKeyLock(key, fn) {
   const prev = _rlLocks.get(key) || Promise.resolve()
@@ -168,7 +175,15 @@ async function withKeyLock(key, fn) {
   const next = new Promise((r) => { release = r })
   _rlLocks.set(key, prev.then(() => next))
   await prev
-  try { return await fn() } finally { release(); if (_rlLocks.get(key) === next) _rlLocks.delete(key) }
+  let timedOut = false
+  const timer = setTimeout(() => { timedOut = true; release() }, LOCK_TIMEOUT_MS)
+  try {
+    return await fn()
+  } finally {
+    clearTimeout(timer)
+    if (!timedOut) release()
+    if (_rlLocks.get(key) === next) _rlLocks.delete(key)
+  }
 }
 export async function checkRateLimit(key, maxCount = 3, windowMs = 10 * 60 * 1000) {
   try {

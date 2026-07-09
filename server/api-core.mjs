@@ -124,6 +124,17 @@ function getClientIp(req) {
 function htmlEscape(v) {
   return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 }
+// Telefon raqamida kamida shuncha raqam bo'lishi kerak — brauzer tomonidagi
+// filtrni (faqat belgi ruxsat etish) chetlab o'tib to'g'ridan-to'g'ri so'rov
+// yuborilgan holatlarda ham serverning o'zi haqiqiy tekshiruvni bajaradi.
+function isValidPhone(v) {
+  const digits = String(v == null ? '' : v).replace(/\D/g, '')
+  return digits.length >= 7
+}
+// Rezyume fayli uchun ruxsat etilgan kengaytmalar (klient tomonidagi
+// <input accept="..."> bilan bir xil) — MIME sarlavhasiga ishonmasdan,
+// avval nomdan kengaytmani tekshiramiz.
+const ALLOWED_RESUME_EXTS = new Set(['.pdf', '.doc', '.docx', '.rtf', '.txt'])
 // CSV formula-in'ektsiyadan himoya: agar qiymat =, +, -, @ yoki tab bilan
 // boshlansa, elektron jadval dasturi uni formula deb bajarib yubormasligi uchun
 // oldiga apostrof qo'shamiz (Excel/Sheets buni matn sifatida ko'rsatadi).
@@ -514,6 +525,10 @@ async function findImagePath(folder, id) {
 //  ASOSIY HANDLER
 // ============================================================
 
+// JSON so'rov tanasi uchun maksimal hajm — oddiy forma yuborishlari uchun
+// bemalol yetarli, lekin xotira tugashi (DoS) xavfini oldini oladi.
+const MAX_JSON_BODY_BYTES = 1 * 1024 * 1024 // 1MB
+
 // JSON tana o'qish (adapter req._json bergan bo'lsa o'shani oladi)
 async function getJson(req) {
   if (req._json !== undefined) return req._json || {}
@@ -522,8 +537,22 @@ async function getJson(req) {
     // aylantiramiz (chunk chegarasida bo'linib qolgan kirill/o'zbekcha
     // belgilar buzilib qolmasligi uchun).
     const chunks = []
-    req.on('data', (c) => chunks.push(Buffer.isBuffer(c) ? c : Buffer.from(c)))
+    let total = 0
+    let destroyed = false
+    req.on('data', (c) => {
+      if (destroyed) return
+      const buf = Buffer.isBuffer(c) ? c : Buffer.from(c)
+      total += buf.length
+      if (total > MAX_JSON_BODY_BYTES) {
+        destroyed = true
+        try { req.destroy() } catch {}
+        resolve({})
+        return
+      }
+      chunks.push(buf)
+    })
     req.on('end', () => {
+      if (destroyed) return
       try {
         const data = Buffer.concat(chunks).toString('utf8')
         resolve(data ? JSON.parse(data) : {})
@@ -550,6 +579,9 @@ export async function handleApi(req, res) {
     res.statusCode = 200
     res.setHeader('Content-Type', mime)
     res.setHeader('Cache-Control', 'no-cache')
+    // Brauzer deklaratsiya qilingan Content-Type'ni "sniff" qilib boshqacha
+    // (masalan text/html) sifatida talqin qilmasin — stored-XSS'ga qo'shimcha to'siq.
+    res.setHeader('X-Content-Type-Options', 'nosniff')
     res.end(buf)
   }
   const notFound = () => { res.statusCode = 404; res.end('Not found') }
@@ -677,15 +709,20 @@ export async function handleApi(req, res) {
 
     // ===== Ommaviy POST'lar (forma) =====
     if (p === '/api/suggestions' && method === 'POST') {
-      const body = await getJson(req)
-      if (body._hp) return json(400, { ok: false, error: "Noto'g'ri so'rov." })
+      // Rate-limit IP asosida ishlaydi — so'rov tanasini o'qishdan OLDIN
+      // tekshiramiz, shunda cheklovdan oshgan so'rovlar hech qachon xotiraga
+      // to'liq o'qilmaydi (DoS xavfini kamaytiradi).
       const ip = getClientIp(req)
       if (!(await checkRateLimit(`suggestions:${ip}`, 3, 10 * 60 * 1000)))
         return json(429, { ok: false, error: "Juda ko'p so'rov yuborildingiz. 10 daqiqadan keyin qayta urinib ko'ring." })
+      const body = await getJson(req)
+      if (body._hp) return json(400, { ok: false, error: "Noto'g'ri so'rov." })
       if (!body.subject || !String(body.subject).trim() || !body.message || !String(body.message).trim())
         return json(400, { ok: false, error: 'Mavzu va xabar majburiy' })
       if (String(body.message).length > 5000 || String(body.subject).length > 300)
         return json(400, { ok: false, error: "Matn juda uzun." })
+      if (body.phone && !isValidPhone(body.phone))
+        return json(400, { ok: false, error: "Telefon raqamni to'g'ri kiriting" })
       const list = await readArray('suggestions')
       const rec = { id: genId(), fullName: body.fullName || '', phone: body.phone || '', category: body.category || '', subject: body.subject, message: body.message, submittedAt: new Date().toISOString() }
       list.unshift(rec); await writeArray('suggestions', list)
@@ -693,15 +730,18 @@ export async function handleApi(req, res) {
       return json(200, { ok: true })
     }
     if (p === '/api/contact' && method === 'POST') {
-      const body = await getJson(req)
-      if (body._hp) return json(400, { ok: false, error: "Noto'g'ri so'rov." })
       const ip = getClientIp(req)
       if (!(await checkRateLimit(`contact:${ip}`, 3, 10 * 60 * 1000)))
         return json(429, { ok: false, error: "Juda ko'p so'rov yuborildingiz. 10 daqiqadan keyin qayta urinib ko'ring." })
+      const body = await getJson(req)
+      if (body._hp) return json(400, { ok: false, error: "Noto'g'ri so'rov." })
       if (!body.fullName || !String(body.fullName).trim() || !body.phone || !String(body.phone).trim())
         return json(400, { ok: false, error: 'Ism va telefon majburiy' })
-      if (String(body.fullName).length > 200 || String(body.phone).length > 30 || String(body.message || '').length > 3000)
+      if (String(body.fullName).length > 200 || String(body.phone).length > 30 || String(body.message || '').length > 3000
+        || String(body.email || '').length > 200 || String(body.company || '').length > 200)
         return json(400, { ok: false, error: "Matn juda uzun." })
+      if (!isValidPhone(body.phone))
+        return json(400, { ok: false, error: "Telefon raqamni to'g'ri kiriting" })
       const list = await readArray('contacts')
       const rec = { id: genId(), fullName: body.fullName, phone: body.phone, email: body.email || '', company: body.company || '', message: body.message || '', submittedAt: new Date().toISOString() }
       list.unshift(rec); await writeArray('contacts', list)
@@ -716,9 +756,19 @@ export async function handleApi(req, res) {
         return json(429, { ok: false, error: "Siz allaqachon ariza yuborgansiz. 1 soatdan keyin qayta urinib ko'ring." })
       for (const key of ['fullName', 'field', 'phone'])
         if (!body[key] || !String(body[key]).trim()) return json(400, { ok: false, error: `Majburiy maydon to'ldirilmagan: ${key}` })
+      if (String(body.fullName).length > 200 || String(body.phone).length > 30 || String(body.field).length > 100
+        || String(body.email || '').length > 200 || String(body.contact || '').length > 200 || String(body.experienceYears || '').length > 10)
+        return json(400, { ok: false, error: "Matn juda uzun." })
+      if (!isValidPhone(body.phone))
+        return json(400, { ok: false, error: "Telefon raqamni to'g'ri kiriting" })
       const id = genId()
       const safeName = String(body.fullName).trim().replace(/[^\p{L}\p{N}]+/gu, '_').slice(0, 60) || 'nomalum'
       const f = file(req)
+      if (f && f.buffer) {
+        const ext = extFromName(f.originalname).toLowerCase()
+        if (!ALLOWED_RESUME_EXTS.has(ext))
+          return json(400, { ok: false, error: "Rezyume fayli PDF, DOC, DOCX, RTF yoki TXT formatida bo'lishi kerak" })
+      }
       const rec = {
         id, folder: id, fullName: body.fullName, field: body.field,
         experienceYears: body.experienceYears || '', phone: body.phone, email: body.email || '',
@@ -728,7 +778,7 @@ export async function handleApi(req, res) {
       if (f && f.buffer) {
         const ext = extFromName(f.originalname) || ''
         const resumeName = `rezyume${ext}`
-        await putFile('resume', `${id}/${resumeName}`, f.buffer, f.mimetype)
+        await putFile('resume', `${id}/${resumeName}`, f.buffer, 'application/octet-stream')
         rec.resumeFile = resumeName
       }
       const list = await readArray('hr'); list.unshift(rec); await writeArray('hr', list)
@@ -784,7 +834,11 @@ export async function handleApi(req, res) {
       let tasks = await readArray('tasks')
       if (!isSuper) tasks = tasks.filter((t) => t.assignee === admin.username)
       const data = {
-        history: (await readArray('history')).slice(0, 10),
+        // Audit-log boshqa adminlarning ismi va ruxsati yo'q bo'limlardagi
+        // amallarni ham o'z ichiga oladi — shuning uchun faqat superadminga
+        // ko'rsatiladi (boshqa hamma maydon kabi `can()` bilan emas, chunki
+        // bitta maydon o'zi ko'plab bo'lim haqida metama'lumot tashiydi).
+        history: isSuper ? (await readArray('history')).slice(0, 10) : [],
         tasks,
         me: { username: admin.username, name: admin.name, role: admin.role || 'admin', perms: isSuper ? defaultPerms(true) : (admin.perms || defaultPerms(true)) },
         // Parol hech qachon klientga qaytarilmaydi — faqat kerakli maydonlar.
@@ -799,8 +853,12 @@ export async function handleApi(req, res) {
       if (can('standards')) data.standards = await readArray('standards')
       if (can('investors')) data.investors = await readArray('investors')
       if (can('blog')) data.blog = await readArray('blog')
-      if (can('services')) data.services = await readArray('services')
-      if (can('culture')) data.cultureElements = await readArray('culture-elements')
+      // "sections" (Bo'lim rasmlari) ruxsatiga ega admin bu ro'yxatlarni FAQAT
+      // rasm-slot yorliqlarini (id+sarlavha) ko'rsatish uchun ko'radi — to'liq
+      // "services"/"culture" CRUD ruxsati bo'lmasa ham, aks holda sectionImageGroups()
+      // bu ikki guruhni butunlay bo'sh/ko'rinmas qilib qo'yardi.
+      if (can('services') || can('sections')) data.services = await readArray('services')
+      if (can('culture') || can('sections')) data.cultureElements = await readArray('culture-elements')
       return json(200, { ok: true, data })
     }
 
@@ -1070,7 +1128,11 @@ export async function handleApi(req, res) {
       const admin = await requirePerm('ornaments'); if (!admin) return
       await ensureOrnaments(); const body = fields(req); const action = body.action; const f = file(req)
       let items = await readArray('ornaments')
-      const saveImg = async (id) => { if (!f || !f.buffer) return; const old = await listFiles('image', 'ornament'); await deleteFiles('image', old.filter((n) => n.startsWith(id + '.')).map((n) => `ornament/${n}`)); const ext = extFromName(f.originalname) || '.jpg'; await putFile('image', `ornament/${id}${ext}`, f.buffer, f.mimetype) }
+      // DIQQAT: klient bergan f.mimetype'ga ISHONMAYMIZ (uni istalgan qiymatga
+      // o'zgartirish mumkin) — saqlanadigan Content-Type kengaytmadan olingan
+      // qat'iy ro'yxat (mimeFromExt) orqali aniqlanadi, shu bilan stored-XSS
+      // (masalan text/html deb yuklangan fayl) imkonsiz bo'ladi.
+      const saveImg = async (id) => { if (!f || !f.buffer) return; const old = await listFiles('image', 'ornament'); await deleteFiles('image', old.filter((n) => n.startsWith(id + '.')).map((n) => `ornament/${n}`)); const ext = extFromName(f.originalname) || '.jpg'; await putFile('image', `ornament/${id}${ext}`, f.buffer, mimeFromExt(ext)) }
       if (action === 'create') { const id = genId(); await saveImg(id); items.unshift({ id, ...pickBilingual(body, ORNAMENT_FIELDS), hasImage: !!(f && f.buffer), active: true, createdAt: new Date().toISOString() }); await logHistory(admin.name, `yangi naqsh qo'shdi: "${body.old || ''}"`) }
       else if (action === 'update') { await saveImg(body.id); items = items.map((o) => o.id === body.id ? mergeBilingual({ ...o, hasImage: (f && f.buffer) ? true : o.hasImage }, body, ORNAMENT_FIELDS) : o); await logHistory(admin.name, `naqshni tahrirladi: "${body.old || ''}"`) }
       else if (action === 'toggle') { let st = true; items = items.map((o) => { if (o.id === body.id) { st = !(o.active !== false); return { ...o, active: st } } return o }); const it = items.find((o) => o.id === body.id); await logHistory(admin.name, `naqshni ${st ? "ko'rsatdi" : 'yashirdi'}: "${it ? it.old : ''}"`) }
@@ -1082,7 +1144,7 @@ export async function handleApi(req, res) {
       const admin = await requirePerm('projects'); if (!admin) return
       const body = fields(req); const action = body.action; const f = file(req)
       let projects = await readArray('projects')
-      const saveImg = async (id) => { if (!f || !f.buffer) return; const old = await listFiles('image', 'project'); await deleteFiles('image', old.filter((n) => n.startsWith(id + '.')).map((n) => `project/${n}`)); const ext = extFromName(f.originalname) || '.jpg'; await putFile('image', `project/${id}${ext}`, f.buffer, f.mimetype) }
+      const saveImg = async (id) => { if (!f || !f.buffer) return; const old = await listFiles('image', 'project'); await deleteFiles('image', old.filter((n) => n.startsWith(id + '.')).map((n) => `project/${n}`)); const ext = extFromName(f.originalname) || '.jpg'; await putFile('image', `project/${id}${ext}`, f.buffer, mimeFromExt(ext)) }
       if (action === 'create') {
         const id = genId(); await saveImg(id)
         projects.unshift({ id, ...pickBilingual(body, PROJECT_FIELDS), name: body.name || 'Nomsiz loyiha', year: body.year || '', hasImage: !!(f && f.buffer), active: true, createdAt: new Date().toISOString() })
@@ -1100,7 +1162,7 @@ export async function handleApi(req, res) {
       const admin = await requirePerm('blog'); if (!admin) return
       await ensureBlog(); const body = fields(req); const action = body.action; const f = file(req)
       let items = await readArray('blog')
-      const saveImg = async (id) => { if (!f || !f.buffer) return; const old = await listFiles('image', 'blog'); await deleteFiles('image', old.filter((n) => n.startsWith(id + '.')).map((n) => `blog/${n}`)); const ext = extFromName(f.originalname) || '.jpg'; await putFile('image', `blog/${id}${ext}`, f.buffer, f.mimetype) }
+      const saveImg = async (id) => { if (!f || !f.buffer) return; const old = await listFiles('image', 'blog'); await deleteFiles('image', old.filter((n) => n.startsWith(id + '.')).map((n) => `blog/${n}`)); const ext = extFromName(f.originalname) || '.jpg'; await putFile('image', `blog/${id}${ext}`, f.buffer, mimeFromExt(ext)) }
       if (action === 'create') {
         const id = genId(); await saveImg(id)
         items.unshift({ id, ...pickBilingual(body, BLOG_FIELDS), title: body.title || 'Nomsiz maqola', hasImage: !!(f && f.buffer), status: 'draft', createdAt: new Date().toISOString(), publishedAt: null })
@@ -1130,7 +1192,7 @@ export async function handleApi(req, res) {
       const removeOld = async () => { await deleteFiles('image', old.filter((n) => n.startsWith(key + '.')).map((n) => `section/${n}`)) }
       if (body.action === 'delete') { await removeOld(); await logHistory(admin.name, `bo'lim rasmini o'chirdi: ${key}`); return json(200, { ok: true }) }
       if (!f || !f.buffer) return json(400, { ok: false, error: 'Rasm tanlanmagan' })
-      await removeOld(); const ext = extFromName(f.originalname) || '.jpg'; await putFile('image', `section/${key}${ext}`, f.buffer, f.mimetype)
+      await removeOld(); const ext = extFromName(f.originalname) || '.jpg'; await putFile('image', `section/${key}${ext}`, f.buffer, mimeFromExt(ext))
       await logHistory(admin.name, `bo'lim rasmini yangiladi: ${key}`)
       return json(200, { ok: true })
     }

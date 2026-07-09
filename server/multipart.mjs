@@ -26,7 +26,13 @@ export function parseMultipart(req) {
       })
     })
     bb.on('close', () => {
-      if (truncated) return reject(new Error("Fayl hajmi ruxsat etilgan chegaradan (10MB) katta"))
+      if (truncated) {
+        const err = new Error("Fayl hajmi ruxsat etilgan chegaradan (10MB) katta")
+        // Chaqiruvchi (api/index.mjs, vite.config.ts) shu bayroqni ko'rib,
+        // umumiy 500 o'rniga to'g'ri 413 (Payload Too Large) qaytara oladi.
+        err.statusCode = 413
+        return reject(err)
+      }
       resolve({ fields, file })
     })
     bb.on('error', reject)

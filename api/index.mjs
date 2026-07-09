@@ -59,7 +59,9 @@ export default async function handler(req, res) {
     }
     await handleApi(req, res)
   } catch (e) {
-    res.statusCode = 500
+    // Fayl-hajmi kabi "kutilgan" xatolar o'zining statusCode'ini olib keladi
+    // (masalan multipart.mjs'dagi 413) — bo'lmasa umumiy 500 qoladi.
+    res.statusCode = Number.isInteger(e?.statusCode) ? e.statusCode : 500
     res.setHeader('Content-Type', 'application/json; charset=utf-8')
     res.end(JSON.stringify({ ok: false, error: e?.message || 'Server xatosi' }))
   }
