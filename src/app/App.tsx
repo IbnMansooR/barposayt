@@ -105,12 +105,11 @@ export default function App() {
             <motion.h1
               style={{
                 fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(2.5rem, 6vw, 6rem)',
                 lineHeight: '1.25',
                 color: '#060920',
                 textShadow: 'none'
               }}
-              className="tracking-tight"
+              className="tracking-tight text-[clamp(1.5rem,7vw,2.25rem)] md:text-[clamp(2.5rem,6vw,6rem)]"
             >
               {t("Biz qurmaymiz.", "Мы не строим.")}<br />
               <span className="inline-flex items-baseline justify-center gap-3 flex-wrap">
@@ -132,7 +131,7 @@ export default function App() {
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 1.2 }}
               style={{ fontFamily: 'var(--font-display)', textShadow: 'none' }}
-              className="max-w-3xl mx-auto leading-relaxed tracking-wide text-[#060920] text-xl md:text-2xl"
+              className="max-w-3xl mx-auto leading-relaxed tracking-wide text-[#060920] text-base md:text-2xl"
             >
               <BarpoWord /> {t("— tadbirkorlar, investorlar va yirik loyihalar uchun qurilish jarayonini tizim, sifat, nazorat va mas'uliyat asosida boshqaradigan kompaniya.", "Компания, которая управляет строительным процессом для предпринимателей, инвесторов и крупных проектов на основе системы, качества, контроля и ответственности.")}
             </motion.p>
@@ -142,7 +141,7 @@ export default function App() {
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 1.4 }}
               style={{ fontFamily: 'var(--font-body)', textShadow: 'none' }}
-              className="max-w-3xl mx-auto leading-relaxed tracking-wide text-[#060920]/75 text-lg"
+              className="max-w-3xl mx-auto leading-relaxed tracking-wide text-[#060920]/75 text-sm md:text-lg"
             >
               {t("Qurilish — bu faqat beton, armatura va ishchi kuchi emas. Qurilish — bu reja, intizom, muhandislik fikri, moliyaviy nazorat va natijaga bo'lgan mas'uliyat.", "Строительство — это не только бетон, арматура и рабочая сила. Строительство — это план, дисциплина, инженерная мысль, финансовый контроль и ответственность за результат.")}
             </motion.p>

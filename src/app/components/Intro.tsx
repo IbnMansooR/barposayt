@@ -157,7 +157,7 @@ export function Intro() {
       >
         <span
           style={{ fontFamily: "var(--font-body)" }}
-          className={"text-white/90 " + (phase === 0 ? "text-xs tracking-[0.2em] uppercase" : "text-lg md:text-xl tracking-[0.15em] font-light")}
+          className={"text-white/90 text-center " + (phase === 0 ? "text-xs tracking-[0.2em] uppercase" : "text-lg md:text-xl tracking-[0.15em] font-light")}
         >
           {phase === 0
             ? t("Pastga aylantiring", "Прокрутите вниз")

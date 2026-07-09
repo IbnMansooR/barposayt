@@ -40,8 +40,8 @@ export function FloorSection({
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 1, delay: 0.4 }}
-        className="leading-[1.2] tracking-tight"
-        style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 3.5vw, 3.5rem)' }}
+        className="leading-[1.2] tracking-tight text-[clamp(1.375rem,7vw,1.875rem)] md:text-[clamp(2rem,3.5vw,3.5rem)]"
+        style={{ fontFamily: 'var(--font-display)' }}
       >
         {barpo(title)}
       </motion.h2>
