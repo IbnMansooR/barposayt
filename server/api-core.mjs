@@ -131,6 +131,13 @@ function isValidPhone(v) {
   const digits = String(v == null ? '' : v).replace(/\D/g, '')
   return digits.length >= 7
 }
+// Sodda email format tekshiruvi (xavfsizlik uchun emas — chiqish htmlEscape
+// bilan himoyalangan — faqat brauzer `type="email"` validatsiyasini chetlab
+// o'tib to'g'ridan-to'g'ri so'rov yuborilgan holatlarda ham ma'lumot sifatini
+// ta'minlash uchun).
+function isValidEmail(v) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v == null ? '' : v).trim())
+}
 // Rezyume fayli uchun ruxsat etilgan kengaytmalar (klient tomonidagi
 // <input accept="..."> bilan bir xil) — MIME sarlavhasiga ishonmasdan,
 // avval nomdan kengaytmani tekshiramiz.
@@ -742,6 +749,8 @@ export async function handleApi(req, res) {
         return json(400, { ok: false, error: "Matn juda uzun." })
       if (!isValidPhone(body.phone))
         return json(400, { ok: false, error: "Telefon raqamni to'g'ri kiriting" })
+      if (body.email && !isValidEmail(body.email))
+        return json(400, { ok: false, error: "Email manzilni to'g'ri kiriting" })
       const list = await readArray('contacts')
       const rec = { id: genId(), fullName: body.fullName, phone: body.phone, email: body.email || '', company: body.company || '', message: body.message || '', submittedAt: new Date().toISOString() }
       list.unshift(rec); await writeArray('contacts', list)
@@ -761,6 +770,8 @@ export async function handleApi(req, res) {
         return json(400, { ok: false, error: "Matn juda uzun." })
       if (!isValidPhone(body.phone))
         return json(400, { ok: false, error: "Telefon raqamni to'g'ri kiriting" })
+      if (body.email && !isValidEmail(body.email))
+        return json(400, { ok: false, error: "Email manzilni to'g'ri kiriting" })
       const id = genId()
       const safeName = String(body.fullName).trim().replace(/[^\p{L}\p{N}]+/gu, '_').slice(0, 60) || 'nomalum'
       const f = file(req)
@@ -838,7 +849,7 @@ export async function handleApi(req, res) {
         // amallarni ham o'z ichiga oladi — shuning uchun faqat superadminga
         // ko'rsatiladi (boshqa hamma maydon kabi `can()` bilan emas, chunki
         // bitta maydon o'zi ko'plab bo'lim haqida metama'lumot tashiydi).
-        history: isSuper ? (await readArray('history')).slice(0, 10) : [],
+        history: isSuper ? (await readArray('history')).slice(0, 50) : [],
         tasks,
         me: { username: admin.username, name: admin.name, role: admin.role || 'admin', perms: isSuper ? defaultPerms(true) : (admin.perms || defaultPerms(true)) },
         // Parol hech qachon klientga qaytarilmaydi — faqat kerakli maydonlar.

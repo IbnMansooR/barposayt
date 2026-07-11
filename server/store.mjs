@@ -148,57 +148,30 @@ export async function deleteFiles(kind, pathKeys) {
   } catch (e) { console.error('[store.deleteFiles]', pathKeys, e?.message || e); return false }
 }
 
-// ---------- Rate limiter (Supabase KV orqali) ----------
+// ---------- Rate limiter (Supabase KV orqali, atomik RPC bilan) ----------
 // Har oyna (windowMs ms) da bitta IP dan maxCount so'rovgacha ruxsat beradi.
 // Returns: true = ruxsat, false = bloklangan
 //
-// DIQQAT (bilib turilgan cheklov): o'qish-va-keyin-yozish operatsiyasi to'liq
-// atomik emas — bir xil kalitga deyarli bir vaqtda kelgan ikkita so'rov
-// nazariy jihatdan bir xil (eski) hisobni o'qib, ikkalasi ham o'tib ketishi
-// mumkin. To'liq atomiklik uchun Postgres tomonida "UPDATE ... SET count =
-// count + 1 RETURNING count" kabi saqlanadigan protsedura (RPC) kerak —
-// bu ma'lumotlar bazasi sxemasini o'zgartirishni talab qiladi va shu sabab
-// bu yerda amalga oshirilmadi. Quyidagi ichki-jarayon qulfi (bitta issiq
-// Vercel funksiyasi/lokal dev-server doirasida) real amaliy foydalanish
-// hajmi uchun poyga oynasini sezilarli qisqartiradi.
-// Agar navbatdagi (oldingi) chaqiruv shuncha vaqt ichida tugamasa, navbatni
-// baribir bo'shatamiz — aks holda bitta sekinlashgan Supabase so'rovi shu
-// kalitga tegishli BARCHA keyingi so'rovlarni abadiy "osilib qolishga"
-// majbur qilar edi (foydalanuvchiga hech qanday javob — na muvaffaqiyat,
-// na xato — qaytmasdan). Sekin chaqiruvning o'zi baribir davom etadi va
-// o'z natijasini chaqiruvchisiga qaytaradi — faqat NAVBAT band qilinmaydi.
-const LOCK_TIMEOUT_MS = 8000
-const _rlLocks = new Map()
-async function withKeyLock(key, fn) {
-  const prev = _rlLocks.get(key) || Promise.resolve()
-  let release
-  const next = new Promise((r) => { release = r })
-  _rlLocks.set(key, prev.then(() => next))
-  await prev
-  let timedOut = false
-  const timer = setTimeout(() => { timedOut = true; release() }, LOCK_TIMEOUT_MS)
-  try {
-    return await fn()
-  } finally {
-    clearTimeout(timer)
-    if (!timedOut) release()
-    if (_rlLocks.get(key) === next) _rlLocks.delete(key)
-  }
-}
+// `rl_check_and_increment` — bitta UPSERT+RETURNING orqali ishlaydigan Postgres
+// protsedurasi (migratsiya: add_atomic_rate_limit_increment) — o'qish-va-yozish
+// endi bitta atomik DB amali, shuning uchun bir xil kalitga deyarli bir vaqtda
+// kelgan ikkita so'rov orasidagi poyga holati mumkin emas. Bu ilgari shu yerda
+// bo'lgan ichki-jarayon qulfini (va uning "abadiy osilib qolish" xavfini
+// yumshatish uchun kerak bo'lgan timeout-patch'ni) butunlay ortiqcha qildi —
+// endi navbat degan narsaning o'zi yo'q, har bir so'rov mustaqil ravishda
+// to'g'ridan-to'g'ri DB'ga murojaat qiladi.
 export async function checkRateLimit(key, maxCount = 3, windowMs = 10 * 60 * 1000) {
   try {
-    return await withKeyLock(key, async () => {
-      const windowId = Math.floor(Date.now() / windowMs)
-      const rlKey = `rl:${key}:${windowId}`
-      const count = await readJson(rlKey, 0)
-      if (count >= maxCount) return false
-      await writeJson(rlKey, count + 1)
-      // Eski (2 oyna oldingi) hisoblagichni imkon qadar tozalab boramiz —
-      // shunda kv jadvali cheksiz o'sib ketmaydi.
-      deleteJson(`rl:${key}:${windowId - 2}`).catch(() => {})
-      return true
-    })
-  } catch {
+    const windowId = Math.floor(Date.now() / windowMs)
+    const rlKey = `rl:${key}:${windowId}`
+    const { data, error } = await sb().rpc('rl_check_and_increment', { p_key: rlKey, p_max: maxCount })
+    if (error) throw error
+    // Eski (2 oyna oldingi) hisoblagichni imkon qadar tozalab boramiz —
+    // shunda kv jadvali cheksiz o'sib ketmaydi.
+    deleteJson(`rl:${key}:${windowId - 2}`).catch(() => {})
+    return !!data
+  } catch (e) {
+    console.error('[store.checkRateLimit]', key, e?.message || e)
     return true // DB xatosi -> o'tkazib yuboramiz
   }
 }

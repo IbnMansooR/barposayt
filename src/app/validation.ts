@@ -10,3 +10,12 @@ export function isValidPhone(value: string): boolean {
   const digits = (value || "").replace(/\D/g, "");
   return digits.length >= MIN_PHONE_DIGITS;
 }
+
+// Sodda email formati tekshiruvi (xavfsizlik uchun emas — chiqishda htmlEscape
+// bilan himoyalangan — faqat ma'lumot sifati uchun: "asd", "a@b" kabi aniq
+// noto'g'ri qiymatlarni ushlaydi, chuqur RFC-mos tekshiruv qilmaydi).
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export function isValidEmail(value: string): boolean {
+  return EMAIL_RE.test((value || "").trim());
+}

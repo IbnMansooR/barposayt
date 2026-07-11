@@ -326,7 +326,13 @@ function AdminPageInner() {
   // ochiq parol emas — muddati tugaydigan va chiqishda bekor qilinadigan token.
   const authTokenQS = () => `token=${encodeURIComponent(creds?.token || "")}`;
 
-  const loadData = useCallback(() => {
+  // `light`: faqat /api/admin/data'ni qayta yuklaydi — rasm/statistika/sozlamalarga
+  // umuman ta'sir qilmaydigan sof-JSON amallar (admin, topshiriq, taklif, standart,
+  // investor, xizmat, madaniyat, HR holati) uchun ishlatiladi, har CRUD'da 4 ta emas
+  // 1 ta so'rov yuboradi. Rasm yuklaydigan amallar (loyiha/naqsh/blog) va bo'lim-rasmi
+  // to'liq variantni ishlatishda davom etadi, chunki ular section-images/stats bilan
+  // bog'liq bo'lishi mumkin.
+  const loadData = useCallback((opts?: { light?: boolean }) => {
     if (!creds?.token) return;
     setLoading(true);
     setFetchError("");
@@ -334,6 +340,7 @@ function AdminPageInner() {
       .then((json) => setData(json.data))
       .catch((err) => setFetchError(err instanceof Error ? err.message : t("Ma'lumot olishda xatolik", "Ошибка при получении данных")))
       .finally(() => setLoading(false));
+    if (opts?.light) return;
     fetch("/api/section-images")
       .then((r) => r.json())
       .then((j) => { if (j.ok) setSectionImages(j.images || {}); })
@@ -357,7 +364,7 @@ function AdminPageInner() {
     if (!confirm(t(`Bu arizani ${labels[status]}ni tasdiqlaysizmi?`, `Подтверждаете действие «${labels[status]}» для этой заявки?`))) return;
     try {
       await apiCall("/api/admin/hr-status", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ folder, status }) });
-      loadData();
+      loadData({ light: true });
     } catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
 
@@ -366,7 +373,7 @@ function AdminPageInner() {
     if (!confirm(t(`"${name}" arizasi butunlay o'chirilsinmi? Rezyume fayli ham o'chadi va qaytarib bo'lmaydi.`, `Полностью удалить заявку «${name}»? Файл резюме также будет удалён без возможности восстановления.`))) return;
     try {
       await apiCall("/api/admin/hr-delete", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ folder }) });
-      loadData();
+      loadData({ light: true });
     } catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
 
@@ -478,14 +485,14 @@ function AdminPageInner() {
           perms,
         });
       }
-      setShowAdminModal(false); setEditingAdmin(null); loadData();
+      setShowAdminModal(false); setEditingAdmin(null); loadData({ light: true });
     } catch (err) {
       alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка"));
     } finally { setSaving(false); }
   };
   const deleteAdminUser = async (username: string) => {
     if (!confirm(t(`"${username}" admin o'chirilsinmi?`, `Удалить администратора «${username}»?`))) return;
-    try { await adminUserAction({ action: "delete", username }); loadData(); }
+    try { await adminUserAction({ action: "delete", username }); loadData({ light: true }); }
     catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
 
@@ -498,19 +505,19 @@ function AdminPageInner() {
     const body = Object.fromEntries(new FormData(e.currentTarget).entries());
     try {
       await taskAction({ action: "create", ...body });
-      setShowTaskModal(false); loadData();
+      setShowTaskModal(false); loadData({ light: true });
     } catch (err) {
       alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка"));
     } finally { setSaving(false); }
   };
   // (parametr `task` deb nomlangan — tashqi tarjima funksiyasi `t`ni soyalamasligi uchun)
   const toggleTaskDone = async (task: TaskItem) => {
-    try { await taskAction({ action: task.status === "done" ? "undone" : "done", id: task.id }); loadData(); }
+    try { await taskAction({ action: task.status === "done" ? "undone" : "done", id: task.id }); loadData({ light: true }); }
     catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
   const deleteTask = async (id: string) => {
     if (!confirm(t("Bu topshiriq o'chirilsinmi?", "Удалить это задание?"))) return;
-    try { await taskAction({ action: "delete", id }); loadData(); }
+    try { await taskAction({ action: "delete", id }); loadData({ light: true }); }
     catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
 
@@ -524,16 +531,16 @@ function AdminPageInner() {
     try {
       if (editingOffer) await offerAction({ action: "update", id: editingOffer.id, ...body });
       else await offerAction({ action: "create", ...body });
-      setShowOfferModal(false); setEditingOffer(null); loadData();
+      setShowOfferModal(false); setEditingOffer(null); loadData({ light: true });
     } catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); } finally { setSaving(false); }
   };
   const toggleOffer = async (id: string) => {
-    try { await offerAction({ action: "toggle", id }); loadData(); }
+    try { await offerAction({ action: "toggle", id }); loadData({ light: true }); }
     catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
   const deleteOffer = async (id: string) => {
     if (!confirm(t("Bu taklif o'chirilsinmi?", "Удалить это предложение?"))) return;
-    try { await offerAction({ action: "delete", id }); loadData(); }
+    try { await offerAction({ action: "delete", id }); loadData({ light: true }); }
     catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
 
@@ -597,16 +604,16 @@ function AdminPageInner() {
     try {
       if (editingStandard) await standardAction({ action: "update", id: editingStandard.id, ...body });
       else await standardAction({ action: "create", ...body });
-      setShowStandardModal(false); setEditingStandard(null); loadData();
+      setShowStandardModal(false); setEditingStandard(null); loadData({ light: true });
     } catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); } finally { setSaving(false); }
   };
   const toggleStandard = async (id: string) => {
-    try { await standardAction({ action: "toggle", id }); loadData(); }
+    try { await standardAction({ action: "toggle", id }); loadData({ light: true }); }
     catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
   const deleteStandard = async (id: string) => {
     if (!confirm(t("Bu standart o'chirilsinmi?", "Удалить этот стандарт?"))) return;
-    try { await standardAction({ action: "delete", id }); loadData(); }
+    try { await standardAction({ action: "delete", id }); loadData({ light: true }); }
     catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
 
@@ -620,16 +627,16 @@ function AdminPageInner() {
     try {
       if (editingInvestor) await investorAction({ action: "update", id: editingInvestor.id, ...body });
       else await investorAction({ action: "create", ...body });
-      setShowInvestorModal(false); setEditingInvestor(null); loadData();
+      setShowInvestorModal(false); setEditingInvestor(null); loadData({ light: true });
     } catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); } finally { setSaving(false); }
   };
   const toggleInvestor = async (id: string) => {
-    try { await investorAction({ action: "toggle", id }); loadData(); }
+    try { await investorAction({ action: "toggle", id }); loadData({ light: true }); }
     catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
   const deleteInvestor = async (id: string) => {
     if (!confirm(t("Bu bo'lim o'chirilsinmi?", "Удалить этот раздел?"))) return;
-    try { await investorAction({ action: "delete", id }); loadData(); }
+    try { await investorAction({ action: "delete", id }); loadData({ light: true }); }
     catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
 
@@ -668,16 +675,16 @@ function AdminPageInner() {
     try {
       if (editingService) await serviceAction({ action: "update", id: editingService.id, ...body });
       else await serviceAction({ action: "create", ...body });
-      setShowServiceModal(false); setEditingService(null); loadData();
+      setShowServiceModal(false); setEditingService(null); loadData({ light: true });
     } catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); } finally { setSaving(false); }
   };
   const toggleService = async (id: string) => {
-    try { await serviceAction({ action: "toggle", id }); loadData(); }
+    try { await serviceAction({ action: "toggle", id }); loadData({ light: true }); }
     catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
   const deleteService = async (id: string) => {
     if (!confirm(t("Bu xizmat o'chirilsinmi?", "Удалить эту услугу?"))) return;
-    try { await serviceAction({ action: "delete", id }); loadData(); }
+    try { await serviceAction({ action: "delete", id }); loadData({ light: true }); }
     catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
 
@@ -694,16 +701,16 @@ function AdminPageInner() {
     try {
       if (editingCulture) await cultureAction({ action: "update", id: editingCulture.id, ...body });
       else await cultureAction({ action: "create", ...body });
-      setShowCultureModal(false); setEditingCulture(null); loadData();
+      setShowCultureModal(false); setEditingCulture(null); loadData({ light: true });
     } catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); } finally { setSaving(false); }
   };
   const toggleCulture = async (id: string) => {
-    try { await cultureAction({ action: "toggle", id }); loadData(); }
+    try { await cultureAction({ action: "toggle", id }); loadData({ light: true }); }
     catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
   const deleteCulture = async (id: string) => {
     if (!confirm(t("Bu element o'chirilsinmi?", "Удалить этот элемент?"))) return;
-    try { await cultureAction({ action: "delete", id }); loadData(); }
+    try { await cultureAction({ action: "delete", id }); loadData({ light: true }); }
     catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
 
@@ -747,7 +754,7 @@ function AdminPageInner() {
     if (!confirm(t("O'chirilsinmi?", "Удалить?"))) return;
     try {
       await apiCall("/api/admin/delete", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type, id }) });
-      loadData();
+      loadData({ light: true });
     } catch (err) { alert(err instanceof Error ? err.message : t("Xatolik", "Ошибка")); }
   };
 
@@ -1715,7 +1722,7 @@ function AdminPageInner() {
               {t("O'zgarishlar tarixi", "История изменений")}
             </h2>
             <span style={{ fontFamily: "var(--font-body)" }} className="text-xs tracking-[0.15em] uppercase text-[#060920]/40">
-              {t("Oxirgi 10 ta amal", "Последние 10 действий")}
+              {t("Oxirgi 50 ta amal", "Последние 50 действий")}
             </span>
           </div>
 
